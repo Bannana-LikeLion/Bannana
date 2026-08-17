@@ -1,0 +1,497 @@
+/* =====================================================
+   PAGE
+===================================================== */
+
+.participant-waiting-page {
+    min-height: 100dvh;
+  
+    box-sizing: border-box;
+  
+    padding:
+      max(24px, env(safe-area-inset-top))
+      22px
+      calc(105px + env(safe-area-inset-bottom));
+  
+    background: #fffdf5;
+  
+    color: #21190f;
+  }
+  
+  
+  /* =====================================================
+     PROGRESS
+  ===================================================== */
+  
+  .participant-waiting-progress {
+    display: flex;
+    align-items: center;
+  
+    gap: 6px;
+  
+    margin-bottom: 18px;
+  }
+  
+  .participant-progress-bar {
+    width: 27px;
+    height: 7px;
+  
+    border-radius: 999px;
+  
+    background: #ebe5d0;
+  }
+  
+  .participant-progress-bar--active {
+    background: #f4cf45;
+  }
+  
+  .participant-waiting-progress span {
+    margin-left: 5px;
+  
+    color: #8d7751;
+  
+    font-size: 10px;
+  }
+  
+  
+  /* =====================================================
+     HEADER
+  ===================================================== */
+  
+  .participant-waiting-header {
+    margin-bottom: 20px;
+  }
+  
+  .participant-waiting-header h1 {
+    margin: 0;
+  
+    font-size: 25px;
+    font-weight: 800;
+  }
+  
+  .participant-waiting-header p {
+    margin: 7px 0 0;
+  
+    color: #9a8056;
+  
+    font-size: 11px;
+  }
+  
+  
+  /* =====================================================
+     ROOM CARD
+  ===================================================== */
+  
+  .participant-waiting-room-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    gap: 15px;
+  
+    margin-bottom: 15px;
+    padding: 17px;
+  
+    border-radius: 19px;
+  
+    background: white;
+  
+    box-shadow:
+      0 5px 18px
+      rgba(69, 52, 25, 0.05);
+  }
+  
+  .participant-waiting-room-card h2 {
+    margin: 0;
+  
+    font-size: 14px;
+  }
+  
+  .participant-waiting-room-card p {
+    margin: 6px 0 0;
+  
+    color: #987d54;
+  
+    font-size: 9px;
+  }
+  
+  .participant-search-complete {
+    flex-shrink: 0;
+  
+    padding: 9px 11px;
+  
+    border-radius: 999px;
+  
+    background: #e7f7e5;
+  
+    color: #559052;
+  
+    font-size: 9px;
+    font-weight: 800;
+  }
+  
+  
+  /* =====================================================
+     PROCESS
+  ===================================================== */
+  
+  .participant-process-card {
+    padding: 20px;
+  
+    border-radius: 20px;
+  
+    background: white;
+  
+    box-shadow:
+      0 5px 20px
+      rgba(65, 50, 24, 0.05);
+  }
+  
+  .participant-process-card h2 {
+    margin: 0 0 17px;
+  
+    font-size: 14px;
+  }
+  
+  .participant-process-list {
+    position: relative;
+  }
+  
+  .participant-process-item {
+    min-height: 54px;
+  
+    display: flex;
+    align-items: center;
+  
+    gap: 13px;
+  }
+  
+  .participant-process-icon {
+    width: 31px;
+    height: 31px;
+  
+    flex-shrink: 0;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 50%;
+  
+    background: #e8e1cc;
+  
+    color: #4b3a15;
+  
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .participant-process-icon--done {
+    background: #f4cf45;
+  }
+  
+  .participant-process-item strong {
+    display: block;
+  
+    font-size: 11px;
+  }
+  
+  .participant-process-item p {
+    margin: 4px 0 0;
+  
+    color: #998361;
+  
+    font-size: 8px;
+  }
+  
+  .participant-process-item--waiting {
+    opacity: 0.48;
+  }
+  
+  .participant-process-line {
+    width: 2px;
+    height: 15px;
+  
+    margin-left: 14px;
+  
+    background: #e8e0ca;
+  }
+  
+  .participant-process-line--done {
+    background: #f4cf45;
+  }
+  
+  
+  /* =====================================================
+     MAP
+  ===================================================== */
+  
+  .participant-waiting-map {
+    position: relative;
+  
+    height: 190px;
+  
+    overflow: hidden;
+  
+    margin-top: 15px;
+  
+    border-radius: 20px;
+  
+    background: #e5e3dc;
+  }
+  
+  .participant-map-road {
+    position: absolute;
+  
+    background: white;
+  }
+  
+  .participant-map-road--vertical {
+    width: 8px;
+    height: 100%;
+  
+    left: 50%;
+  }
+  
+  .participant-map-road--horizontal {
+    width: 100%;
+    height: 8px;
+  
+    top: 49%;
+  }
+  
+  .participant-map-green {
+    position: absolute;
+  
+    width: 85px;
+    height: 60px;
+  
+    left: 41%;
+    top: 23%;
+  
+    border-radius: 18px;
+  
+    background: #cadcae;
+  }
+  
+  .participant-map-water {
+    position: absolute;
+  
+    width: 135px;
+    height: 44px;
+  
+    left: 34%;
+    bottom: 15%;
+  
+    background: #d0dfe8;
+  
+    transform: rotate(6deg);
+  }
+  
+  
+  /* =====================================================
+     PARTICIPANT MARKERS
+  
+     1 = 호스트
+     2 = 송현석
+     3 = 김보경
+     4 = 현재 참여자
+  ===================================================== */
+  
+  .participant-map-person {
+    position: absolute;
+  
+    z-index: 4;
+  
+    width: 37px;
+    height: 37px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border: 4px solid white;
+    border-radius: 50%;
+  
+    font-size: 10px;
+    font-weight: 800;
+  
+    box-shadow:
+      0 3px 8px
+      rgba(0, 0, 0, 0.08);
+  }
+  
+  .participant-map-person--1 {
+    left: 13%;
+    top: 8%;
+  
+    background: #7144df;
+  
+    color: white;
+  }
+  
+  .participant-map-person--2 {
+    right: 12%;
+    bottom: 12%;
+  
+    background: #e87570;
+  
+    color: #21190f;
+  }
+  
+  .participant-map-person--3 {
+    left: 38%;
+    bottom: 9%;
+  
+    background: #f0c936;
+  
+    color: #21190f;
+  }
+  
+  .participant-map-person--4 {
+    right: 19%;
+    top: 13%;
+  
+    background: #79cec5;
+  
+    color: #21190f;
+  }
+  
+  
+  /* =====================================================
+     MIDPOINT
+  ===================================================== */
+  
+  .participant-map-midpoint {
+    position: absolute;
+  
+    z-index: 5;
+  
+    left: 50%;
+    top: 50%;
+  
+    width: 59px;
+    height: 59px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    transform: translate(-50%, -50%);
+  
+    border: 6px solid white;
+    border-radius: 50%;
+  
+    background: #f4cf45;
+  
+    font-size: 27px;
+  }
+  
+  .participant-map-result-label {
+    position: absolute;
+  
+    z-index: 7;
+  
+    left: 50%;
+    top: 12px;
+  
+    padding: 8px 13px;
+  
+    transform: translateX(-50%);
+  
+    border-radius: 999px;
+  
+    background: #342b1c;
+  
+    color: #f4cf45;
+  
+    white-space: nowrap;
+  
+    font-size: 9px;
+    font-weight: 800;
+  }
+  
+  
+  /* =====================================================
+     BOTTOM
+  ===================================================== */
+  
+  .participant-waiting-bottom {
+    position: fixed;
+  
+    z-index: 20;
+  
+    left: 50%;
+    bottom: 0;
+  
+    width: 100%;
+    max-width: 480px;
+  
+    box-sizing: border-box;
+  
+    padding:
+      15px
+      22px
+      max(
+        22px,
+        env(safe-area-inset-bottom)
+      );
+  
+    transform: translateX(-50%);
+  
+    background:
+      linear-gradient(
+        transparent,
+        #fffdf5 28%
+      );
+  }
+  
+  .participant-waiting-primary {
+    width: 100%;
+    height: 59px;
+  
+    border: none;
+    border-radius: 18px;
+  
+    background: #f4cf45;
+  
+    color: #21190f;
+  
+    font-size: 15px;
+    font-weight: 800;
+  
+    cursor: pointer;
+  
+    box-shadow:
+      0 7px 20px
+      rgba(221, 176, 31, 0.17);
+  }
+  
+  .participant-waiting-primary:active {
+    transform: scale(0.985);
+  }
+  
+  
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+  
+  @media (max-width: 360px) {
+    .participant-waiting-page {
+      padding-left: 17px;
+      padding-right: 17px;
+    }
+  
+    .participant-map-person {
+      width: 34px;
+      height: 34px;
+  
+      font-size: 9px;
+    }
+  
+    .participant-map-midpoint {
+      width: 54px;
+      height: 54px;
+  
+      font-size: 24px;
+    }
+  }

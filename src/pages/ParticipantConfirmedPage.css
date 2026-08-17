@@ -1,0 +1,1047 @@
+/* =====================================================
+   PAGE
+===================================================== */
+
+.participant-confirmed-page {
+    width: 100%;
+  
+    min-height: 100dvh;
+  
+    padding:
+      max(24px, env(safe-area-inset-top))
+      22px
+      calc(30px + env(safe-area-inset-bottom));
+  
+    background: #fffdf5;
+  
+    color: #21190f;
+  }
+  
+  
+  /* =====================================================
+     PROGRESS
+  ===================================================== */
+  
+  .participant-confirmed-progress {
+    display: flex;
+    align-items: center;
+  
+    gap: 8px;
+  
+    margin-bottom: 22px;
+  }
+  
+  .participant-confirmed-progress-bars {
+    display: flex;
+  
+    gap: 6px;
+  }
+  
+  .participant-confirmed-progress-bars span {
+    width: 28px;
+    height: 7px;
+  
+    border-radius: 999px;
+  
+    background: #f4cf45;
+  }
+  
+  .participant-confirmed-progress strong {
+    color: #8c754e;
+  
+    font-size: 10px;
+  }
+  
+  
+  /* =====================================================
+     HEADER
+  ===================================================== */
+  
+  .participant-confirmed-header {
+    margin-bottom: 19px;
+  }
+  
+  .participant-confirmed-header h1 {
+    margin: 0;
+  
+    color: #21190f;
+  
+    font-size: 25px;
+    font-weight: 800;
+  
+    letter-spacing: -0.4px;
+  }
+  
+  .participant-confirmed-header p {
+    margin: 7px 0 0;
+  
+    color: #9a8056;
+  
+    font-size: 11px;
+  }
+  
+  
+  /* =====================================================
+     MY TRAVEL
+  ===================================================== */
+  
+  .participant-my-travel {
+    position: relative;
+  
+    overflow: hidden;
+  
+    margin-bottom: 15px;
+    padding: 20px;
+  
+    border-radius: 22px;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #fff2ad,
+        #ffeda2
+      );
+  
+    box-shadow:
+      0 6px 20px
+      rgba(222, 179, 31, 0.08);
+  }
+  
+  .participant-my-travel::after {
+    content: "";
+  
+    position: absolute;
+  
+    width: 100px;
+    height: 100px;
+  
+    right: -27px;
+    top: -35px;
+  
+    border-radius: 50%;
+  
+    background:
+      rgba(
+        244,
+        207,
+        69,
+        0.22
+      );
+  }
+  
+  .participant-my-travel-top {
+    position: relative;
+  
+    z-index: 2;
+  
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  
+    gap: 15px;
+  }
+  
+  .participant-my-travel-top p {
+    margin: 0 0 5px;
+  
+    color: #826b43;
+  
+    font-size: 11px;
+    font-weight: 700;
+  }
+  
+  .participant-my-travel-minute {
+    display: block;
+  
+    color: #21190f;
+  
+    font-size: 40px;
+    font-weight: 900;
+  
+    line-height: 1;
+  }
+  
+  .participant-my-travel-minute span {
+    margin-left: 4px;
+  
+    font-size: 15px;
+  }
+  
+  
+  /* =====================================================
+     DEPARTURE
+  ===================================================== */
+  
+  .participant-departure {
+    flex-shrink: 0;
+  
+    text-align: right;
+  }
+  
+  .participant-departure strong {
+    display: block;
+  
+    color: #725913;
+  
+    font-size: 13px;
+    font-weight: 800;
+  }
+  
+  .participant-departure span {
+    display: block;
+  
+    margin-top: 3px;
+  
+    color: #92764c;
+  
+    font-size: 9px;
+  }
+  
+  
+  /* =====================================================
+     TRAVEL PROGRESS
+  ===================================================== */
+  
+  .participant-travel-progress {
+    position: relative;
+  
+    z-index: 2;
+  
+    width: 100%;
+    height: 7px;
+  
+    overflow: hidden;
+  
+    margin-top: 16px;
+  
+    border-radius: 999px;
+  
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.72
+      );
+  }
+  
+  .participant-travel-progress > div {
+    height: 100%;
+  
+    border-radius: inherit;
+  
+    background: #7acbc5;
+  }
+  
+  .participant-travel-help {
+    position: relative;
+  
+    z-index: 2;
+  
+    margin: 9px 0 0;
+  
+    color: #8e754e;
+  
+    font-size: 9px;
+  }
+  
+  
+  /* =====================================================
+     FINAL PLACE
+  ===================================================== */
+  
+  .participant-final-place {
+    margin-bottom: 15px;
+    padding: 18px;
+  
+    border-radius: 21px;
+  
+    background: white;
+  
+    box-shadow:
+      0 5px 18px
+      rgba(67, 50, 23, 0.05);
+  }
+  
+  .participant-final-place > h2 {
+    margin: 0 0 14px;
+  
+    color: #5d4728;
+  
+    font-size: 14px;
+    font-weight: 800;
+  }
+  
+  .participant-final-place-main {
+    display: flex;
+    align-items: center;
+  
+    gap: 14px;
+  }
+  
+  
+  /* =====================================================
+     PLACE IMAGE
+  ===================================================== */
+  
+  .participant-final-place-image {
+    width: 70px;
+    height: 70px;
+  
+    flex-shrink: 0;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 18px;
+  
+    background: #fff5c5;
+  
+    font-size: 34px;
+  }
+  
+  .participant-final-place-info {
+    flex: 1;
+  
+    min-width: 0;
+  }
+  
+  .participant-final-place-info h3 {
+    margin: 0;
+  
+    overflow: hidden;
+  
+    color: #21190f;
+  
+    font-size: 17px;
+    font-weight: 800;
+  
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  
+  /* =====================================================
+     PLACE TAG
+  ===================================================== */
+  
+  .participant-final-place-tags {
+    display: flex;
+  
+    gap: 6px;
+  
+    margin-top: 8px;
+  }
+  
+  .participant-final-place-tags span {
+    padding: 5px 8px;
+  
+    border-radius: 999px;
+  
+    background: #f4efdf;
+  
+    color: #77613f;
+  
+    font-size: 9px;
+    font-weight: 700;
+  }
+  
+  .participant-final-place-tags
+  .participant-final-place-tag--indoor {
+    background: #e3f0db;
+  
+    color: #5b7f55;
+  }
+  
+  .participant-final-place-info p {
+    margin: 8px 0 0;
+  
+    color: #9b8054;
+  
+    font-size: 10px;
+  }
+  
+  
+  /* =====================================================
+     MAP
+  ===================================================== */
+  
+  .participant-confirmed-map {
+    position: relative;
+  
+    height: 210px;
+  
+    overflow: hidden;
+  
+    margin-bottom: 15px;
+  
+    border-radius: 22px;
+  
+    background: #e4e3dc;
+  }
+  
+  
+  /* =====================================================
+     ROAD
+  ===================================================== */
+  
+  .participant-confirmed-map-road {
+    position: absolute;
+  
+    z-index: 1;
+  
+    background: white;
+  }
+  
+  .participant-confirmed-map-road--vertical {
+    width: 9px;
+    height: 100%;
+  
+    left: 50%;
+    top: 0;
+  
+    transform: translateX(-50%);
+  }
+  
+  .participant-confirmed-map-road--horizontal {
+    width: 100%;
+    height: 9px;
+  
+    left: 0;
+    top: 48%;
+  }
+  
+  
+  /* =====================================================
+     MAP DECORATION
+  ===================================================== */
+  
+  .participant-confirmed-map-green {
+    position: absolute;
+  
+    width: 91px;
+    height: 63px;
+  
+    left: 41%;
+    top: 25%;
+  
+    border-radius: 20px;
+  
+    background: #cadcaf;
+  }
+  
+  .participant-confirmed-map-water {
+    position: absolute;
+  
+    width: 150px;
+    height: 45px;
+  
+    left: 34%;
+    bottom: 15%;
+  
+    background: #d0dfe8;
+  
+    transform: rotate(7deg);
+  }
+  
+  .participant-confirmed-map-building {
+    position: absolute;
+  
+    width: 57px;
+    height: 53px;
+  
+    border-radius: 12px;
+  
+    background: #cacac5;
+  }
+  
+  .participant-confirmed-map-building--left {
+    left: 7%;
+    bottom: 15%;
+  }
+  
+  .participant-confirmed-map-building--right {
+    right: 7%;
+    bottom: 17%;
+  }
+  
+  
+  /* =====================================================
+     MARKER
+  ===================================================== */
+  
+  .participant-confirmed-marker {
+    position: absolute;
+  
+    z-index: 6;
+  
+    width: 43px;
+    height: 43px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border: 5px solid white;
+    border-radius: 50%;
+  
+    color: #21190f;
+  
+    font-size: 12px;
+    font-weight: 800;
+  
+    box-shadow:
+      0 4px 12px
+      rgba(0, 0, 0, 0.09);
+  }
+  
+  
+  /* 1 = 호스트 */
+  
+  .participant-confirmed-marker--1 {
+    left: 13%;
+    top: 10%;
+  
+    background: #7144df;
+  
+    color: white;
+  }
+  
+  
+  /* 2 */
+  
+  .participant-confirmed-marker--2 {
+    right: 11%;
+    bottom: 15%;
+  
+    background: #e87570;
+  }
+  
+  
+  /* 3 */
+  
+  .participant-confirmed-marker--3 {
+    left: 27%;
+    bottom: 11%;
+  
+    background: #f0c936;
+  }
+  
+  
+  /* 4 = 현재 참여자 */
+  
+  .participant-confirmed-marker--4 {
+    right: 18%;
+    top: 13%;
+  
+    background: #79cec5;
+  }
+  
+  
+  /* =====================================================
+     MIDPOINT
+  ===================================================== */
+  
+  .participant-confirmed-midpoint {
+    position: absolute;
+  
+    z-index: 8;
+  
+    left: 50%;
+    top: 50%;
+  
+    width: 69px;
+    height: 69px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    transform:
+      translate(
+        -50%,
+        -50%
+      );
+  
+    border: 7px solid white;
+    border-radius: 50%;
+  
+    background: #f4cf45;
+  
+    font-size: 31px;
+  
+    box-shadow:
+      0 5px 16px
+      rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  /* =====================================================
+     FAIRNESS
+  ===================================================== */
+  
+  .participant-map-fair-label {
+    position: absolute;
+  
+    z-index: 10;
+  
+    left: 50%;
+    bottom: 9px;
+  
+    max-width:
+      calc(
+        100% -
+        30px
+      );
+  
+    padding: 8px 12px;
+  
+    transform:
+      translateX(-50%);
+  
+    border-radius: 999px;
+  
+    background: white;
+  
+    color: #423622;
+  
+    white-space: nowrap;
+  
+    font-size: 9px;
+    font-weight: 800;
+  
+    box-shadow:
+      0 4px 12px
+      rgba(0, 0, 0, 0.08);
+  }
+  
+  
+  /* =====================================================
+     ALL TRAVEL
+  ===================================================== */
+  
+  .participant-all-travel {
+    margin-bottom: 15px;
+    padding: 18px;
+  
+    border-radius: 21px;
+  
+    background: white;
+  
+    box-shadow:
+      0 5px 18px
+      rgba(65, 49, 22, 0.05);
+  }
+  
+  .participant-all-travel > h2 {
+    margin: 0 0 14px;
+  
+    color: #2e2417;
+  
+    font-size: 16px;
+    font-weight: 800;
+  }
+  
+  .participant-all-travel-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  
+  /* =====================================================
+     TRAVEL ROW
+  ===================================================== */
+  
+  .participant-all-travel-row {
+    min-height: 67px;
+  
+    display: flex;
+    align-items: center;
+  
+    gap: 11px;
+  
+    border-bottom:
+      1px solid #eee5d2;
+  }
+  
+  .participant-all-travel-row:last-child {
+    border-bottom: none;
+  }
+  
+  
+  /* =====================================================
+     AVATAR
+  ===================================================== */
+  
+  .participant-all-avatar {
+    width: 41px;
+    height: 41px;
+  
+    flex-shrink: 0;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 50%;
+  
+    color: #21190f;
+  
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .participant-all-avatar--1 {
+    background: #7144df;
+  
+    color: white;
+  }
+  
+  .participant-all-avatar--2 {
+    background: #e87570;
+  }
+  
+  .participant-all-avatar--3 {
+    background: #f0c936;
+  }
+  
+  .participant-all-avatar--4 {
+    background: #79cec5;
+  }
+  
+  
+  /* =====================================================
+     PERSON + BAR
+  ===================================================== */
+  
+  .participant-all-person {
+    flex: 1;
+  
+    min-width: 0;
+  }
+  
+  .participant-all-person > strong {
+    display: block;
+  
+    overflow: hidden;
+  
+    color: #312719;
+  
+    font-size: 11px;
+    font-weight: 800;
+  
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .participant-all-bar {
+    width: 100%;
+    height: 4px;
+  
+    overflow: hidden;
+  
+    margin-top: 8px;
+  
+    border-radius: 999px;
+  
+    background: #eee9dc;
+  }
+  
+  .participant-all-bar-value {
+    display: block;
+  
+    height: 100%;
+  
+    border-radius: 999px;
+  }
+  
+  .participant-all-bar-value--1 {
+    background: #7144df;
+  }
+  
+  .participant-all-bar-value--2 {
+    background: #e87570;
+  }
+  
+  .participant-all-bar-value--3 {
+    background: #f0c936;
+  }
+  
+  .participant-all-bar-value--4 {
+    background: #79cec5;
+  }
+  
+  
+  /* =====================================================
+     TIME
+  ===================================================== */
+  
+  .participant-all-time {
+    flex-shrink: 0;
+  
+    text-align: right;
+  }
+  
+  .participant-all-time strong {
+    display: block;
+  
+    color: #21190f;
+  
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .participant-all-time span {
+    display: block;
+  
+    margin-top: 4px;
+  
+    color: #ad812c;
+  
+    font-size: 8px;
+  }
+  
+  
+  /* =====================================================
+     WEATHER + DATE SUMMARY
+  ===================================================== */
+  
+  .participant-final-summary {
+    display: grid;
+  
+    grid-template-columns:
+      0.8fr
+      1.5fr;
+  
+    gap: 10px;
+  
+    margin-bottom: 14px;
+  }
+  
+  
+  /* =====================================================
+     WEATHER
+  ===================================================== */
+  
+  .participant-final-weather,
+  .participant-final-date {
+    min-height: 93px;
+  
+    display: flex;
+    align-items: center;
+  
+    padding: 14px;
+  
+    border-radius: 18px;
+  
+    background: white;
+  
+    box-shadow:
+      0 5px 17px
+      rgba(64, 49, 23, 0.05);
+  }
+  
+  .participant-final-weather {
+    flex-direction: column;
+    justify-content: center;
+  
+    text-align: center;
+  }
+  
+  .participant-final-weather-icon {
+    margin-bottom: 5px;
+  
+    font-size: 27px;
+  }
+  
+  .participant-final-weather strong {
+    display: block;
+  
+    color: #342819;
+  
+    font-size: 11px;
+  }
+  
+  .participant-final-weather small {
+    display: block;
+  
+    margin-top: 3px;
+  
+    color: #987c52;
+  
+    font-size: 8px;
+  }
+  
+  
+  /* =====================================================
+     DATE
+  ===================================================== */
+  
+  .participant-final-date {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .participant-final-date strong {
+    display: block;
+  
+    color: #342819;
+  
+    font-size: 12px;
+  }
+  
+  .participant-final-date span {
+    display: block;
+  
+    margin-top: 5px;
+  
+    color: #947950;
+  
+    font-size: 9px;
+    line-height: 1.5;
+  }
+  
+  
+  /* =====================================================
+     CALENDAR SUCCESS
+  ===================================================== */
+  
+  .participant-calendar-success {
+    margin-bottom: 10px;
+    padding: 10px;
+  
+    border-radius: 12px;
+  
+    background: #e5f5e3;
+  
+    color: #548850;
+  
+    text-align: center;
+  
+    font-size: 10px;
+    font-weight: 800;
+  }
+  
+  
+  /* =====================================================
+     ACTION
+  ===================================================== */
+  
+  .participant-confirmed-actions {
+    display: flex;
+    flex-direction: column;
+  
+    gap: 9px;
+  }
+  
+  .participant-calendar-button,
+  .participant-share-button {
+    width: 100%;
+    height: 57px;
+  
+    border-radius: 17px;
+  
+    font-size: 14px;
+    font-weight: 800;
+  
+    cursor: pointer;
+  }
+  
+  
+  /* PRIMARY */
+  
+  .participant-calendar-button {
+    border: none;
+  
+    background: #f4cf45;
+  
+    color: #21190f;
+  
+    box-shadow:
+      0 7px 20px
+      rgba(221, 176, 31, 0.17);
+  }
+  
+  
+  /* SECONDARY */
+  
+  .participant-share-button {
+    border: 1.5px solid #e5dac1;
+  
+    background: white;
+  
+    color: #68563b;
+  }
+  
+  .participant-calendar-button:active,
+  .participant-share-button:active {
+    transform: scale(0.987);
+  }
+  
+  
+  /* =====================================================
+     SMALL PHONE
+  ===================================================== */
+  
+  @media (max-width: 360px) {
+    .participant-confirmed-page {
+      padding-left: 17px;
+      padding-right: 17px;
+    }
+  
+    .participant-confirmed-header h1 {
+      font-size: 22px;
+    }
+  
+    .participant-my-travel {
+      padding: 17px;
+    }
+  
+    .participant-my-travel-minute {
+      font-size: 35px;
+    }
+  
+    .participant-final-place {
+      padding: 15px;
+    }
+  
+    .participant-final-place-image {
+      width: 60px;
+      height: 60px;
+  
+      font-size: 29px;
+    }
+  
+    .participant-confirmed-map {
+      height: 190px;
+    }
+  
+    .participant-confirmed-marker {
+      width: 38px;
+      height: 38px;
+  
+      border-width: 4px;
+  
+      font-size: 10px;
+    }
+  
+    .participant-confirmed-midpoint {
+      width: 61px;
+      height: 61px;
+  
+      font-size: 27px;
+    }
+  
+    .participant-all-travel {
+      padding: 15px;
+    }
+  
+    .participant-all-avatar {
+      width: 37px;
+      height: 37px;
+  
+      font-size: 10px;
+    }
+  }
