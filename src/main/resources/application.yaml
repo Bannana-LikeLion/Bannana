@@ -17,3 +17,10 @@ spring:
     console:
       enabled: true
       path: /h2-console
+weather:
+  kma:
+    base-url: https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+    service-key: ${KMA_SERVICE_KEY:}
+    page-no: 1
+    num-of-rows: 1000
+    data-type: JSON

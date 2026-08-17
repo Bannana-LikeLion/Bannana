@@ -1,0 +1,58 @@
+{
+  "response": {
+    "header": {
+      "resultCode": "00",
+      "resultMsg": "NORMAL_SERVICE"
+    },
+    "body": {
+      "dataType": "JSON",
+      "items": {
+        "item": [
+          {
+            "baseDate": "20260817",
+            "baseTime": "1400",
+            "category": "TMP",
+            "fcstDate": "20260821",
+            "fcstTime": "1900",
+            "fcstValue": "27.0",
+            "nx": 60,
+            "ny": 127
+          },
+          {
+            "baseDate": "20260817",
+            "baseTime": "1400",
+            "category": "POP",
+            "fcstDate": "20260821",
+            "fcstTime": "1900",
+            "fcstValue": "20",
+            "nx": 60,
+            "ny": 127
+          },
+          {
+            "baseDate": "20260817",
+            "baseTime": "1400",
+            "category": "PTY",
+            "fcstDate": "20260821",
+            "fcstTime": "1900",
+            "fcstValue": "0",
+            "nx": 60,
+            "ny": 127
+          },
+          {
+            "baseDate": "20260817",
+            "baseTime": "1400",
+            "category": "SKY",
+            "fcstDate": "20260821",
+            "fcstTime": "1900",
+            "fcstValue": "3",
+            "nx": 60,
+            "ny": 127
+          }
+        ]
+      },
+      "pageNo": 1,
+      "numOfRows": 1000,
+      "totalCount": 4
+    }
+  }
+}

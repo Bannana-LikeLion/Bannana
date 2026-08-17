@@ -10,9 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import com.bannana.backend.weather.exception.WeatherBadRequestException;
+import com.bannana.backend.weather.exception.WeatherExternalApiException;
+import com.bannana.backend.weather.exception.WeatherForecastNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,6 +39,24 @@ public class GlobalExceptionHandler {
 		return build(HttpStatus.CONFLICT, ex.getMessage(), request);
 	}
 
+	@ExceptionHandler(WeatherForecastNotFoundException.class)
+	public ResponseEntity<ApiErrorResponse> handleWeatherForecastNotFound(WeatherForecastNotFoundException ex,
+		HttpServletRequest request) {
+		return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+	}
+
+	@ExceptionHandler(WeatherExternalApiException.class)
+	public ResponseEntity<ApiErrorResponse> handleWeatherExternalApi(WeatherExternalApiException ex,
+		HttpServletRequest request) {
+		return build(HttpStatus.BAD_GATEWAY, ex.getMessage(), request);
+	}
+
+	@ExceptionHandler(WeatherBadRequestException.class)
+	public ResponseEntity<ApiErrorResponse> handleWeatherBadRequest(WeatherBadRequestException ex,
+		HttpServletRequest request) {
+		return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+	}
+
 	@ExceptionHandler(BadRequestException.class)
 	public ResponseEntity<ApiErrorResponse> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
 		return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
@@ -51,6 +74,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler({
+		MissingServletRequestParameterException.class,
 		HttpMessageNotReadableException.class,
 		MethodArgumentTypeMismatchException.class,
 		ConstraintViolationException.class,

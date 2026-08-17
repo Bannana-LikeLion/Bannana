@@ -1,0 +1,1 @@
+GET http://localhost:8080/weather?lat=37.5665&lng=126.9780&datetime=2026-08-19T19:00
