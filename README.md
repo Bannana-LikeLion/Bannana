@@ -2,25 +2,7 @@
 
 참여자들의 출발지를 받아 모두에게 이동시간 부담이 공평한 중간 장소 후보 3곳을 계산하는 **stateless** API.
 
-- 엔드포인트는 `POST /recommendations` **하나뿐**이다.
-- DB / 영속성 계층이 **없다**. JDBC·JPA·H2 의존성을 추가하지 말 것.
-- 방/참여자 저장, 날씨, 주변 장소는 **다른 서비스 담당**이다. 프론트가 이 API의 `candidates` 좌표로 그쪽 API를 따로 호출해 화면에서 합친다.
-
 ## 실행
-
-환경변수로 API 키를 넣는다.
-
-```bash
-export KAKAO_API_KEY=...    # 카카오 REST API 키
-export ODSAY_API_KEY=...    # ODsay API 키 (URL 인코딩 전의 원본 키)
-./gradlew bootRun
-```
-
-PowerShell:
-
-```powershell
-$env:KAKAO_API_KEY="..."; $env:ODSAY_API_KEY="..."; ./gradlew bootRun
-```
 
 기본 포트는 `8081`(`application.yml`의 `server.port`).
 
@@ -38,8 +20,8 @@ curl -X POST http://localhost:8081/recommendations \
   -H "Content-Type: application/json" \
   -d '{
     "participants": [
-      {"nickname":"김보경","origin_lat":37.5665,"origin_lng":126.9780,"transport_mode":"transit","max_travel_min":40},
-      {"nickname":"송현석","origin_lat":37.4979,"origin_lng":127.0276,"transport_mode":"transit","max_travel_min":40},
+      {"nickname":"홍길동","origin_lat":37.5665,"origin_lng":126.9780,"transport_mode":"transit","max_travel_min":40},
+      {"nickname":"김홍도","origin_lat":37.4979,"origin_lng":127.0276,"transport_mode":"transit","max_travel_min":40},
       {"nickname":"이지은","origin_lat":37.5445,"origin_lng":127.0557,"transport_mode":"transit","max_travel_min":40}
     ],
     "place_types": ["cafe","restaurant"],
@@ -54,7 +36,7 @@ curl -X POST http://localhost:8081/recommendations \
       "name": "성수역",
       "lat": 37.5446,
       "lng": 127.0559,
-      "travel_times": { "김보경": 34, "송현석": 37, "이지은": 39 },
+      "travel_times": { "홍길동": 34, "김홍도": 37, "이지은": 39 },
       "gap_minutes": 5
     }
   ]
@@ -70,8 +52,6 @@ curl -X POST http://localhost:8081/recommendations \
 | 405 | `POST` 외의 메서드 |
 | 502 | 후보 역을 못 찾음 / 모든 후보의 이동시간 조회 실패 |
 
-오류 본문은 `{"error": "...", "message": "..."}` 형태다. **이 형태는 프론트와 확정한 계약이 아니므로**
-프론트에서 다른 모양을 원하면 맞춰 바꾸면 된다.
 
 ## 처리 흐름
 
@@ -135,10 +115,6 @@ curl -X POST http://localhost:8081/recommendations \
 - **참여자 수 상한 20명.** 후보 10곳 × 20명 = 200콜이 상한선이 된다.
 
 ## 테스트
-
-```bash
-./gradlew test
-```
 
 - `GeoPointTest` — 중심점 평균, 거리 계산
 - `CandidateScorerTest` — `gap_minutes`, 부분 실패, 정렬 규칙, soft 필터
