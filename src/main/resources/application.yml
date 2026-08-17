@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: bannana-recommendation
+# 이 서비스는 완전히 stateless다. build.gradle.kts에 JDBC/JPA/H2 의존성이 아예 없으므로
+# DataSource 자동설정도 애초에 동작하지 않는다. 영속성 의존성을 추가하지 말 것.
+
+server:
+  port: 8081
+
+bannana:
+  api:
+    kakao:
+      api-key: ${KAKAO_API_KEY:}
+      base-url: https://dapi.kakao.com
+      connect-timeout: 3s
+      read-timeout: 5s
+    odsay:
+      api-key: ${ODSAY_API_KEY:}
+      base-url: https://api.odsay.com
+      connect-timeout: 3s
+      read-timeout: 6s
+  recommendation:
+    # 후보 역 개수 (명세: 6~10곳)
+    min-candidates: 6
+    max-candidates: 10
+    # 응답에 담을 후보 수
+    top-n: 3
+    # 카카오 검색 반경(m). 앞에서부터 시도하다 min-candidates를 채우면 멈춘다.
+    search-radii: [3000, 5000, 10000, 20000]
+    # auto = 카카오 우선 + 정적 목록 폴백 / kakao / static
+    station-provider: auto
+    # ODsay 동시 호출 수
+    concurrency: 8
+
+logging:
+  level:
+    com.bannana.recommendation: INFO
