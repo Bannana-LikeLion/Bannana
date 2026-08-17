@@ -20,6 +20,7 @@ import com.bannana.backend.room.entity.Room;
 import com.bannana.backend.room.entity.RoomStatus;
 import com.bannana.backend.room.entity.TransportMode;
 import com.bannana.backend.room.exception.HostAlreadyExistsException;
+import com.bannana.backend.room.exception.BadRequestException;
 import com.bannana.backend.room.exception.ParticipantNotFoundException;
 import com.bannana.backend.room.exception.RoomNotFoundException;
 import com.bannana.backend.room.repository.ParticipantRepository;
@@ -27,6 +28,8 @@ import com.bannana.backend.room.repository.RoomRepository;
 
 @Service
 public class RoomService {
+
+	private static final long MAX_PARTICIPANT_COUNT = 6L;
 
 	private final RoomRepository roomRepository;
 	private final ParticipantRepository participantRepository;
@@ -61,6 +64,8 @@ public class RoomService {
 	@Transactional
 	public HostRegistrationResponse registerHost(Long roomId, ParticipantCreateRequest request) {
 		Room room = findRoom(roomId);
+		assertRoomCapacity(roomId);
+
 		if (participantRepository.existsByRoomIdAndRole(roomId, ParticipantRole.HOST)) {
 			throw new HostAlreadyExistsException(roomId);
 		}
@@ -81,6 +86,8 @@ public class RoomService {
 	@Transactional
 	public ParticipantResponse createParticipant(Long roomId, ParticipantCreateRequest request) {
 		Room room = findRoom(roomId);
+		assertRoomCapacity(roomId);
+
 		Participant participant = new Participant(
 			room,
 			request.name(),
@@ -143,5 +150,11 @@ public class RoomService {
 
 	private String buildInviteUrl(Long roomId) {
 		return inviteBaseUrl + "/" + roomId;
+	}
+
+	private void assertRoomCapacity(Long roomId) {
+		if (participantRepository.countByRoomId(roomId) >= MAX_PARTICIPANT_COUNT) {
+			throw new BadRequestException("Participant limit exceeded. Maximum is 6.");
+		}
 	}
 }

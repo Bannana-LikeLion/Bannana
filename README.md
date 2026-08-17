@@ -124,6 +124,7 @@ src/main/java/com/bannana/backend
 
 제약:
 
+- 한 방의 총 참가 인원은 최대 6명
 - 한 방에 HOST는 1명만 허용
 - 이미 호스트가 있으면 `409 Conflict`
 
@@ -165,6 +166,7 @@ http://localhost:5173/invite/{roomId}
 - 경도
 
 `originLat`, `originLng`는 nullable이며, 주소 -> 좌표 변환은 아직 구현하지 않았습니다.
+한 방의 총 참가 인원은 최대 6명입니다.
 
 #### Request
 
@@ -342,4 +344,3 @@ http://localhost:5173/invite/{roomId}
 - Spring Boot 애플리케이션 실행 성공
 - 5개 API 동작 확인
 - 주요 예외 응답 확인
-
