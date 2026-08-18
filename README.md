@@ -2,15 +2,16 @@
 
 참여자 모두에게 이동시간이 공평한 약속 장소를 찾아주는 서비스.
 
+이 브랜치에는 **백엔드**만 있다. 프론트엔드는 `frontend` 브랜치에 있다.
+
 ```
-bannana/
-├─ backend/    Spring Boot 단일 앱 (방·참여자, 날씨, 주변 장소, 추천 알고리즘)
-└─ frontend/   React + Vite
+backend/    Spring Boot 단일 앱 (방·참여자, 날씨, 주변 장소, 추천 알고리즘)
 ```
+
+원래 `room-service`(방/날씨/장소)와 `recommendation-service`(추천 알고리즘)가 따로 개발되다가
+하나의 Spring Boot 앱으로 합쳐졌다.
 
 ## 실행
-
-### backend
 
 ```bash
 cd backend
@@ -50,10 +51,11 @@ $env:KAKAO_REST_API_KEY="..."; $env:ODSAY_API_KEY="..."; $env:KMA_SERVICE_KEY=".
 `/recommendations`의 입출력 스키마는 프론트와 합의된 계약이라 임의로 바꾸지 않는다.
 자세한 내용은 [backend/README.md](backend/README.md).
 
-## 아직 연결되지 않은 부분
+## 프론트엔드와 아직 연결되지 않은 부분
 
+백엔드끼리는 합쳐졌지만, **프론트엔드와는 아직 서로 호출하지 않는다.** 데모를 돌리려면 아래가 필요하다.
 
-1. **프론트엔드 API 연동** — 현재 `src/data/mockData.js` + `localStorage`만 사용하며 네트워크 호출이 0건이다.
+1. **프론트엔드 API 연동** — `frontend` 브랜치는 `src/data/mockData.js` + `localStorage`만 쓰며 네트워크 호출이 0건이다.
 2. **CORS 설정** — 백엔드에 `Access-Control-*` 헤더가 없어 브라우저에서 `5173 → 8080` 호출이 차단된다.
 3. **출발지 좌표 변환(지오코딩)** — 참여자는 `originText`("수원역")만 저장되고 좌표는 `null`로 남는다.
    `/recommendations`는 좌표가 필수라 이 단계 없이는 추천을 호출할 수 없다.
