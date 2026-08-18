@@ -24,3 +24,8 @@ weather:
     page-no: 1
     num-of-rows: 1000
     data-type: JSON
+kakao:
+  local:
+    rest-api-key: ${KAKAO_REST_API_KEY:}
+    radius: 2000
+    size: 10
