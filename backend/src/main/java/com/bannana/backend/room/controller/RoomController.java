@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bannana.backend.room.dto.CreateRoomRequest;
+import com.bannana.backend.room.dto.FinalPlaceRequest;
 import com.bannana.backend.room.dto.HostRegistrationResponse;
 import com.bannana.backend.room.dto.ParticipantCreateRequest;
 import com.bannana.backend.room.dto.ParticipantResponse;
@@ -19,6 +20,7 @@ import com.bannana.backend.room.dto.ParticipantUpdateOriginRequest;
 import com.bannana.backend.room.dto.RoomResponse;
 import com.bannana.backend.room.dto.RoomStatusResponse;
 import com.bannana.backend.room.service.RoomService;
+import com.bannana.backend.room.dto.FinalPlaceRequest;
 
 import jakarta.validation.Valid;
 
@@ -63,5 +65,12 @@ public class RoomController {
 	@GetMapping("/{roomId}/status")
 	public ResponseEntity<RoomStatusResponse> getRoomStatus(@PathVariable Long roomId) {
 		return ResponseEntity.ok(roomService.getRoomStatus(roomId));
+	}
+
+	@PostMapping("/{roomId}/final-place")
+	public ResponseEntity<Void> setFinalPlace(@PathVariable Long roomId,
+		@Valid @RequestBody FinalPlaceRequest request) {
+		roomService.setFinalPlace(roomId, request);
+		return ResponseEntity.ok().build();
 	}
 }

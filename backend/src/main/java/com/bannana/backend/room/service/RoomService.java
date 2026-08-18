@@ -25,6 +25,7 @@ import com.bannana.backend.room.exception.ParticipantNotFoundException;
 import com.bannana.backend.room.exception.RoomNotFoundException;
 import com.bannana.backend.room.repository.ParticipantRepository;
 import com.bannana.backend.room.repository.RoomRepository;
+import com.bannana.backend.room.dto.FinalPlaceRequest;
 
 @Service
 public class RoomService {
@@ -133,13 +134,21 @@ public class RoomService {
 			.toList();
 
 		long joinedCount = participantRepository.countByRoomId(roomId);
+
+		RoomStatusResponse.FinalPlace finalPlace = room.getFinalPlaceName() == null
+		? null
+		: new RoomStatusResponse.FinalPlace(room.getFinalPlaceName(), room.getFinalPlaceLat(), room.getFinalPlaceLng());
 		return new RoomStatusResponse(
 			room.getId(),
 			room.getTitle(),
+			room.getMeetingDate(),
+			room.getMeetingTime(),
+			room.getPlaceTypesAsList(),
 			room.getStatus(),
 			hostResponse,
 			participantResponses,
-			joinedCount
+			joinedCount,
+			finalPlace
 		);
 	}
 
@@ -156,5 +165,12 @@ public class RoomService {
 		if (participantRepository.countByRoomId(roomId) >= MAX_PARTICIPANT_COUNT) {
 			throw new BadRequestException("Participant limit exceeded. Maximum is 6.");
 		}
+	}
+
+	@Transactional
+	public void setFinalPlace(Long roomId, FinalPlaceRequest request) {
+		Room room = findRoom(roomId);
+		room.markFinalPlace(request.placeName(), request.lat(), request.lng());
+		roomRepository.save(room);
 	}
 }

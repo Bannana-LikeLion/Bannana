@@ -1,5 +1,6 @@
 package com.bannana.backend.recommendation.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 /**
@@ -7,20 +8,25 @@ import java.util.List;
  * ODsay는 오류도 HTTP 200 + 본문의 error 필드로 내려주기 때문에 error를 반드시 확인해야 한다.
  * 오류 메시지 필드명이 버전에 따라 message / msg로 갈려서 둘 다 받는다.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record OdsayPathResponse(Error error, Result result) {
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Error(String code, String message, String msg) {
         public String text() {
             return message != null ? message : msg;
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Result(List<Path> path) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Path(Info info) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Info(Integer totalTime) {
     }
 }

@@ -63,6 +63,15 @@ public class Room {
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
+	@Column(name = "final_place_name")
+	private String finalPlaceName;
+
+	@Column(name = "final_place_lat")
+	private Double finalPlaceLat;
+
+	@Column(name = "final_place_lng")
+	private Double finalPlaceLng;
+
 	public Room(String title, LocalDate meetingDate, LocalTime meetingTime, TransportMode transportMode,
 		Collection<PlaceType> placeTypes) {
 		this.title = title;
@@ -85,5 +94,11 @@ public class Room {
 
 	public List<PlaceType> getPlaceTypesAsList() {
 		return new ArrayList<>(placeTypes);
+	}
+
+	public void markFinalPlace(String placeName, Double lat, Double lng) {
+	this.finalPlaceName = placeName;
+	this.finalPlaceLat = lat;
+	this.finalPlaceLng = lng;
 	}
 }

@@ -35,4 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# 로컬 API 키 (커밋 금지)
 /application.yaml
