@@ -1,0 +1,135 @@
+### Create room
+POST http://localhost:8080/rooms
+Content-Type: application/json
+
+{
+  "title": "금요일 저녁 모임",
+  "meetingDate": "2026-08-22",
+  "meetingTime": "19:00:00",
+  "transportMode": "transit",
+  "placeTypes": ["카페", "식당"]
+}
+
+> {%
+client.global.set("roomId", response.body.roomId);
+%}
+
+### Register host
+POST http://localhost:8080/rooms/{{roomId}}/host
+Content-Type: application/json
+
+{
+  "name": "박지수",
+  "originText": "서울 서초구 방배동",
+  "originLat": null,
+  "originLng": null
+}
+
+> {%
+client.global.set("hostParticipantId", response.body.participantId);
+%}
+
+### Register participant
+POST http://localhost:8080/rooms/{{roomId}}/participants
+Content-Type: application/json
+
+{
+  "name": "송현석",
+  "originText": "서울 강남구 역삼동",
+  "originLat": null,
+  "originLng": null
+}
+
+> {%
+client.global.set("participantId", response.body.participantId);
+%}
+
+### Update participant origin
+PATCH http://localhost:8080/rooms/{{roomId}}/participants/{{participantId}}
+Content-Type: application/json
+
+{
+  "originText": "서울 송파구 잠실동",
+  "originLat": null,
+  "originLng": null
+}
+
+### Get room status
+GET http://localhost:8080/rooms/{{roomId}}/status
+
+### Not found room
+GET http://localhost:8080/rooms/999999/status
+
+### Duplicate host registration
+POST http://localhost:8080/rooms/{{roomId}}/host
+Content-Type: application/json
+
+{
+  "name": "중복호스트",
+  "originText": "서울 중구",
+  "originLat": null,
+  "originLng": null
+}
+
+### Update missing participant
+PATCH http://localhost:8080/rooms/{{roomId}}/participants/999999
+Content-Type: application/json
+
+{
+  "originText": "서울 강북구",
+  "originLat": null,
+  "originLng": null
+}
+
+### Other room participant update forbidden
+POST http://localhost:8080/rooms
+Content-Type: application/json
+
+{
+  "title": "다른 방",
+  "meetingDate": "2026-08-23",
+  "meetingTime": "20:00:00",
+  "transportMode": "walk",
+  "placeTypes": ["공원"]
+}
+
+> {%
+client.global.set("otherRoomId", response.body.roomId);
+%}
+
+### Create participant in other room
+POST http://localhost:8080/rooms/{{otherRoomId}}/participants
+Content-Type: application/json
+
+{
+  "name": "다른방참여자",
+  "originText": "서울 종로구",
+  "originLat": null,
+  "originLng": null
+}
+
+> {%
+client.global.set("otherRoomParticipantId", response.body.participantId);
+%}
+
+### Attempt to modify participant from another room
+PATCH http://localhost:8080/rooms/{{roomId}}/participants/{{otherRoomParticipantId}}
+Content-Type: application/json
+
+{
+  "originText": "서울 강동구",
+  "originLat": null,
+  "originLng": null
+}
+
+### Missing required field
+POST http://localhost:8080/rooms
+Content-Type: application/json
+
+{
+  "title": "",
+  "meetingDate": "2026-08-22",
+  "meetingTime": "19:00:00",
+  "transportMode": "transit",
+  "placeTypes": ["카페"]
+}

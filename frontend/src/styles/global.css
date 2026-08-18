@@ -1,0 +1,51 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  html,
+  body,
+  #root {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+  }
+  
+  body {
+    font-family:
+      Pretendard,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+  
+    background-color: #f3f1eb;
+    color: var(--color-text);
+  }
+  
+  button,
+  input {
+    font: inherit;
+  }
+  
+  button {
+    border: none;
+    cursor: pointer;
+  }
+  
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  /* 모바일 웹 공통 영역 */
+  .app-container {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100dvh;
+  
+    margin: 0 auto;
+  
+    background-color: var(--color-background);
+  
+    position: relative;
+  }
