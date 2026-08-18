@@ -33,15 +33,6 @@ $env:KAKAO_REST_API_KEY="..."; $env:ODSAY_API_KEY="..."; $env:KMA_SERVICE_KEY=".
 
 키가 없어도 앱은 뜬다. 해당 기능만 502를 반환한다.
 
-### frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-`http://localhost:5173`.
 
 ## API
 
@@ -61,7 +52,6 @@ npm run dev
 
 ## 아직 연결되지 않은 부분
 
-세 파트를 한 레포로 합쳤을 뿐, **아직 서로 호출하지 않는다.** 데모를 돌리려면 아래가 필요하다.
 
 1. **프론트엔드 API 연동** — 현재 `src/data/mockData.js` + `localStorage`만 사용하며 네트워크 호출이 0건이다.
 2. **CORS 설정** — 백엔드에 `Access-Control-*` 헤더가 없어 브라우저에서 `5173 → 8080` 호출이 차단된다.
