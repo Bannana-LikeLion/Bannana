@@ -1,0 +1,7 @@
+plugins {
+	// build.gradle이 요구하는 Java 21이 없는 머신에서도 Gradle이 툴체인을 자동으로 내려받게 한다.
+	// (팀원 PC에는 JDK 21이 있지만, 없는 환경에서 빌드가 통째로 실패하던 문제를 막는다)
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'backend'

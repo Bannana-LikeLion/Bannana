@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# 로컬 환경변수 (API 키를 절대 커밋하지 말 것)
+.env
+.env.local
+*.local
+
+# 에디터
+.idea/
+.vscode/
+*.iml
