@@ -1,0 +1,204 @@
+.kakao-map {
+    position: relative;
+  
+    width: 100%;
+  
+    overflow: hidden;
+  
+    border: 1px solid #eee3c6;
+    border-radius: 22px;
+  
+    background: #eeeae0;
+  
+    box-shadow:
+      0 5px 18px
+      rgba(61, 46, 23, 0.05);
+  }
+  
+  .kakao-map__canvas {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* =====================================================
+     PARTICIPANT MARKER
+  ===================================================== */
+  
+  .kakao-map__participant-marker {
+    width: 44px;
+    height: 44px;
+  
+    box-sizing: border-box;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border: 5px solid white;
+    border-radius: 50%;
+  
+    font-size: 13px;
+    font-weight: 800;
+  
+    cursor: default;
+  
+    box-shadow:
+      0 4px 12px
+      rgba(0, 0, 0, 0.16);
+  }
+  
+  /* =====================================================
+     LOADING / ERROR
+  ===================================================== */
+  
+  .kakao-map__state {
+    position: absolute;
+  
+    z-index: 10;
+  
+    inset: 0;
+  
+    display: flex;
+    flex-direction: column;
+  
+    align-items: center;
+    justify-content: center;
+  
+    gap: 7px;
+  
+    background: #f4f1e9;
+  
+    color: #806b48;
+  }
+  
+  .kakao-map__state span {
+    font-size: 25px;
+  }
+  
+  .kakao-map__state p {
+    margin: 0;
+  
+    font-size: 11px;
+    font-weight: 700;
+  }
+  
+  .kakao-map__state--error {
+    color: #c35e59;
+  
+    background: #fff3f1;
+  }
+  
+  /* =====================================================
+     EMPTY GUIDE
+  ===================================================== */
+  
+  .kakao-map__guide {
+    position: absolute;
+  
+    z-index: 5;
+  
+    left: 50%;
+    bottom: 14px;
+  
+    display: flex;
+    align-items: center;
+  
+    gap: 6px;
+  
+    padding: 8px 12px;
+  
+    transform:
+      translateX(-50%);
+  
+    border-radius: 999px;
+  
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.94
+      );
+  
+    color: #806b48;
+  
+    font-size: 10px;
+    font-weight: 700;
+  
+    white-space: nowrap;
+  
+    box-shadow:
+      0 4px 14px
+      rgba(0, 0, 0, 0.08);
+  }
+  
+  /* =====================================================
+     SINGLE LOCATION LABEL
+  ===================================================== */
+  
+  .kakao-map__label {
+    position: absolute;
+  
+    z-index: 5;
+  
+    left: 15px;
+    bottom: 15px;
+  
+    max-width:
+      calc(100% - 30px);
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 6px;
+  
+    padding: 9px 12px;
+  
+    border-radius: 999px;
+  
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.95
+      );
+  
+    color: #21190f;
+  
+    font-size: 10px;
+  
+    box-shadow:
+      0 5px 16px
+      rgba(0, 0, 0, 0.1);
+  }
+  
+  .kakao-map__dot {
+    width: 9px;
+    height: 9px;
+  
+    flex-shrink: 0;
+  
+    border-radius: 50%;
+  
+    background: #7144df;
+  }
+  
+  .kakao-map__label strong {
+    flex-shrink: 0;
+  
+    font-weight: 800;
+  
+    white-space: nowrap;
+  }
+  
+  .kakao-map__place {
+    overflow: hidden;
+  
+    color: #665740;
+  
+    text-overflow: ellipsis;
+  
+    white-space: nowrap;
+  }

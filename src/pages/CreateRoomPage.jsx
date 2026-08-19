@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import LocationSearch from "../components/common/LocationSearch";
+import KakaoMap from "../components/map/KakaoMap";
+
 import {
   saveRoomDraft,
 } from "../data/roomStorage";
@@ -8,20 +11,16 @@ import {
 import "./CreateRoomPage.css";
 
 function CreateRoomPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const [step, setStep] =
-    useState(1);
+  const [
+    step,
+    setStep,
+  ] = useState(1);
 
   /* =====================================================
      FORM
-
-     실제 서비스 초기 상태
-     - 약속방 이름 X
-     - 날짜 X
-     - 시간 X
-     - 장소 유형 X
-     - 이동수단은 MVP에서 대중교통 고정
   ===================================================== */
 
   const [
@@ -38,11 +37,15 @@ function CreateRoomPage() {
 
     hostOrigin: "",
 
+    hostOriginLat: null,
+
+    hostOriginLng: null,
+
     preferredCategories: [],
   });
 
   /* =====================================================
-     INPUT CHANGE
+     BASIC INPUT
   ===================================================== */
 
   const handleChange = (
@@ -58,6 +61,55 @@ function CreateRoomPage() {
         ...prev,
 
         [name]: value,
+      })
+    );
+  };
+
+  /* =====================================================
+     HOST ORIGIN INPUT
+  ===================================================== */
+
+  const handleOriginInputChange = (
+    value
+  ) => {
+    setFormData(
+      (prev) => ({
+        ...prev,
+
+        hostOrigin: value,
+
+        /*
+          검색 결과를 선택한 뒤
+          사용자가 다시 직접 텍스트를
+          수정하면 기존 좌표는
+          정확하지 않으므로 초기화.
+        */
+        hostOriginLat: null,
+
+        hostOriginLng: null,
+      })
+    );
+  };
+
+  /* =====================================================
+     HOST ORIGIN SELECT
+  ===================================================== */
+
+  const handleOriginSelect = (
+    place
+  ) => {
+    setFormData(
+      (prev) => ({
+        ...prev,
+
+        hostOrigin:
+          place.placeName,
+
+        hostOriginLat:
+          place.lat,
+
+        hostOriginLng:
+          place.lng,
       })
     );
   };
@@ -83,7 +135,8 @@ function CreateRoomPage() {
             selected
               ? prev.preferredCategories.filter(
                   (item) =>
-                    item !== category
+                    item !==
+                    category
                 )
               : [
                   ...prev.preferredCategories,
@@ -165,12 +218,31 @@ function CreateRoomPage() {
       return;
     }
 
-    /*
-      현재 Mock 단계에서는 localStorage 저장.
+    if (
+      !Number.isFinite(
+        formData.hostOriginLat
+      ) ||
+      !Number.isFinite(
+        formData.hostOriginLng
+      )
+    ) {
+      alert(
+        "출발지를 검색한 뒤 검색 결과에서 하나를 선택해주세요."
+      );
 
-      추후:
+      return;
+    }
+
+    /*
+      아직 이번 단계에서는
+      기존 Mock 저장을 유지한다.
+
+      다음 단계에서 실제 백엔드의
+
       POST /rooms
-      API 요청으로 교체.
+      POST /rooms/{roomId}/host
+
+      로 교체한다.
     */
 
     saveRoomDraft({
@@ -189,6 +261,12 @@ function CreateRoomPage() {
       hostOrigin:
         formData.hostOrigin.trim(),
 
+      hostOriginLat:
+        formData.hostOriginLat,
+
+      hostOriginLng:
+        formData.hostOriginLng,
+
       preferredCategories:
         formData.preferredCategories,
     });
@@ -206,10 +284,6 @@ function CreateRoomPage() {
   if (step === 2) {
     return (
       <main className="create-page app-container">
-        {/* ===============================
-            HEADER
-        =============================== */}
-
         <header className="create-header">
           <button
             type="button"
@@ -219,7 +293,8 @@ function CreateRoomPage() {
 
               window.scrollTo({
                 top: 0,
-                behavior: "smooth",
+                behavior:
+                  "smooth",
               });
             }}
             aria-label="이전 단계"
@@ -244,8 +319,6 @@ function CreateRoomPage() {
             </div>
           </div>
 
-          {/* Progress */}
-
           <div className="create-progress">
             <div className="create-progress__bar create-progress__bar--active" />
 
@@ -261,52 +334,29 @@ function CreateRoomPage() {
           </p>
         </header>
 
-        {/* ===============================
-            CONTENT
-        =============================== */}
-
         <div className="create-content">
-          {/* HOST MAP */}
+          {/* ===============================
+              REAL KAKAO MAP
+          =============================== */}
 
-          <section className="host-map">
-            <div className="host-map__block host-map__block--green" />
+          <KakaoMap
+            lat={
+              formData.hostOriginLat
+            }
+            lng={
+              formData.hostOriginLng
+            }
+            placeName={
+              formData.hostOrigin
+            }
+            userName={
+              formData.hostName.trim()
+            }
+          />
 
-            <div className="host-map__block host-map__block--gray" />
-
-            <div className="host-map__water" />
-
-            <div className="host-map__road host-map__road--vertical" />
-
-            <div className="host-map__road host-map__road--horizontal" />
-
-            <div className="host-map__marker">
-              {formData.hostName.trim()
-                ? formData.hostName
-                    .trim()
-                    .charAt(0)
-                : "나"}
-            </div>
-
-            {formData.hostOrigin.trim() && (
-              <div className="host-map__label">
-                <span className="host-map__dot" />
-
-                <strong>
-                  {formData.hostName.trim() ||
-                    "호스트"}
-                </strong>
-
-                <span className="host-map__origin">
-                  ·{" "}
-                  {
-                    formData.hostOrigin
-                  }
-                </span>
-              </div>
-            )}
-          </section>
-
-          {/* HOST CARD */}
+          {/* ===============================
+              HOST CARD
+          =============================== */}
 
           <section className="create-card host-card">
             <div className="host-card__header">
@@ -351,22 +401,22 @@ function CreateRoomPage() {
             {/* ORIGIN */}
 
             <div className="host-field">
-              <label htmlFor="hostOrigin">
+              <label>
                 출발지
               </label>
 
-              <input
-                id="hostOrigin"
-                type="text"
-                name="hostOrigin"
-                className="create-input"
+              <LocationSearch
                 value={
                   formData.hostOrigin
                 }
-                onChange={
-                  handleChange
+                onInputChange={
+                  handleOriginInputChange
+                }
+                onSelect={
+                  handleOriginSelect
                 }
                 placeholder="예: 수원역"
+                inputClassName="create-input"
               />
             </div>
 
@@ -390,10 +440,6 @@ function CreateRoomPage() {
           </section>
         </div>
 
-        {/* ===============================
-            BOTTOM
-        =============================== */}
-
         <footer className="create-bottom">
           <button
             type="button"
@@ -416,10 +462,6 @@ function CreateRoomPage() {
 
   return (
     <main className="create-page app-container">
-      {/* ===============================
-          HEADER
-      =============================== */}
-
       <header className="create-header">
         <button
           type="button"
@@ -449,8 +491,6 @@ function CreateRoomPage() {
           </div>
         </div>
 
-        {/* PROGRESS */}
-
         <div className="create-progress">
           <div className="create-progress__bar create-progress__bar--active" />
 
@@ -465,10 +505,6 @@ function CreateRoomPage() {
           1 / 4단계 · 약속방 설정
         </p>
       </header>
-
-      {/* ===============================
-          CONTENT
-      =============================== */}
 
       <div className="create-content">
         {/* ROOM NAME */}
@@ -496,9 +532,7 @@ function CreateRoomPage() {
           />
         </section>
 
-        {/* ===============================
-            DATE / TIME
-        =============================== */}
+        {/* DATE / TIME */}
 
         <section className="create-card">
           <h2 className="create-card-title">
@@ -506,8 +540,6 @@ function CreateRoomPage() {
           </h2>
 
           <div className="create-date-time">
-            {/* DATE */}
-
             <div className="create-field">
               <label
                 className="create-field-label"
@@ -529,8 +561,6 @@ function CreateRoomPage() {
                 }
               />
             </div>
-
-            {/* TIME */}
 
             <div className="create-field">
               <label
@@ -556,11 +586,7 @@ function CreateRoomPage() {
           </div>
         </section>
 
-        {/* ===============================
-            TRANSPORT
-
-            MVP = 대중교통만
-        =============================== */}
+        {/* TRANSPORT */}
 
         <section className="create-card">
           <h2 className="create-card-title">
@@ -584,11 +610,7 @@ function CreateRoomPage() {
           </div>
         </section>
 
-        {/* ===============================
-            PLACE TYPE
-
-            초기에는 아무것도 선택 X
-        =============================== */}
+        {/* PLACE TYPE */}
 
         <section className="create-card">
           <h2 className="create-card-title">
@@ -600,8 +622,6 @@ function CreateRoomPage() {
           </p>
 
           <div className="place-type-list">
-            {/* CAFE */}
-
             <button
               type="button"
               className={
@@ -624,8 +644,6 @@ function CreateRoomPage() {
             >
               ☕ 카페
             </button>
-
-            {/* RESTAURANT */}
 
             <button
               type="button"
@@ -652,10 +670,6 @@ function CreateRoomPage() {
           </div>
         </section>
       </div>
-
-      {/* ===============================
-          BOTTOM
-      =============================== */}
 
       <footer className="create-bottom">
         <button

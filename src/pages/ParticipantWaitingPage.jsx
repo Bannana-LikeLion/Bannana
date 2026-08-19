@@ -1,9 +1,13 @@
-import { useMemo } from "react";
+import {
+  useMemo,
+} from "react";
 
 import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+
+import KakaoMap from "../components/map/KakaoMap";
 
 import {
   getMockParticipants,
@@ -11,28 +15,29 @@ import {
   getMockRoom,
 } from "../data/mockData";
 
+import {
+  getRoomDraft,
+} from "../data/roomStorage";
+
 import "./ParticipantWaitingPage.css";
 
 /*
-  현재 Participant Flow에서는
-  Mock 데이터의 4번째 참여자를
-  초대 링크로 들어온 사용자라고 가정한다.
+  현재 Mock Flow에서는
+  네 번째 참여자를 초대 링크로 들어온
+  현재 사용자라고 가정한다.
 */
 const CURRENT_PARTICIPANT_ID = 4;
 
-/*
-  JoinRoomPage에서 저장한 sessionStorage와
-  반드시 같은 key 규칙을 사용해야 한다.
+/* =====================================================
+   SESSION STORAGE
+===================================================== */
 
-  이전 개발 버전의 key도 fallback으로 읽어서
-  기존 테스트 데이터가 있으면 유지한다.
-*/
 function getCurrentParticipant(
-  inviteCode
+  roomId
 ) {
   try {
     const currentKey =
-      `bannana-participant-${inviteCode}`;
+      `bannana-participant-${roomId}`;
 
     const saved =
       sessionStorage.getItem(
@@ -67,10 +72,23 @@ function getCurrentParticipant(
 }
 
 function ParticipantWaitingPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
+  /*
+    App.jsx Route는 아직 inviteCode라는
+    이름을 사용하고 있지만 실제 값은
+    이후 roomId로 사용한다.
+  */
   const { inviteCode } =
     useParams();
+
+  const roomId =
+    inviteCode;
+
+  /* =====================================================
+     MOCK ROOM / RESULT
+  ===================================================== */
 
   const room = useMemo(
     () => getMockRoom(),
@@ -82,6 +100,12 @@ function ParticipantWaitingPage() {
     []
   );
 
+  const roomDraft =
+    useMemo(
+      () => getRoomDraft(),
+      []
+    );
+
   const participants =
     useMemo(
       () =>
@@ -89,69 +113,281 @@ function ParticipantWaitingPage() {
       []
     );
 
-  /*
-    JoinRoomPage에서 실제로 입력한
-    참여자 이름/출발지 읽기
-  */
+  /* =====================================================
+     CURRENT PARTICIPANT
+  ===================================================== */
+
   const storedParticipant =
     useMemo(
       () =>
         getCurrentParticipant(
-          inviteCode
+          roomId
         ),
-      [inviteCode]
+      [roomId]
     );
 
-  /*
-    Mock 데이터의 4번째 참여자를
-    실제 Join 입력값으로 덮어쓴다.
-  */
+  /* =====================================================
+     PARTICIPANT DATA
+
+     1. 호스트
+        CreateRoomPage에서 선택한 실제 좌표 사용
+
+     2. 현재 참여자
+        JoinRoomPage에서 선택한 실제 좌표 사용
+
+     3. 나머지 참여자
+        아직 Mock 좌표 사용
+  ===================================================== */
+
   const displayParticipants =
-    useMemo(
-      () =>
-        participants.map(
-          (participant) => {
-            if (
-              participant.id ===
-                CURRENT_PARTICIPANT_ID &&
-              storedParticipant
-            ) {
-              return {
-                ...participant,
+    useMemo(() => {
+      return participants.map(
+        (participant) => {
+          /* ==========================================
+             HOST
+          ========================================== */
 
-                nickname:
-                  storedParticipant.nickname,
+          if (
+            participant.isHost
+          ) {
+            const hasHostLat =
+              Number.isFinite(
+                roomDraft.hostOriginLat
+              );
 
-                origin: {
-                  ...participant.origin,
+            const hasHostLng =
+              Number.isFinite(
+                roomDraft.hostOriginLng
+              );
 
-                  text:
-                    storedParticipant.originText,
-                },
-              };
-            }
+            return {
+              ...participant,
 
-            return participant;
+              nickname:
+                roomDraft.hostName ||
+                participant.nickname,
+
+              origin: {
+                ...participant.origin,
+
+                text:
+                  roomDraft.hostOrigin ||
+                  participant.origin.text,
+
+                lat:
+                  hasHostLat
+                    ? roomDraft.hostOriginLat
+                    : participant.origin.lat,
+
+                lng:
+                  hasHostLng
+                    ? roomDraft.hostOriginLng
+                    : participant.origin.lng,
+              },
+            };
           }
-        ),
-      [
-        participants,
-        storedParticipant,
-      ]
-    );
+
+          /* ==========================================
+             CURRENT PARTICIPANT
+          ========================================== */
+
+          if (
+            participant.id ===
+              CURRENT_PARTICIPANT_ID &&
+            storedParticipant
+          ) {
+            return {
+              ...participant,
+
+              nickname:
+                storedParticipant.nickname,
+
+              origin: {
+                ...participant.origin,
+
+                text:
+                  storedParticipant.originText,
+
+                lat:
+                  Number.isFinite(
+                    storedParticipant.originLat
+                  )
+                    ? storedParticipant.originLat
+                    : participant.origin.lat,
+
+                lng:
+                  Number.isFinite(
+                    storedParticipant.originLng
+                  )
+                    ? storedParticipant.originLng
+                    : participant.origin.lng,
+              },
+            };
+          }
+
+          return participant;
+        }
+      );
+    }, [
+      participants,
+      roomDraft,
+      storedParticipant,
+    ]);
+
+  /* =====================================================
+     MAP MARKERS
+  ===================================================== */
+
+  const participantColors = [
+    {
+      color: "#7144df",
+      textColor: "#ffffff",
+    },
+
+    {
+      color: "#e87570",
+      textColor: "#21190f",
+    },
+
+    {
+      color: "#f0c936",
+      textColor: "#21190f",
+    },
+
+    {
+      color: "#79cec5",
+      textColor: "#21190f",
+    },
+  ];
+
+  const participantMarkers =
+    displayParticipants
+      .map(
+        (
+          participant,
+          index
+        ) => {
+          const lat =
+            Number(
+              participant.origin?.lat
+            );
+
+          const lng =
+            Number(
+              participant.origin?.lng
+            );
+
+          if (
+            !Number.isFinite(lat) ||
+            !Number.isFinite(lng)
+          ) {
+            return null;
+          }
+
+          const color =
+            participantColors[
+              index
+            ] ??
+            participantColors[0];
+
+          return {
+            id:
+              `participant-${participant.id}`,
+
+            lat,
+            lng,
+
+            label:
+              participant.nickname,
+
+            initial:
+              participant.nickname.charAt(
+                0
+              ),
+
+            color:
+              color.color,
+
+            textColor:
+              color.textColor,
+          };
+        }
+      )
+      .filter(Boolean);
+
+  /* =====================================================
+     MIDPOINT MARKER
+  ===================================================== */
+
+  const midpointMarker =
+    useMemo(() => {
+      const midpoint =
+        result.midpoint;
+
+      if (
+        !midpoint ||
+        !Number.isFinite(
+          Number(midpoint.lat)
+        ) ||
+        !Number.isFinite(
+          Number(midpoint.lng)
+        )
+      ) {
+        return null;
+      }
+
+      return {
+        id:
+          "midpoint",
+
+        lat:
+          Number(
+            midpoint.lat
+          ),
+
+        lng:
+          Number(
+            midpoint.lng
+          ),
+
+        label:
+          midpoint.name,
+
+        initial:
+          "🍌",
+
+        color:
+          "#f4cf45",
+
+        textColor:
+          "#21190f",
+      };
+    }, [result]);
+
+  const mapMarkers =
+    midpointMarker
+      ? [
+          ...participantMarkers,
+          midpointMarker,
+        ]
+      : participantMarkers;
+
+  /* =====================================================
+     RESULT BUTTON
+  ===================================================== */
 
   const handleShowResult =
     () => {
       navigate(
-        `/join/${inviteCode}/confirmed`
+        `/join/${roomId}/confirmed`
       );
     };
 
   return (
     <main className="participant-waiting-page app-container">
-      {/* =========================
+      {/* =================================================
           PROGRESS
-      ========================= */}
+      ================================================= */}
 
       <div className="participant-waiting-progress">
         <div className="participant-progress-bar participant-progress-bar--active" />
@@ -160,12 +396,14 @@ function ParticipantWaitingPage() {
 
         <div className="participant-progress-bar participant-progress-bar--active" />
 
-        <span>3/3</span>
+        <span>
+          3/3
+        </span>
       </div>
 
-      {/* =========================
+      {/* =================================================
           HEADER
-      ========================= */}
+      ================================================= */}
 
       <header className="participant-waiting-header">
         <h1>
@@ -178,9 +416,9 @@ function ParticipantWaitingPage() {
         </p>
       </header>
 
-      {/* =========================
+      {/* =================================================
           ROOM
-      ========================= */}
+      ================================================= */}
 
       <section className="participant-waiting-room-card">
         <div>
@@ -190,7 +428,10 @@ function ParticipantWaitingPage() {
 
           <p>
             호스트{" "}
-            {room.host.nickname}
+            {
+              roomDraft.hostName ||
+              room.host.nickname
+            }
           </p>
         </div>
 
@@ -199,9 +440,9 @@ function ParticipantWaitingPage() {
         </span>
       </section>
 
-      {/* =========================
+      {/* =================================================
           PROCESS
-      ========================= */}
+      ================================================= */}
 
       <section className="participant-process-card">
         <h2>
@@ -209,6 +450,8 @@ function ParticipantWaitingPage() {
         </h2>
 
         <div className="participant-process-list">
+          {/* 1 */}
+
           <div className="participant-process-item">
             <div className="participant-process-icon participant-process-icon--done">
               ✓
@@ -227,6 +470,8 @@ function ParticipantWaitingPage() {
           </div>
 
           <div className="participant-process-line participant-process-line--done" />
+
+          {/* 2 */}
 
           <div className="participant-process-item">
             <div className="participant-process-icon participant-process-icon--done">
@@ -255,6 +500,8 @@ function ParticipantWaitingPage() {
 
           <div className="participant-process-line participant-process-line--done" />
 
+          {/* 3 */}
+
           <div className="participant-process-item">
             <div className="participant-process-icon participant-process-icon--done">
               ✓
@@ -276,6 +523,8 @@ function ParticipantWaitingPage() {
 
           <div className="participant-process-line" />
 
+          {/* 4 */}
+
           <div className="participant-process-item participant-process-item--waiting">
             <div className="participant-process-icon" />
 
@@ -293,55 +542,69 @@ function ParticipantWaitingPage() {
         </div>
       </section>
 
-      {/* =========================
-          MAP
-      ========================= */}
+      {/* =================================================
+          REAL KAKAO MAP
+      ================================================= */}
 
       <section className="participant-waiting-map">
-        <div className="participant-map-road participant-map-road--vertical" />
+        <KakaoMap
+          markers={
+            mapMarkers
+          }
+          height="100%"
+          level={5}
+          emptyMessage="위치 정보를 불러올 수 없어요"
+        />
 
-        <div className="participant-map-road participant-map-road--horizontal" />
-
-        <div className="participant-map-green" />
-
-        <div className="participant-map-water" />
-
-        {displayParticipants.map(
-          (
-            participant,
-            index
-          ) => (
-            <div
-              key={participant.id}
-              className={`participant-map-person participant-map-person--${
-                index + 1
-              }`}
-              title={
-                participant.nickname
-              }
-            >
-              {participant.nickname.charAt(
-                0
-              )}
-            </div>
-          )
+        {result.midpoint && (
+          <div className="participant-map-result-label">
+            🍌{" "}
+            {
+              result.midpoint.name
+            }{" "}
+            발견
+          </div>
         )}
 
-        <div className="participant-map-midpoint">
-          🍌
-        </div>
+        {/* =============================================
+            MAP LEGEND
+        ============================================= */}
 
-        <div className="participant-map-result-label">
-          🍌{" "}
-          {result.midpoint?.name ??
-            "중간 지점"}{" "}
-          발견
+        <div className="participant-waiting-map-legend">
+          {displayParticipants.map(
+            (
+              participant,
+              index
+            ) => (
+              <div
+                key={
+                  participant.id
+                }
+                className="participant-waiting-map-legend-item"
+              >
+                <span
+                  className={`participant-waiting-legend-dot participant-waiting-legend-dot--${
+                    index + 1
+                  }`}
+                />
+
+                <span>
+                  {
+                    participant.nickname
+                  }
+
+                  {participant.isHost &&
+                    " (호스트)"}
+                </span>
+              </div>
+            )
+          )}
         </div>
       </section>
 
-      {/* =========================
+      {/* =================================================
           BOTTOM
-      ========================= */}
+      ================================================= */}
 
       <footer className="participant-waiting-bottom">
         <button

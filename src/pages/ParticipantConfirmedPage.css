@@ -1045,3 +1045,14 @@
       font-size: 10px;
     }
   }
+
+  /* =====================================================
+   REAL KAKAO MAP
+  ===================================================== */
+
+  .participant-confirmed-map .kakao-map {
+    border: none;
+    border-radius: 22px;
+
+    box-shadow: none;
+  }
