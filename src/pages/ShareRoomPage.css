@@ -1,460 +1,613 @@
 .share-page {
-    min-height: 100dvh;
-  
-    padding:
-      max(20px, env(safe-area-inset-top))
-      20px
-      calc(108px + env(safe-area-inset-bottom));
-  
-    background: #fffdf5;
+  min-height: 100dvh;
+
+  padding:
+    max(20px, env(safe-area-inset-top))
+    20px
+    calc(
+      108px +
+      env(safe-area-inset-bottom)
+    );
+
+  background: #fffdf5;
+}
+
+/* =================================
+   HEADER
+================================= */
+
+.share-back-button {
+  width: 42px;
+  height: 42px;
+
+  margin-bottom: 10px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #21190f;
+
+  font-size: 27px;
+
+  cursor: pointer;
+}
+
+.share-title-row {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.share-title-icon {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: #f4cf45;
+
+  font-size: 20px;
+}
+
+.share-title-row h1 {
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.share-title-row p {
+  margin:
+    4px
+    0
+    0;
+
+  color: #9a8056;
+
+  font-size: 12px;
+}
+
+/* =================================
+   PROGRESS
+================================= */
+
+.share-progress {
+  display: flex;
+
+  gap: 7px;
+
+  margin-top: 18px;
+}
+
+.share-progress__bar {
+  flex: 1;
+
+  height: 5px;
+
+  border-radius: 999px;
+
+  background: #ebe5d1;
+}
+
+.share-progress__bar--active {
+  background: #f4cf45;
+}
+
+.share-step {
+  margin:
+    7px
+    0
+    16px;
+
+  color: #92784d;
+
+  font-size: 11px;
+}
+
+/* =================================
+   CREATED CARD
+================================= */
+
+.share-created-card {
+  position: relative;
+
+  overflow: hidden;
+
+  margin-bottom: 14px;
+
+  padding:
+    25px
+    20px;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff6c9,
+      #fff0a7
+    );
+
+  text-align: center;
+}
+
+.share-created-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 110px;
+  height: 110px;
+
+  right: -25px;
+  top: -30px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      244,
+      207,
+      69,
+      0.2
+    );
+}
+
+.share-monkey {
+  position: relative;
+
+  z-index: 2;
+
+  margin-bottom: 7px;
+
+  font-size: 55px;
+}
+
+.share-created-card h2 {
+  position: relative;
+
+  z-index: 2;
+
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 20px;
+}
+
+.share-created-card p {
+  position: relative;
+
+  z-index: 2;
+
+  margin:
+    8px
+    0
+    0;
+
+  color: #806b48;
+
+  font-size: 11px;
+}
+
+/* =================================
+   CARD
+================================= */
+
+.share-card {
+  margin-bottom: 14px;
+
+  padding: 18px;
+
+  border-radius: 21px;
+
+  background: white;
+
+  box-shadow:
+    0 6px 20px
+    rgba(
+      70,
+      53,
+      25,
+      0.04
+    );
+}
+
+.share-card-title {
+  margin:
+    0
+    0
+    12px;
+
+  color: #4b3b27;
+
+  font-size: 14px;
+}
+
+/* =================================
+   INFO ROW
+================================= */
+
+.share-info-row {
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  border-bottom:
+    1px solid #eee5ce;
+
+  font-size: 11px;
+}
+
+.share-info-row:last-child {
+  border-bottom: none;
+}
+
+.share-info-row span {
+  flex-shrink: 0;
+
+  color: #94794b;
+}
+
+.share-info-row strong {
+  color: #332718;
+
+  text-align: right;
+}
+
+/* =================================
+   LINK
+================================= */
+
+.share-link-row {
+  display: flex;
+
+  gap: 9px;
+}
+
+.share-link-text {
+  flex: 1;
+
+  min-width: 0;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  padding:
+    0
+    13px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #eadfbd;
+
+  border-radius: 13px;
+
+  background: #fffdf6;
+
+  color: #6e5b3d;
+
+  font-size: 10px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.share-copy-button {
+  width: 68px;
+
+  flex-shrink: 0;
+
+  border: none;
+
+  border-radius: 13px;
+
+  background: #f4cf45;
+
+  color: #332718;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.share-copy-button:active {
+  transform:
+    scale(0.97);
+}
+
+/* =================================
+   QR
+================================= */
+
+.share-qr-area {
+  display: flex;
+  align-items: center;
+
+  gap: 17px;
+
+  margin-top: 16px;
+}
+
+.share-qr {
+  width: 105px;
+  height: 105px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid #eee1bc;
+
+  border-radius: 12px;
+
+  background: white;
+}
+
+.share-qr-description strong {
+  color: #332718;
+
+  font-size: 12px;
+}
+
+.share-qr-description p {
+  margin:
+    5px
+    0
+    0;
+
+  color: #8f7b5b;
+
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* =================================
+   SHARE OPTIONS
+
+   3열 → 2열
+================================= */
+
+.share-buttons {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 10px;
+
+  margin-top: 2px;
+}
+
+.share-option {
+  min-width: 0;
+
+  height: 82px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  border:
+    1px solid #e9e3d3;
+
+  border-radius: 17px;
+
+  background: #f7f5ee;
+
+  color: #4e402a;
+
+  cursor: pointer;
+
+  transition:
+    transform
+      0.15s ease,
+    box-shadow
+      0.15s ease;
+}
+
+.share-option strong {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.share-option small {
+  color: #928064;
+
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.share-option--kakao {
+  border-color: #eed436;
+
+  background: #fee500;
+
+  color: #21190f;
+}
+
+.share-option--kakao small {
+  color:
+    rgba(
+      33,
+      25,
+      15,
+      0.63
+    );
+}
+
+.share-option--sms {
+  background: #f5f8f2;
+}
+
+.share-option__icon {
+  margin-bottom: 2px;
+
+  font-size: 20px;
+}
+
+.share-option:hover {
+  box-shadow:
+    0 5px 15px
+    rgba(
+      60,
+      48,
+      26,
+      0.07
+    );
+}
+
+.share-option:active {
+  transform:
+    scale(0.975);
+}
+
+/* =================================
+   SHARE HELP
+================================= */
+
+.share-options-help {
+  margin:
+    10px
+    4px
+    0;
+
+  color: #a08d6d;
+
+  text-align: center;
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+/* =================================
+   BOTTOM
+================================= */
+
+.share-bottom {
+  position: fixed;
+
+  z-index: 30;
+
+  left: 50%;
+  bottom: 0;
+
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 480px;
+
+  padding:
+    14px
+    20px
+    max(
+      20px,
+      env(
+        safe-area-inset-bottom
+      )
+    );
+
+  transform:
+    translateX(-50%);
+
+  background:
+    linear-gradient(
+      transparent,
+      #fffdf5 30%
+    );
+}
+
+.share-primary-button {
+  width: 100%;
+  height: 60px;
+
+  border: none;
+
+  border-radius: 18px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 22px
+    rgba(
+      221,
+      176,
+      31,
+      0.17
+    );
+}
+
+.share-primary-button:active {
+  transform:
+    scale(0.985);
+}
+
+/* =================================
+   SMALL PHONE
+================================= */
+
+@media (max-width: 360px) {
+  .share-page {
+    padding-left: 16px;
+    padding-right: 16px;
   }
-  
-  /* =================================
-     HEADER
-  ================================= */
-  
-  .share-back-button {
-    width: 42px;
-    height: 42px;
-  
-    margin-bottom: 10px;
-  
-    display: flex;
-    align-items: center;
-  
-    padding: 0;
-  
-    border: none;
-  
-    background: transparent;
-  
-    color: #21190f;
-  
-    font-size: 27px;
-  }
-  
-  .share-title-row {
-    display: flex;
-    align-items: center;
-  
-    gap: 12px;
-  }
-  
-  .share-title-icon {
-    width: 46px;
-    height: 46px;
-  
-    flex-shrink: 0;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    border-radius: 13px;
-  
-    background: #f4cf45;
-  
-    font-size: 20px;
-  }
-  
-  .share-title-row h1 {
-    margin: 0;
-  
-    color: #21190f;
-  
-    font-size: 25px;
-    font-weight: 800;
-  }
-  
-  .share-title-row p {
-    margin: 4px 0 0;
-  
-    color: #9a8056;
-  
-    font-size: 12px;
-  }
-  
-  /* =================================
-     PROGRESS
-  ================================= */
-  
-  .share-progress {
-    display: flex;
-  
-    gap: 7px;
-  
-    margin-top: 18px;
-  }
-  
-  .share-progress__bar {
-    flex: 1;
-  
-    height: 5px;
-  
-    border-radius: 999px;
-  
-    background: #ebe5d1;
-  }
-  
-  .share-progress__bar--active {
-    background: #f4cf45;
-  }
-  
-  .share-step {
-    margin: 7px 0 16px;
-  
-    color: #92784d;
-  
-    font-size: 11px;
-  }
-  
-  /* =================================
-     CREATED CARD
-  ================================= */
-  
-  .share-created-card {
-    position: relative;
-  
-    overflow: hidden;
-  
-    margin-bottom: 14px;
-    padding: 25px 20px;
-  
-    border-radius: 22px;
-  
-    background:
-      linear-gradient(
-        135deg,
-        #fff6c9,
-        #fff0a7
-      );
-  
-    text-align: center;
-  }
-  
-  .share-created-card::after {
-    content: "";
-  
-    position: absolute;
-  
-    width: 110px;
-    height: 110px;
-  
-    right: -25px;
-    top: -30px;
-  
-    border-radius: 50%;
-  
-    background:
-      rgba(244, 207, 69, 0.2);
-  }
-  
-  .share-monkey {
-    position: relative;
-  
-    z-index: 2;
-  
-    margin-bottom: 7px;
-  
-    font-size: 55px;
-  }
-  
-  .share-created-card h2 {
-    position: relative;
-  
-    z-index: 2;
-  
-    margin: 0;
-  
-    color: #21190f;
-  
-    font-size: 20px;
-  }
-  
-  .share-created-card p {
-    position: relative;
-  
-    z-index: 2;
-  
-    margin: 8px 0 0;
-  
-    color: #806b48;
-  
-    font-size: 11px;
-  }
-  
-  /* =================================
-     CARD
-  ================================= */
-  
+
   .share-card {
-    margin-bottom: 14px;
-    padding: 18px;
-  
-    border-radius: 21px;
-  
-    background: white;
-  
-    box-shadow:
-      0 6px 20px
-      rgba(70, 53, 25, 0.04);
+    padding: 16px;
   }
-  
-  .share-card-title {
-    margin: 0 0 12px;
-  
-    color: #4b3b27;
-  
-    font-size: 14px;
-  }
-  
-  /* =================================
-     INFO ROW
-  ================================= */
-  
-  .share-info-row {
-    min-height: 40px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  
-    gap: 18px;
-  
-    border-bottom:
-      1px solid #eee5ce;
-  
-    font-size: 11px;
-  }
-  
-  .share-info-row:last-child {
-    border-bottom: none;
-  }
-  
-  .share-info-row span {
-    flex-shrink: 0;
-  
-    color: #94794b;
-  }
-  
-  .share-info-row strong {
-    color: #332718;
-  
-    text-align: right;
-  }
-  
-  /* =================================
-     LINK
-  ================================= */
-  
-  .share-link-row {
-    display: flex;
-  
-    gap: 9px;
-  }
-  
-  .share-link-text {
-    flex: 1;
-  
-    min-width: 0;
-    height: 48px;
-  
-    display: flex;
-    align-items: center;
-  
-    padding: 0 13px;
-  
-    overflow: hidden;
-  
-    border:
-      1px solid #eadfbd;
-    border-radius: 13px;
-  
-    background: #fffdf6;
-  
-    color: #6e5b3d;
-  
-    font-size: 10px;
-  
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .share-copy-button {
-    width: 62px;
-  
-    flex-shrink: 0;
-  
-    border: none;
-    border-radius: 13px;
-  
-    background: #f4cf45;
-  
-    color: #332718;
-  
-    font-size: 12px;
-    font-weight: 800;
-  }
-  
-  /* =================================
-     QR
-  ================================= */
-  
-  .share-qr-area {
-    display: flex;
-    align-items: center;
-  
-    gap: 17px;
-  
-    margin-top: 16px;
-  }
-  
+
   .share-qr {
-    width: 105px;
-    height: 105px;
-  
-    flex-shrink: 0;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    border:
-      1px solid #eee1bc;
-    border-radius: 12px;
-  
-    background: white;
+    width: 90px;
+    height: 90px;
   }
-  
-  .share-qr-description strong {
-    color: #332718;
-  
-    font-size: 12px;
-  }
-  
-  .share-qr-description p {
-    margin: 5px 0 0;
-  
-    color: #8f7b5b;
-  
-    font-size: 10px;
-    line-height: 1.5;
-  }
-  
-  /* =================================
-     SHARE OPTIONS
-  ================================= */
-  
-  .share-buttons {
-    display: grid;
-  
-    grid-template-columns:
-      repeat(3, 1fr);
-  
-    gap: 10px;
-  
-    margin-top: 2px;
-  }
-  
+
   .share-option {
-    height: 73px;
-  
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  
-    gap: 5px;
-  
-    border:
-      1px solid #e9e3d3;
-    border-radius: 15px;
-  
-    background: #f3f7ee;
-  
-    color: #66583e;
-  
+    height: 76px;
+  }
+
+  .share-option strong {
     font-size: 10px;
-    font-weight: 700;
   }
-  
-  .share-option--kakao {
-    background: #f5dd3e;
+
+  .share-option small {
+    font-size: 7px;
   }
-  
-  .share-option__icon {
-    font-size: 19px;
-  }
-  
-  /* =================================
-     BOTTOM
-  ================================= */
-  
-  .share-bottom {
-    position: fixed;
-  
-    z-index: 30;
-  
-    left: 50%;
-    bottom: 0;
-  
-    width: 100%;
-    max-width: 480px;
-  
-    padding:
-      14px
-      20px
-      max(20px, env(safe-area-inset-bottom));
-  
-    transform:
-      translateX(-50%);
-  
-    background:
-      linear-gradient(
-        transparent,
-        #fffdf5 30%
-      );
-  }
-  
-  .share-primary-button {
-    width: 100%;
-    height: 60px;
-  
-    border: none;
-    border-radius: 18px;
-  
-    background: #f4cf45;
-  
-    color: #21190f;
-  
-    font-size: 16px;
-    font-weight: 800;
-  
-    box-shadow:
-      0 8px 22px
-      rgba(221, 176, 31, 0.17);
-  }
-  
-  .share-primary-button:active {
-    transform: scale(0.985);
-  }
-  
-  /* =================================
-     SMALL PHONE
-  ================================= */
-  
-  @media (max-width: 360px) {
-    .share-page {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-  
-    .share-card {
-      padding: 16px;
-    }
-  
-    .share-qr {
-      width: 90px;
-      height: 90px;
-    }
-  }
+}

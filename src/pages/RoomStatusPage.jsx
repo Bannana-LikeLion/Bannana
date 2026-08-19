@@ -1,4 +1,6 @@
 import {
+  useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -12,15 +14,8 @@ import {
 import KakaoMap from "../components/map/KakaoMap";
 
 import {
-  getMockParticipants,
-  getMockRoom,
-  getMockRoomStatus,
-  getMockWaitingRoomStatus,
-} from "../data/mockData";
-
-import {
-  getRoomDraft,
-} from "../data/roomStorage";
+  getRoomStatus,
+} from "../api/bannanaApi";
 
 import "./RoomStatusPage.css";
 
@@ -34,142 +29,226 @@ function RoomStatusPage() {
   const mapSectionRef =
     useRef(null);
 
+  /* =====================================================
+     STATE
+  ===================================================== */
+
   const [
-    complete,
-    setComplete,
+    roomStatus,
+    setRoomStatus,
+  ] = useState(null);
+
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(true);
+
+  const [
+    isRefreshing,
+    setIsRefreshing,
   ] = useState(false);
+
+  const [
+    error,
+    setError,
+  ] = useState("");
 
   const [
     activeTab,
     setActiveTab,
   ] = useState("map");
 
-  /*
-    사용자가 참여자 목록을 눌렀을 때
-    카카오 지도에 전달할 위치
-  */
   const [
     focusLocation,
     setFocusLocation,
   ] = useState(null);
 
   /* =====================================================
-     ROOM
+     GET ROOM STATUS
+
+     GET /rooms/{roomId}/status
   ===================================================== */
 
-  const room = useMemo(
-    () => getMockRoom(),
-    []
-  );
+  const fetchRoomStatus =
+    useCallback(
+      async ({
+        showLoading = false,
+      } = {}) => {
+        if (!roomId) {
+          return;
+        }
 
-  const roomDraft =
-    useMemo(
-      () => getRoomDraft(),
-      []
-    );
-
-  /* =====================================================
-     STATUS
-  ===================================================== */
-
-  const waitingStatus =
-    useMemo(
-      () =>
-        getMockWaitingRoomStatus(),
-      []
-    );
-
-  const completedStatus =
-    useMemo(
-      () =>
-        getMockRoomStatus(),
-      []
-    );
-
-  const status =
-    complete
-      ? completedStatus
-      : waitingStatus;
-
-  const submittedParticipants =
-    status.participants.filter(
-      (participant) =>
-        participant.submitted
-    );
-
-  const waitingParticipant =
-    status.participants.find(
-      (participant) =>
-        !participant.submitted
-    );
-
-  const totalCount =
-    status.totalParticipants ??
-    status.participants.length;
-
-  const submittedCount =
-    status.submittedCount ??
-    submittedParticipants.length;
-
-  /* =====================================================
-     PARTICIPANT DETAIL
-  ===================================================== */
-
-  const participantDetails =
-    useMemo(() => {
-      const participants =
-        getMockParticipants();
-
-      return participants.map(
-        (participant) => {
-          /*
-            호스트는 CreateRoomPage에서
-            카카오 검색으로 선택한
-            실제 좌표를 우선 사용
-          */
-          if (
-            !participant.isHost
-          ) {
-            return participant;
+        try {
+          if (showLoading) {
+            setIsLoading(true);
+          } else {
+            setIsRefreshing(true);
           }
 
-          const hasSavedLat =
-            Number.isFinite(
-              roomDraft.hostOriginLat
+          setError("");
+
+          const data =
+            await getRoomStatus(
+              roomId
             );
 
-          const hasSavedLng =
-            Number.isFinite(
-              roomDraft.hostOriginLng
+          setRoomStatus(data);
+        } catch (fetchError) {
+          console.error(
+            "참여 현황 조회 실패:",
+            fetchError
+          );
+
+          setError(
+            fetchError.message ||
+              "참여 현황을 불러오지 못했습니다."
+          );
+        } finally {
+          setIsLoading(false);
+          setIsRefreshing(false);
+        }
+      },
+      [roomId]
+    );
+
+  /* =====================================================
+     FIRST LOAD
+  ===================================================== */
+
+  useEffect(() => {
+    fetchRoomStatus({
+      showLoading: true,
+    });
+  }, [fetchRoomStatus]);
+
+  /* =====================================================
+     POLLING
+
+     참여자가 초대 링크를 통해 들어오면
+     화면에 자동 반영되도록 주기적으로 조회.
+  ===================================================== */
+
+  useEffect(() => {
+    const intervalId =
+      window.setInterval(
+        () => {
+          fetchRoomStatus();
+        },
+        3000
+      );
+
+    return () => {
+      window.clearInterval(
+        intervalId
+      );
+    };
+  }, [fetchRoomStatus]);
+
+  /* =====================================================
+     PARTICIPANT NORMALIZE
+
+     Backend:
+     participant_id
+     nickname
+     origin_text
+     origin_lat
+     origin_lng
+     role
+
+     ↓
+
+     Frontend에서 쓰기 편한 형태로 변환
+  ===================================================== */
+
+  const participants =
+    useMemo(() => {
+      if (!roomStatus) {
+        return [];
+      }
+
+      const rawParticipants = [
+        roomStatus.host,
+        ...(roomStatus.participants ??
+          []),
+      ].filter(Boolean);
+
+      return rawParticipants.map(
+        (participant) => {
+          const lat =
+            Number(
+              participant.origin_lat
+            );
+
+          const lng =
+            Number(
+              participant.origin_lng
             );
 
           return {
-            ...participant,
+            id:
+              participant.participant_id,
 
-            origin: {
-              ...participant.origin,
+            nickname:
+              participant.nickname,
 
-              text:
-                roomDraft.hostOrigin ||
-                participant.origin.text,
+            originText:
+              participant.origin_text,
 
-              lat:
-                hasSavedLat
-                  ? roomDraft.hostOriginLat
-                  : participant.origin.lat,
+            lat:
+              Number.isFinite(lat)
+                ? lat
+                : null,
 
-              lng:
-                hasSavedLng
-                  ? roomDraft.hostOriginLng
-                  : participant.origin.lng,
-            },
+            lng:
+              Number.isFinite(lng)
+                ? lng
+                : null,
+
+            role:
+              participant.role,
+
+            isHost:
+              participant.role ===
+              "HOST",
+
+            hasLocation:
+              Number.isFinite(lat) &&
+              Number.isFinite(lng),
           };
         }
       );
-    }, [roomDraft]);
+    }, [roomStatus]);
 
   /* =====================================================
-     PARTICIPANT COLORS
+     DATE
+  ===================================================== */
+
+  const meetingDateText =
+    useMemo(() => {
+      if (
+        !roomStatus?.meetingDate
+      ) {
+        return "";
+      }
+
+      const date =
+        new Date(
+          `${roomStatus.meetingDate}T00:00:00`
+        );
+
+      return new Intl.DateTimeFormat(
+        "ko-KR",
+        {
+          month: "long",
+          day: "numeric",
+        }
+      ).format(date);
+    }, [
+      roomStatus?.meetingDate,
+    ]);
+
+  /* =====================================================
+     COLORS
   ===================================================== */
 
   const participantColors = [
@@ -192,125 +271,17 @@ function RoomStatusPage() {
       color: "#79cec5",
       textColor: "#21190f",
     },
+
+    {
+      color: "#84a9d8",
+      textColor: "#21190f",
+    },
+
+    {
+      color: "#d99ac5",
+      textColor: "#21190f",
+    },
   ];
-
-  /* =====================================================
-     MAP PARTICIPANTS
-  ===================================================== */
-
-  const mapParticipants =
-    submittedParticipants
-      .map(
-        (participant) => {
-          const detail =
-            participantDetails.find(
-              (item) =>
-                item.id ===
-                participant.id
-            );
-
-          if (
-            !detail ||
-            !Number.isFinite(
-              detail.origin?.lat
-            ) ||
-            !Number.isFinite(
-              detail.origin?.lng
-            )
-          ) {
-            return null;
-          }
-
-          const participantIndex =
-            status.participants.findIndex(
-              (item) =>
-                item.id ===
-                participant.id
-            );
-
-          const color =
-            participantColors[
-              participantIndex
-            ] ??
-            participantColors[0];
-
-          return {
-            id:
-              participant.id,
-
-            nickname:
-              participant.nickname,
-
-            isHost:
-              participant.isHost,
-
-            originText:
-              participant.originText,
-
-            lat:
-              detail.origin.lat,
-
-            lng:
-              detail.origin.lng,
-
-            marker: {
-              id:
-                participant.id,
-
-              lat:
-                detail.origin.lat,
-
-              lng:
-                detail.origin.lng,
-
-              label:
-                participant.nickname,
-
-              initial:
-                participant.nickname.charAt(
-                  0
-                ),
-
-              color:
-                color.color,
-
-              textColor:
-                color.textColor,
-            },
-          };
-        }
-      )
-      .filter(Boolean);
-
-  const mapMarkers =
-    mapParticipants.map(
-      (participant) =>
-        participant.marker
-    );
-
-  /* =====================================================
-     DATE
-  ===================================================== */
-
-  const meetingDate =
-    new Date(
-      room.meetingDateTime
-    );
-
-  const meetingDateText =
-    new Intl.DateTimeFormat(
-      "ko-KR",
-      {
-        month: "long",
-        day: "numeric",
-      }
-    ).format(
-      meetingDate
-    );
-
-  /* =====================================================
-     AVATAR CLASS
-  ===================================================== */
 
   const avatarClasses = [
     "status-avatar--one",
@@ -320,77 +291,94 @@ function RoomStatusPage() {
   ];
 
   /* =====================================================
-     REFRESH
+     MAP MARKERS
   ===================================================== */
 
-  const handleRefresh = () => {
-    /*
-      현재는 Mock.
+  const mapMarkers =
+    useMemo(() => {
+      return participants
+        .filter(
+          (participant) =>
+            participant.hasLocation
+        )
+        .map(
+          (
+            participant,
+            index
+          ) => {
+            const color =
+              participantColors[
+                index
+              ] ??
+              participantColors[0];
 
-      실제 API 연동 후:
-      GET /rooms/{roomId}/status
-      재호출로 변경
-    */
+            return {
+              id:
+                participant.id,
 
-    setComplete(true);
-  };
+              lat:
+                participant.lat,
+
+              lng:
+                participant.lng,
+
+              label:
+                participant.nickname,
+
+              initial:
+                participant.nickname?.charAt(
+                  0
+                ) ?? "?",
+
+              color:
+                color.color,
+
+              textColor:
+                color.textColor,
+            };
+          }
+        );
+    }, [participants]);
+
+  /* =====================================================
+     MANUAL REFRESH
+  ===================================================== */
+
+  const handleRefresh =
+    async () => {
+      await fetchRoomStatus();
+    };
 
   /* =====================================================
      PARTICIPANT CLICK
-     목록 클릭 → 해당 위치로 이동
+     → 지도 이동 + 확대
   ===================================================== */
 
   const handleParticipantFocus = (
     participant
   ) => {
-    /*
-      해당 참여자의 실제 지도 좌표 검색
-    */
-
-    const mapParticipant =
-      mapParticipants.find(
-        (item) =>
-          item.id ===
-          participant.id
-      );
-
-    /*
-      아직 출발지를 입력하지 않은 사람은
-      지도 이동 불가
-    */
-    if (!mapParticipant) {
+    if (
+      !participant.hasLocation
+    ) {
       return;
     }
 
-    /*
-      목록 탭을 보고 있었다면
-      지도로 자동 전환
-    */
     setActiveTab("map");
 
-    /*
-      같은 사람을 여러 번 눌러도
-      다시 이동할 수 있도록
-      매번 새로운 객체 생성
-    */
     setFocusLocation({
       id:
-        mapParticipant.id,
+        participant.id,
 
       lat:
-        mapParticipant.lat,
+        participant.lat,
 
       lng:
-        mapParticipant.lng,
+        participant.lng,
 
       requestId:
         Date.now(),
     });
 
-    /*
-      클릭 후 지도 영역도
-      화면에 보이도록 부드럽게 이동
-    */
     requestAnimationFrame(
       () => {
         requestAnimationFrame(
@@ -409,10 +397,6 @@ function RoomStatusPage() {
       }
     );
   };
-
-  /* =====================================================
-     KEYBOARD
-  ===================================================== */
 
   const handleParticipantKeyDown = (
     event,
@@ -441,6 +425,106 @@ function RoomStatusPage() {
     );
   };
 
+  /* =====================================================
+     LOADING
+  ===================================================== */
+
+  if (isLoading) {
+    return (
+      <main className="status-page app-container">
+        <header className="status-header">
+          <h1>
+            참여 현황
+          </h1>
+
+          <p>
+            방 정보를 불러오는
+            중이에요...
+          </p>
+        </header>
+      </main>
+    );
+  }
+
+  /* =====================================================
+     ERROR
+  ===================================================== */
+
+  if (
+    error &&
+    !roomStatus
+  ) {
+    return (
+      <main className="status-page app-container">
+        <header className="status-header">
+          <button
+            type="button"
+            className="status-back-button"
+            onClick={() =>
+              navigate(-1)
+            }
+          >
+            ←
+          </button>
+
+          <h1>
+            참여 현황
+          </h1>
+        </header>
+
+        <section className="status-participant-card">
+          <div className="status-list-info">
+            <strong>
+              참여 현황을 불러오지
+              못했어요.
+            </strong>
+
+            <p>
+              {error}
+            </p>
+          </div>
+        </section>
+
+        <footer className="status-bottom">
+          <button
+            type="button"
+            className="status-find-button"
+            onClick={() =>
+              fetchRoomStatus({
+                showLoading: true,
+              })
+            }
+          >
+            다시 시도하기
+          </button>
+        </footer>
+      </main>
+    );
+  }
+
+  /* =====================================================
+     VALUES
+  ===================================================== */
+
+  const joinedCount =
+    roomStatus?.joinedCount ??
+    participants.length;
+
+  const locationCount =
+    participants.filter(
+      (participant) =>
+        participant.hasLocation
+    ).length;
+
+  const everyParticipantHasLocation =
+    participants.length > 0 &&
+    locationCount ===
+      participants.length;
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
+
   return (
     <main className="status-page app-container">
       {/* =================================================
@@ -466,7 +550,10 @@ function RoomStatusPage() {
             </h1>
 
             <p>
-              {room.title} ·{" "}
+              {
+                roomStatus.title
+              }
+              {" · "}
               {meetingDateText}
             </p>
           </div>
@@ -477,8 +564,13 @@ function RoomStatusPage() {
             onClick={
               handleRefresh
             }
+            disabled={
+              isRefreshing
+            }
           >
-            🔄 새로고침
+            {isRefreshing
+              ? "🔄 확인 중"
+              : "🔄 새로고침"}
           </button>
         </div>
 
@@ -502,14 +594,14 @@ function RoomStatusPage() {
 
       <section
         className={`status-summary-card ${
-          status.allSubmitted
+          everyParticipantHasLocation
             ? "status-summary-card--complete"
             : ""
         }`}
       >
         <div className="status-summary-top">
           <div className="status-summary-avatars">
-            {status.participants.map(
+            {participants.map(
               (
                 participant,
                 index
@@ -523,16 +615,26 @@ function RoomStatusPage() {
                       index
                     ] ?? ""
                   } ${
-                    !participant.submitted
+                    !participant.hasLocation
                       ? "status-summary-avatar--waiting"
                       : ""
                   }`}
+                  style={
+                    index >=
+                    avatarClasses.length
+                      ? {
+                          background:
+                            participantColors[
+                              index
+                            ]?.color ??
+                            "#cccccc",
+                        }
+                      : undefined
+                  }
                 >
-                  {participant.submitted
-                    ? participant.nickname.charAt(
-                        0
-                      )
-                    : "?"}
+                  {participant.nickname?.charAt(
+                    0
+                  ) ?? "?"}
                 </div>
               )
             )}
@@ -540,26 +642,21 @@ function RoomStatusPage() {
 
           <div className="status-summary-text">
             <strong>
-              {status.allSubmitted
-                ? `${totalCount}명 모두 입력했어요 ✅`
-                : `${totalCount}명 중 ${submittedCount}명이 입력했어요`}
+              현재 {joinedCount}명이
+              참여했어요
             </strong>
 
             <p>
-              {status.allSubmitted
-                ? "지금 바로 중간 지점을 찾을 수 있어요!"
-                : `${
-                    waitingParticipant
-                      ?.nickname ??
-                    "참여자"
-                  }님의 입력을 기다리는 중`}
+              {everyParticipantHasLocation
+                ? "현재 참여자들의 출발지 입력이 완료됐어요!"
+                : `${locationCount}/${joinedCount}명이 출발지를 입력했어요`}
             </p>
           </div>
 
           <span className="status-summary-badge">
-            {status.allSubmitted
-              ? "완료 ✓"
-              : "대기중"}
+            {everyParticipantHasLocation
+              ? "입력 완료 ✓"
+              : "참여 중"}
           </span>
         </div>
       </section>
@@ -603,7 +700,7 @@ function RoomStatusPage() {
       </div>
 
       {/* =================================================
-          REAL KAKAO MAP
+          MAP
       ================================================= */}
 
       {activeTab ===
@@ -624,22 +721,22 @@ function RoomStatusPage() {
               focusLocation
             }
             focusLevel={3}
-            emptyMessage="출발지를 입력한 참여자가 아직 없어요"
+            emptyMessage="아직 지도에 표시할 출발지가 없어요"
           />
 
           <div className="status-map-legend">
-            {mapParticipants.map(
-              (
-                participant
-              ) => {
-                const participantIndex =
-                  status.participants.findIndex(
-                    (item) =>
-                      item.id ===
-                      participant.id
-                  );
-
-                return (
+            {participants
+              .filter(
+                (
+                  participant
+                ) =>
+                  participant.hasLocation
+              )
+              .map(
+                (
+                  participant,
+                  index
+                ) => (
                   <div
                     key={
                       participant.id
@@ -648,9 +745,15 @@ function RoomStatusPage() {
                   >
                     <span
                       className={`status-legend-dot status-legend-dot--${
-                        participantIndex +
-                        1
+                        index + 1
                       }`}
+                      style={{
+                        background:
+                          participantColors[
+                            index
+                          ]?.color ??
+                          "#cccccc",
+                      }}
                     />
 
                     <span>
@@ -662,9 +765,8 @@ function RoomStatusPage() {
                         " (호스트)"}
                     </span>
                   </div>
-                );
-              }
-            )}
+                )
+              )}
           </div>
         </section>
       )}
@@ -679,17 +781,13 @@ function RoomStatusPage() {
         </h2>
 
         <div className="status-participant-list">
-          {status.participants.map(
+          {participants.map(
             (
               participant,
               index
             ) => {
               const canFocus =
-                mapParticipants.some(
-                  (item) =>
-                    item.id ===
-                    participant.id
-                );
+                participant.hasLocation;
 
               return (
                 <article
@@ -697,7 +795,7 @@ function RoomStatusPage() {
                     participant.id
                   }
                   className={`status-participant-card ${
-                    !participant.submitted
+                    !participant.hasLocation
                       ? "status-participant-card--waiting"
                       : ""
                   }`}
@@ -742,16 +840,26 @@ function RoomStatusPage() {
                         index
                       ] ?? ""
                     } ${
-                      !participant.submitted
+                      !participant.hasLocation
                         ? "status-list-avatar--waiting"
                         : ""
                     }`}
+                    style={
+                      index >=
+                      avatarClasses.length
+                        ? {
+                            background:
+                              participantColors[
+                                index
+                              ]?.color ??
+                              "#cccccc",
+                          }
+                        : undefined
+                    }
                   >
-                    {participant.submitted
-                      ? participant.nickname.charAt(
-                          0
-                        )
-                      : "?"}
+                    {participant.nickname?.charAt(
+                      0
+                    ) ?? "?"}
                   </div>
 
                   <div className="status-list-info">
@@ -772,23 +880,22 @@ function RoomStatusPage() {
                       )}
 
                       {!participant.isHost &&
-                        participant.submitted && (
+                        participant.hasLocation && (
                           <span className="status-complete-tag">
                             입력 완료
                           </span>
                         )}
 
-                      {!participant.submitted && (
+                      {!participant.hasLocation && (
                         <span className="status-waiting-tag">
-                          대기 중
+                          위치 미입력
                         </span>
                       )}
                     </div>
 
                     <p>
-                      {participant.submitted
-                        ? participant.originText
-                        : "출발지 미입력"}
+                      {participant.originText ||
+                        "출발지 미입력"}
                     </p>
                   </div>
                 </article>
@@ -809,10 +916,13 @@ function RoomStatusPage() {
           onClick={
             handleFind
           }
+          disabled={
+            participants.length ===
+            0
+          }
         >
           중간 장소 찾기 (
-          {submittedCount}/
-          {totalCount}명 입력)
+          {joinedCount}명 참여)
         </button>
       </footer>
     </main>

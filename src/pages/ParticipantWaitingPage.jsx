@@ -1,5 +1,7 @@
 import {
+  useEffect,
   useMemo,
+  useState,
 } from "react";
 
 import {
@@ -10,75 +12,70 @@ import {
 import KakaoMap from "../components/map/KakaoMap";
 
 import {
-  getMockParticipants,
-  getMockResult,
-  getMockRoom,
-} from "../data/mockData";
-
-import {
-  getRoomDraft,
-} from "../data/roomStorage";
+  getRoomStatus,
+} from "../api/bannanaApi";
 
 import "./ParticipantWaitingPage.css";
 
-/*
-  현재 Mock Flow에서는
-  네 번째 참여자를 초대 링크로 들어온
-  현재 사용자라고 가정한다.
-*/
-const CURRENT_PARTICIPANT_ID = 4;
-
 /* =====================================================
-   SESSION STORAGE
+   POLLING
+
+   참여자는 호스트와 다른 브라우저를 사용하므로
+   호스트가 장소를 확정했는지 주기적으로
+   Backend에 다시 물어본다.
 ===================================================== */
 
-function getCurrentParticipant(
-  roomId
-) {
-  try {
-    const currentKey =
-      `bannana-participant-${roomId}`;
+const POLLING_INTERVAL = 2500;
 
-    const saved =
-      sessionStorage.getItem(
-        currentKey
-      );
+/* =====================================================
+   PARTICIPANT COLORS
 
-    if (saved) {
-      return JSON.parse(saved);
-    }
+   최대 6명
+===================================================== */
 
-    /*
-      이전 버전 호환
-    */
-    const legacySaved =
-      sessionStorage.getItem(
-        "bannana-current-participant"
-      );
+const PARTICIPANT_COLORS = [
+  {
+    color: "#7144df",
+    textColor: "#ffffff",
+  },
 
-    if (legacySaved) {
-      return JSON.parse(
-        legacySaved
-      );
-    }
-  } catch (error) {
-    console.error(
-      "참여자 정보 읽기 실패:",
-      error
-    );
-  }
+  {
+    color: "#e87570",
+    textColor: "#21190f",
+  },
 
-  return null;
-}
+  {
+    color: "#f0c936",
+    textColor: "#21190f",
+  },
+
+  {
+    color: "#79cec5",
+    textColor: "#21190f",
+  },
+
+  {
+    color: "#84a9d8",
+    textColor: "#21190f",
+  },
+
+  {
+    color: "#d99ac5",
+    textColor: "#21190f",
+  },
+];
+
+/* =====================================================
+   PARTICIPANT WAITING PAGE
+===================================================== */
 
 function ParticipantWaitingPage() {
   const navigate =
     useNavigate();
 
   /*
-    App.jsx Route는 아직 inviteCode라는
-    이름을 사용하고 있지만 실제 값은
-    이후 roomId로 사용한다.
+    App.jsx에서 parameter 이름은
+    inviteCode이지만 현재 실제 값은 roomId.
   */
   const { inviteCode } =
     useParams();
@@ -87,212 +84,220 @@ function ParticipantWaitingPage() {
     inviteCode;
 
   /* =====================================================
-     MOCK ROOM / RESULT
+     STATE
   ===================================================== */
 
-  const room = useMemo(
-    () => getMockRoom(),
-    []
-  );
+  const [
+    roomStatus,
+    setRoomStatus,
+  ] = useState(null);
 
-  const result = useMemo(
-    () => getMockResult(),
-    []
-  );
+  const [
+    isInitialLoading,
+    setIsInitialLoading,
+  ] = useState(true);
 
-  const roomDraft =
-    useMemo(
-      () => getRoomDraft(),
-      []
-    );
+  const [
+    error,
+    setError,
+  ] = useState("");
+
+  /* =====================================================
+     REAL ROOM STATUS
+
+     GET /rooms/{roomId}/status
+
+     처음 화면에 들어왔을 때 한 번 실행하고,
+     이후 2.5초마다 다시 조회한다.
+  ===================================================== */
+
+  useEffect(() => {
+    let cancelled =
+      false;
+
+    let intervalId =
+      null;
+
+    const loadRoomStatus =
+      async ({
+        initial = false,
+      } = {}) => {
+        try {
+          if (initial) {
+            setIsInitialLoading(
+              true
+            );
+          }
+
+          const response =
+            await getRoomStatus(
+              roomId
+            );
+
+          if (cancelled) {
+            return;
+          }
+
+          setRoomStatus(
+            response
+          );
+
+          setError("");
+        } catch (
+          roomStatusError
+        ) {
+          console.error(
+            "약속방 상태 조회 실패:",
+            roomStatusError
+          );
+
+          if (cancelled) {
+            return;
+          }
+
+          /*
+            이미 정상 데이터를 한 번
+            받은 뒤 polling 한 번 실패한 경우에는
+            기존 화면은 유지한다.
+          */
+
+          setError(
+            roomStatusError.message ||
+              "약속방 정보를 불러오지 못했습니다."
+          );
+        } finally {
+          if (
+            !cancelled &&
+            initial
+          ) {
+            setIsInitialLoading(
+              false
+            );
+          }
+        }
+      };
+
+    /*
+      첫 조회
+    */
+
+    loadRoomStatus({
+      initial: true,
+    });
+
+    /*
+      이후 자동 Polling
+    */
+
+    intervalId =
+      window.setInterval(
+        () => {
+          loadRoomStatus();
+        },
+        POLLING_INTERVAL
+      );
+
+    return () => {
+      cancelled = true;
+
+      if (intervalId) {
+        window.clearInterval(
+          intervalId
+        );
+      }
+    };
+  }, [roomId]);
+
+  /* =====================================================
+     PARTICIPANTS
+
+     Backend 응답:
+
+     host
+     +
+     participants[]
+  ===================================================== */
 
   const participants =
-    useMemo(
-      () =>
-        getMockParticipants(),
-      []
-    );
-
-  /* =====================================================
-     CURRENT PARTICIPANT
-  ===================================================== */
-
-  const storedParticipant =
-    useMemo(
-      () =>
-        getCurrentParticipant(
-          roomId
-        ),
-      [roomId]
-    );
-
-  /* =====================================================
-     PARTICIPANT DATA
-
-     1. 호스트
-        CreateRoomPage에서 선택한 실제 좌표 사용
-
-     2. 현재 참여자
-        JoinRoomPage에서 선택한 실제 좌표 사용
-
-     3. 나머지 참여자
-        아직 Mock 좌표 사용
-  ===================================================== */
-
-  const displayParticipants =
     useMemo(() => {
-      return participants.map(
-        (participant) => {
-          /* ==========================================
-             HOST
-          ========================================== */
+      if (!roomStatus) {
+        return [];
+      }
 
-          if (
-            participant.isHost
-          ) {
-            const hasHostLat =
-              Number.isFinite(
-                roomDraft.hostOriginLat
-              );
+      return [
+        roomStatus.host,
+        ...(roomStatus.participants ??
+          []),
+      ].filter(Boolean);
+    }, [roomStatus]);
 
-            const hasHostLng =
-              Number.isFinite(
-                roomDraft.hostOriginLng
-              );
+  /* =====================================================
+     FINAL PLACE
 
-            return {
-              ...participant,
+     호스트가 ResultPage에서
+     "이 장소 선택하기"를 누르면
 
-              nickname:
-                roomDraft.hostName ||
-                participant.nickname,
+     POST /rooms/{roomId}/final-place
 
-              origin: {
-                ...participant.origin,
+     이후 GET /status의 finalPlace가
+     null이 아니게 된다.
+  ===================================================== */
 
-                text:
-                  roomDraft.hostOrigin ||
-                  participant.origin.text,
+  const finalPlace =
+    roomStatus?.finalPlace ??
+    null;
 
-                lat:
-                  hasHostLat
-                    ? roomDraft.hostOriginLat
-                    : participant.origin.lat,
-
-                lng:
-                  hasHostLng
-                    ? roomDraft.hostOriginLng
-                    : participant.origin.lng,
-              },
-            };
-          }
-
-          /* ==========================================
-             CURRENT PARTICIPANT
-          ========================================== */
-
-          if (
-            participant.id ===
-              CURRENT_PARTICIPANT_ID &&
-            storedParticipant
-          ) {
-            return {
-              ...participant,
-
-              nickname:
-                storedParticipant.nickname,
-
-              origin: {
-                ...participant.origin,
-
-                text:
-                  storedParticipant.originText,
-
-                lat:
-                  Number.isFinite(
-                    storedParticipant.originLat
-                  )
-                    ? storedParticipant.originLat
-                    : participant.origin.lat,
-
-                lng:
-                  Number.isFinite(
-                    storedParticipant.originLng
-                  )
-                    ? storedParticipant.originLng
-                    : participant.origin.lng,
-              },
-            };
-          }
-
-          return participant;
-        }
-      );
-    }, [
-      participants,
-      roomDraft,
-      storedParticipant,
-    ]);
+  const hasFinalPlace =
+    Boolean(
+      finalPlace?.placeName
+    );
 
   /* =====================================================
      MAP MARKERS
   ===================================================== */
 
-  const participantColors = [
-    {
-      color: "#7144df",
-      textColor: "#ffffff",
-    },
+  const mapMarkers =
+    useMemo(() => {
+      const markers = [];
 
-    {
-      color: "#e87570",
-      textColor: "#21190f",
-    },
+      /* ===============================================
+         PARTICIPANTS
+      =============================================== */
 
-    {
-      color: "#f0c936",
-      textColor: "#21190f",
-    },
-
-    {
-      color: "#79cec5",
-      textColor: "#21190f",
-    },
-  ];
-
-  const participantMarkers =
-    displayParticipants
-      .map(
+      participants.forEach(
         (
           participant,
           index
         ) => {
           const lat =
             Number(
-              participant.origin?.lat
+              participant.origin_lat
             );
 
           const lng =
             Number(
-              participant.origin?.lng
+              participant.origin_lng
             );
 
           if (
             !Number.isFinite(lat) ||
             !Number.isFinite(lng)
           ) {
-            return null;
+            return;
           }
 
           const color =
-            participantColors[
+            PARTICIPANT_COLORS[
               index
             ] ??
-            participantColors[0];
+            PARTICIPANT_COLORS[0];
 
-          return {
+          markers.push({
             id:
-              `participant-${participant.id}`,
+              `participant-${participant.participant_id ?? index}`,
+
+            type:
+              "participant",
 
             lat,
             lng,
@@ -301,87 +306,203 @@ function ParticipantWaitingPage() {
               participant.nickname,
 
             initial:
-              participant.nickname.charAt(
+              participant.nickname?.charAt(
                 0
-              ),
+              ) ?? "?",
 
             color:
               color.color,
 
             textColor:
               color.textColor,
-          };
+
+            zIndex:
+              100 + index,
+          });
         }
-      )
-      .filter(Boolean);
+      );
 
-  /* =====================================================
-     MIDPOINT MARKER
-  ===================================================== */
+      /* ===============================================
+         FINAL PLACE
 
-  const midpointMarker =
-    useMemo(() => {
-      const midpoint =
-        result.midpoint;
+         호스트가 장소를 확정한 뒤에만 표시
+      =============================================== */
 
-      if (
-        !midpoint ||
-        !Number.isFinite(
-          Number(midpoint.lat)
-        ) ||
-        !Number.isFinite(
-          Number(midpoint.lng)
-        )
-      ) {
-        return null;
+      if (finalPlace) {
+        const lat =
+          Number(
+            finalPlace.lat
+          );
+
+        const lng =
+          Number(
+            finalPlace.lng
+          );
+
+        if (
+          Number.isFinite(lat) &&
+          Number.isFinite(lng)
+        ) {
+          markers.push({
+            id:
+              "final-place",
+
+            type:
+              "midpoint",
+
+            lat,
+            lng,
+
+            label:
+              finalPlace.placeName,
+
+            initial:
+              "🍌",
+
+            color:
+              "#f4cf45",
+
+            textColor:
+              "#21190f",
+
+            zIndex:
+              200,
+          });
+        }
       }
 
-      return {
-        id:
-          "midpoint",
-
-        lat:
-          Number(
-            midpoint.lat
-          ),
-
-        lng:
-          Number(
-            midpoint.lng
-          ),
-
-        label:
-          midpoint.name,
-
-        initial:
-          "🍌",
-
-        color:
-          "#f4cf45",
-
-        textColor:
-          "#21190f",
-      };
-    }, [result]);
-
-  const mapMarkers =
-    midpointMarker
-      ? [
-          ...participantMarkers,
-          midpointMarker,
-        ]
-      : participantMarkers;
+      return markers;
+    }, [
+      participants,
+      finalPlace,
+    ]);
 
   /* =====================================================
-     RESULT BUTTON
+     RESULT
   ===================================================== */
 
   const handleShowResult =
     () => {
+      /*
+        아직 확정되지 않았다면
+        이동시키지 않는다.
+      */
+
+      if (!hasFinalPlace) {
+        return;
+      }
+
       navigate(
         `/join/${roomId}/confirmed`
       );
     };
+
+  /* =====================================================
+     RETRY
+  ===================================================== */
+
+  const handleRetry =
+    async () => {
+      try {
+        setError("");
+
+        setIsInitialLoading(
+          true
+        );
+
+        const response =
+          await getRoomStatus(
+            roomId
+          );
+
+        setRoomStatus(
+          response
+        );
+      } catch (
+        retryError
+      ) {
+        console.error(
+          "약속방 상태 재조회 실패:",
+          retryError
+        );
+
+        setError(
+          retryError.message ||
+            "약속방 정보를 불러오지 못했습니다."
+        );
+      } finally {
+        setIsInitialLoading(
+          false
+        );
+      }
+    };
+
+  /* =====================================================
+     INITIAL LOADING
+  ===================================================== */
+
+  if (
+    isInitialLoading &&
+    !roomStatus
+  ) {
+    return (
+      <main className="participant-waiting-page app-container">
+        <section className="participant-waiting-loading">
+          <div className="participant-waiting-spinner" />
+
+          <h1>
+            약속방 정보를
+            불러오고 있어요
+          </h1>
+
+          <p>
+            잠시만 기다려주세요.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
+  /* =====================================================
+     INITIAL ERROR
+  ===================================================== */
+
+  if (
+    !roomStatus &&
+    error
+  ) {
+    return (
+      <main className="participant-waiting-page app-container">
+        <section className="participant-waiting-error-card">
+          <div className="participant-waiting-error-icon">
+            !
+          </div>
+
+          <h1>
+            약속방 정보를
+            불러오지 못했어요
+          </h1>
+
+          <p>
+            {error}
+          </p>
+
+          <button
+            type="button"
+            onClick={
+              handleRetry
+            }
+          >
+            다시 불러오기
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
     <main className="participant-waiting-page app-container">
@@ -407,12 +528,15 @@ function ParticipantWaitingPage() {
 
       <header className="participant-waiting-header">
         <h1>
-          결과 기다리는 중
+          {hasFinalPlace
+            ? "장소가 확정됐어요!"
+            : "결과 기다리는 중"}
         </h1>
 
         <p>
-          중간 지점이 발견됐어요!
-          🎉
+          {hasFinalPlace
+            ? `${finalPlace.placeName}으로 결정됐어요 🎉`
+            : "호스트가 모두에게 공평한 장소를 고르고 있어요 🍌"}
         </p>
       </header>
 
@@ -423,20 +547,28 @@ function ParticipantWaitingPage() {
       <section className="participant-waiting-room-card">
         <div>
           <h2>
-            {room.title}
+            {roomStatus?.title ??
+              "약속방"}
           </h2>
 
           <p>
             호스트{" "}
-            {
-              roomDraft.hostName ||
-              room.host.nickname
-            }
+            {roomStatus?.host
+              ?.nickname ??
+              "-"}
           </p>
         </div>
 
-        <span className="participant-search-complete">
-          탐색 완료 ✓
+        <span
+          className={`participant-room-status ${
+            hasFinalPlace
+              ? "participant-room-status--complete"
+              : "participant-room-status--waiting"
+          }`}
+        >
+          {hasFinalPlace
+            ? "장소 확정 ✓"
+            : "선택 중"}
         </span>
       </section>
 
@@ -450,7 +582,9 @@ function ParticipantWaitingPage() {
         </h2>
 
         <div className="participant-process-list">
-          {/* 1 */}
+          {/* ==========================================
+              1
+          ========================================== */}
 
           <div className="participant-process-item">
             <div className="participant-process-icon participant-process-icon--done">
@@ -464,14 +598,16 @@ function ParticipantWaitingPage() {
 
               <p>
                 내 출발지가
-                등록됐어요
+                정상적으로 등록됐어요
               </p>
             </div>
           </div>
 
           <div className="participant-process-line participant-process-line--done" />
 
-          {/* 2 */}
+          {/* ==========================================
+              2
+          ========================================== */}
 
           <div className="participant-process-item">
             <div className="participant-process-icon participant-process-icon--done">
@@ -482,60 +618,105 @@ function ParticipantWaitingPage() {
               <strong>
                 참여자{" "}
                 {
-                  displayParticipants.length
+                  participants.length
                 }
-                명 모임
+                명 참여
               </strong>
 
               <p>
-                {displayParticipants
-                  .map(
-                    (participant) =>
-                      participant.nickname
-                  )
-                  .join(", ")}
+                {participants.length >
+                0
+                  ? participants
+                      .map(
+                        (
+                          participant
+                        ) =>
+                          participant.nickname
+                      )
+                      .join(", ")
+                  : "참여자 정보를 확인하고 있어요"}
               </p>
             </div>
           </div>
 
           <div className="participant-process-line participant-process-line--done" />
 
-          {/* 3 */}
+          {/* ==========================================
+              3
+          ========================================== */}
 
           <div className="participant-process-item">
-            <div className="participant-process-icon participant-process-icon--done">
-              ✓
+            <div
+              className={`participant-process-icon ${
+                hasFinalPlace
+                  ? "participant-process-icon--done"
+                  : "participant-process-icon--current"
+              }`}
+            >
+              {hasFinalPlace
+                ? "✓"
+                : (
+                  <span className="participant-process-spinner" />
+                )}
             </div>
 
             <div>
               <strong>
-                호스트가 중간 지점
-                탐색 완료
+                {hasFinalPlace
+                  ? "호스트의 장소 선택 완료"
+                  : "호스트가 추천 장소 확인 중"}
               </strong>
 
               <p>
-                {result.midpoint?.name ??
-                  "중간 지점"}{" "}
-                발견
+                {hasFinalPlace
+                  ? `${finalPlace.placeName}을 선택했어요`
+                  : "이동시간을 비교해 가장 적합한 장소를 고르고 있어요"}
               </p>
             </div>
           </div>
 
-          <div className="participant-process-line" />
+          <div
+            className={`participant-process-line ${
+              hasFinalPlace
+                ? "participant-process-line--done"
+                : ""
+            }`}
+          />
 
-          {/* 4 */}
+          {/* ==========================================
+              4
+          ========================================== */}
 
-          <div className="participant-process-item participant-process-item--waiting">
-            <div className="participant-process-icon" />
+          <div
+            className={`participant-process-item ${
+              !hasFinalPlace
+                ? "participant-process-item--waiting"
+                : ""
+            }`}
+          >
+            <div
+              className={`participant-process-icon ${
+                hasFinalPlace
+                  ? "participant-process-icon--done"
+                  : ""
+              }`}
+            >
+              {hasFinalPlace
+                ? "✓"
+                : null}
+            </div>
 
             <div>
               <strong>
-                최종 장소 확정 대기
+                {hasFinalPlace
+                  ? "최종 장소 확정"
+                  : "최종 장소 확정 대기"}
               </strong>
 
               <p>
-                호스트가 장소를
-                선택하고 있어요
+                {hasFinalPlace
+                  ? "이제 확정된 약속 장소를 확인해보세요"
+                  : "호스트의 선택을 기다리고 있어요"}
               </p>
             </div>
           </div>
@@ -553,16 +734,20 @@ function ParticipantWaitingPage() {
           }
           height="100%"
           level={5}
-          emptyMessage="위치 정보를 불러올 수 없어요"
+          emptyMessage="참여자 위치 정보를 불러올 수 없어요"
         />
 
-        {result.midpoint && (
+        {/* =============================================
+            FINAL PLACE LABEL
+        ============================================= */}
+
+        {hasFinalPlace && (
           <div className="participant-map-result-label">
             🍌{" "}
             {
-              result.midpoint.name
+              finalPlace.placeName
             }{" "}
-            발견
+            확정
           </div>
         )}
 
@@ -571,36 +756,69 @@ function ParticipantWaitingPage() {
         ============================================= */}
 
         <div className="participant-waiting-map-legend">
-          {displayParticipants.map(
+          {participants.map(
             (
               participant,
               index
-            ) => (
-              <div
-                key={
-                  participant.id
-                }
-                className="participant-waiting-map-legend-item"
-              >
-                <span
-                  className={`participant-waiting-legend-dot participant-waiting-legend-dot--${
-                    index + 1
-                  }`}
-                />
+            ) => {
+              const color =
+                PARTICIPANT_COLORS[
+                  index
+                ] ??
+                PARTICIPANT_COLORS[0];
 
-                <span>
-                  {
-                    participant.nickname
+              return (
+                <div
+                  key={
+                    participant.participant_id ??
+                    index
                   }
+                  className="participant-waiting-map-legend-item"
+                >
+                  <span
+                    className="participant-waiting-legend-dot"
+                    style={{
+                      backgroundColor:
+                        color.color,
+                    }}
+                  />
 
-                  {participant.isHost &&
-                    " (호스트)"}
-                </span>
-              </div>
-            )
+                  <span>
+                    {
+                      participant.nickname
+                    }
+
+                    {participant.role ===
+                      "HOST" &&
+                      " (호스트)"}
+                  </span>
+                </div>
+              );
+            }
           )}
         </div>
       </section>
+
+      {/* =================================================
+          POLLING ERROR
+
+          이전 데이터가 이미 있는 상태에서
+          새로고침만 한 번 실패한 경우.
+      ================================================= */}
+
+      {error && (
+        <div className="participant-waiting-poll-error">
+          <span>
+            ⚠️
+          </span>
+
+          <p>
+            최신 상태를 잠시
+            불러오지 못했어요.
+            자동으로 다시 시도합니다.
+          </p>
+        </div>
+      )}
 
       {/* =================================================
           BOTTOM
@@ -609,12 +827,21 @@ function ParticipantWaitingPage() {
       <footer className="participant-waiting-bottom">
         <button
           type="button"
-          className="participant-waiting-primary"
+          className={`participant-waiting-primary ${
+            !hasFinalPlace
+              ? "participant-waiting-primary--disabled"
+              : ""
+          }`}
+          disabled={
+            !hasFinalPlace
+          }
           onClick={
             handleShowResult
           }
         >
-          🍌 결과 확인하기
+          {hasFinalPlace
+            ? "🍌 확정된 장소 확인하기"
+            : "호스트가 장소를 선택하고 있어요"}
         </button>
       </footer>
     </main>

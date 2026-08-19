@@ -3,1558 +3,1645 @@
 ===================================================== */
 
 .result-page {
-    position: relative;
-  
-    width: 100%;
-    max-width: 480px;
-  
-    height: 100dvh;
-    min-height: 100dvh;
-  
-    margin: 0 auto;
-  
-    overflow: hidden;
-  
-    background: #fffdf5;
-  
-    color: #21190f;
-  }
-  
-  .result-page--clear {
-    background: #fffdf5;
-  }
-  
-  .result-page--rain {
-    background: #eef1f3;
-  }
-  
-  .result-page--snow {
-    background: #edf4f8;
-  }
-  
-  
-  /* =====================================================
-     MAP
-  ===================================================== */
-  
-  .result-map {
-    position: absolute;
-  
-    inset: 0;
-  
-    width: 100%;
-    height: 100%;
-  
-    overflow: hidden;
-  
-    background: #e4e3dc;
-  }
-  
-  
-  /* =====================================================
-     MAP ROAD
-  ===================================================== */
-  
-  .result-map__road {
-    position: absolute;
-  
-    z-index: 1;
-  
-    background:
-      rgba(
-        255,
-        255,
-        255,
-        0.95
-      );
-  }
-  
-  .result-map__road--vertical {
-    width: 9px;
-    height: 100%;
-  
-    left: 49%;
-    top: 0;
-  }
-  
-  .result-map__road--horizontal {
-    width: 100%;
-    height: 9px;
-  
-    left: 0;
-    top: 44%;
-  }
-  
-  .result-map__yellow-road {
-    position: absolute;
-  
-    z-index: 2;
-  
-    width: 135%;
-    height: 20px;
-  
-    left: -17%;
-    top: 31%;
-  
-    background: #ebd779;
-  
-    transform: rotate(-4deg);
-  }
-  
-  
-  /* =====================================================
-     MAP DECORATION
-  ===================================================== */
-  
-  .result-map__green {
-    position: absolute;
-  
-    width: 104px;
-    height: 72px;
-  
-    left: 43%;
-    top: 39%;
-  
-    border-radius: 24px;
-  
-    background: #cbdcab;
-  }
-  
-  .result-map__water {
-    position: absolute;
-  
-    width: 230px;
-    height: 76px;
-  
-    left: 31%;
-    top: 54%;
-  
-    background: #ccdde8;
-  
-    transform: rotate(7deg);
-  }
-  
-  .result-map__building {
-    position: absolute;
-  
-    width: 66px;
-    height: 68px;
-  
-    border-radius: 12px;
-  
-    background: #cbc9c3;
-  }
-  
-  .result-map__building--left {
-    left: 5%;
-    top: 50%;
-  }
-  
-  .result-map__building--right {
-    right: 6%;
-    top: 50%;
-  }
-  
-  
-  /* =====================================================
-     BACK
-  ===================================================== */
-  
+  position: relative;
+
+  width: 100%;
+  max-width: 480px;
+
+  height: 100dvh;
+  min-height: 100dvh;
+
+  margin: 0 auto;
+
+  overflow: hidden;
+
+  background: #fffdf5;
+
+  color: #21190f;
+}
+
+.result-page--clear {
+  background: #fffdf5;
+}
+
+.result-page--cloudy,
+.result-page--overcast {
+  background: #f6f5f0;
+}
+
+.result-page--rain {
+  background: #eef1f3;
+}
+
+.result-page--snow {
+  background: #edf4f8;
+}
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.result-map {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #e4e3dc;
+}
+
+/* =====================================================
+   BACK
+===================================================== */
+
+.result-map-back {
+  position: absolute;
+
+  z-index: 30;
+
+  left: 16px;
+
+  top:
+    max(
+      18px,
+      env(safe-area-inset-top)
+    );
+
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 13px;
+
+  background: white;
+
+  color: #21190f;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 15px
+    rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   WEATHER BADGE
+===================================================== */
+
+.result-weather-badge {
+  position: absolute;
+
+  z-index: 30;
+
+  right: 16px;
+
+  top:
+    max(
+      18px,
+      env(safe-area-inset-top)
+    );
+
+  min-width: 112px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding:
+    10px
+    14px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: white;
+
+  color: #21190f;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 15px
+    rgba(0, 0, 0, 0.07);
+}
+
+.result-weather-badge__icon {
+  flex-shrink: 0;
+
+  font-size: 24px;
+}
+
+.result-weather-badge strong {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.result-weather-badge small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #9a8056;
+
+  font-size: 10px;
+}
+
+/* =====================================================
+   PARTICIPANT LEGEND
+===================================================== */
+
+.result-map-participant-chips {
+  position: absolute;
+
+  z-index: 45;
+
+  left: 16px;
+  right: 16px;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  pointer-events: none;
+
+  transition:
+    bottom
+    0.25s ease;
+}
+
+.result-map-participant-chips--dragging {
+  transition: none;
+}
+
+.result-map-participant-chip {
+  min-height: 28px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding:
+    6px
+    10px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
+
+  color: #352a1d;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  box-shadow:
+    0 3px 10px
+    rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   PARTICIPANT DOT
+===================================================== */
+
+.result-participant-dot {
+  width: 9px;
+  height: 9px;
+
+  display: inline-block;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+}
+
+/* =====================================================
+   BOTTOM SHEET
+===================================================== */
+
+.result-sheet {
+  position: fixed;
+
+  z-index: 50;
+
+  left: 50%;
+  bottom: 0;
+
+  width: 100%;
+  max-width: 480px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  transform:
+    translateX(-50%);
+
+  border-radius:
+    25px
+    25px
+    0
+    0;
+
+  background: #fffdf7;
+
+  box-shadow:
+    0 -7px 25px
+    rgba(61, 46, 20, 0.1);
+
+  transition:
+    height
+    0.25s ease;
+}
+
+.result-sheet--dragging {
+  transition: none;
+}
+
+/* =====================================================
+   DRAG
+===================================================== */
+
+.result-sheet-drag-area {
+  width: 100%;
+  height: 31px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: grab;
+
+  touch-action: none;
+
+  user-select: none;
+}
+
+.result-sheet--dragging
+.result-sheet-drag-area {
+  cursor: grabbing;
+}
+
+.result-sheet-handle {
+  width: 46px;
+  height: 5px;
+
+  border-radius: 999px;
+
+  background: #c7c1b3;
+}
+
+/* =====================================================
+   SCROLL
+===================================================== */
+
+.result-sheet-scroll {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  padding:
+    0
+    18px
+    calc(
+      24px +
+      env(safe-area-inset-bottom)
+    );
+}
+
+.result-sheet-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+
+.result-sheet-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: #cbc3b3;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.result-sheet-header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  box-sizing: border-box;
+
+  margin-bottom: 11px;
+}
+
+.result-sheet-header > div:first-child {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.result-sheet-header h1 {
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 22px;
+  font-weight: 800;
+
+  line-height: 1.3;
+
+  word-break: keep-all;
+}
+
+.result-sheet-header p {
+  margin:
+    5px
+    0
+    0;
+
+  color: #9b8056;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+.result-fairness-badge {
+  flex-shrink: 0;
+
+  padding:
+    11px
+    14px;
+
+  border-radius: 999px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  white-space: nowrap;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   TRAVEL SUMMARY
+===================================================== */
+
+.result-travel-summary {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  margin-bottom: 16px;
+}
+
+.result-travel-chip {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding:
+    7px
+    10px;
+
+  border-radius: 999px;
+
+  background: #f4f0e5;
+
+  color: #463925;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   PLACE HEADING
+===================================================== */
+
+.result-place-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin:
+    5px
+    0
+    11px;
+}
+
+.result-place-heading h2 {
+  margin: 0;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.result-place-heading button {
+  flex-shrink: 0;
+
+  padding:
+    7px
+    11px;
+
+  border:
+    1px solid #e5dac0;
+
+  border-radius: 999px;
+
+  background: white;
+
+  color: #806c4c;
+
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.result-message {
+  padding:
+    28px
+    4px;
+
+  color: #9a8056;
+
+  text-align: center;
+
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.result-message--error {
+  text-align: left;
+}
+
+.result-message--error strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #21190f;
+}
+
+.result-message--error p {
+  margin: 0;
+}
+
+/* =====================================================
+   PLACE LIST
+===================================================== */
+
+.result-place-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 11px;
+}
+
+/* =====================================================
+   PLACE CARD
+===================================================== */
+
+.result-place-card {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 14px;
+
+  border:
+    2px solid transparent;
+
+  border-radius: 18px;
+
+  background: white;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 16px
+    rgba(67, 50, 21, 0.05);
+
+  transition:
+    border-color
+      0.15s ease,
+    transform
+      0.15s ease;
+}
+
+.result-place-card--selected {
+  border-color: #e4b81f;
+}
+
+.result-place-card:active {
+  transform:
+    scale(0.99);
+}
+
+.result-place-main {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 13px;
+}
+
+/* =====================================================
+   PLACE IMAGE
+===================================================== */
+
+.result-place-image {
+  width: 59px;
+  height: 59px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: #fff5c6;
+
+  font-size: 29px;
+}
+
+.result-place-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+/* =====================================================
+   PLACE NAME
+===================================================== */
+
+.result-place-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 8px;
+}
+
+.result-place-name-row h3 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #21190f;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-place-name-row > span {
+  flex-shrink: 0;
+
+  color: #a9874c;
+
+  font-size: 10px;
+}
+
+/* =====================================================
+   PLACE TAGS
+===================================================== */
+
+.result-place-tags {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  margin-top: 8px;
+}
+
+.result-place-tags span {
+  padding:
+    5px
+    8px;
+
+  border-radius: 999px;
+
+  background: #f4efdf;
+
+  color: #77633f;
+
+  font-size: 9px;
+}
+
+/* =====================================================
+   PLACE ADDRESS
+===================================================== */
+
+.result-place-address {
+  margin:
+    8px
+    0
+    0;
+
+  color: #9b8054;
+
+  font-size: 10px;
+  line-height: 1.45;
+
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* =====================================================
+   PLACE REASON
+===================================================== */
+
+.result-place-reason {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 6px;
+
+  margin-top: 9px;
+
+  padding:
+    8px
+    9px;
+
+  border-radius: 10px;
+
+  background: #fff9df;
+}
+
+.result-place-reason > span {
+  flex-shrink: 0;
+
+  font-size: 10px;
+}
+
+.result-place-reason p {
+  min-width: 0;
+
+  margin: 0;
+
+  color: #806c47;
+
+  font-size: 9px;
+  line-height: 1.5;
+
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* =====================================================
+   PLACE TRAVEL TIMES
+===================================================== */
+
+.result-place-times {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  margin-top: 9px;
+}
+
+.result-place-time {
+  padding:
+    5px
+    7px;
+
+  border-radius: 999px;
+
+  color: #362c20;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   SELECT BUTTON
+===================================================== */
+
+.result-select-place-button {
+  width: 100%;
+  height: 45px;
+
+  margin-top: 12px;
+
+  border: none;
+  border-radius: 13px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   RESULT DETAIL
+===================================================== */
+
+.result-weather-detail {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    5px
+    0
+    28px;
+}
+
+.result-weather-detail-header {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 14px;
+}
+
+.result-weather-detail-header > div {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.result-weather-detail-header h2 {
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 18px;
+  font-weight: 800;
+
+  line-height: 1.35;
+
+  word-break: keep-all;
+}
+
+.result-weather-detail-header p {
+  margin:
+    5px
+    0
+    0;
+
+  color: #9b8056;
+
+  font-size: 10px;
+  line-height: 1.5;
+
+  word-break: keep-all;
+}
+
+.result-weather-detail-header button {
+  flex-shrink: 0;
+
+  padding:
+    7px
+    11px;
+
+  border:
+    1px solid #e3d8bd;
+
+  border-radius: 999px;
+
+  background: white;
+
+  color: #846f4d;
+
+  white-space: nowrap;
+
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   WEATHER INFO / RESULT REASON CARD
+===================================================== */
+
+.result-weather-info-card,
+.result-reason-card {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-bottom: 11px;
+
+  padding: 15px;
+
+  border:
+    1px solid #ead792;
+
+  border-radius: 16px;
+
+  background: #fffaf0;
+}
+
+/* 강조 카드 */
+
+.result-reason-card--highlight {
+  border-color: #e4bf38;
+
+  background: #fff8d9;
+}
+
+/* =====================================================
+   REASON ICON
+===================================================== */
+
+.result-weather-info-icon,
+.result-weather-reason-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  font-size: 25px;
+
+  line-height: 1.2;
+}
+
+/* =====================================================
+   REASON CONTENT
+
+   flex 내부 텍스트가 화면 밖으로 밀리는 것을 방지
+===================================================== */
+
+.result-reason-content,
+.result-weather-info-card > div,
+.result-reason-card > div {
+  flex: 1;
+
+  min-width: 0;
+}
+
+/* =====================================================
+   REASON TITLE
+===================================================== */
+
+.result-weather-info-card strong,
+.result-reason-card strong {
+  display: block;
+
+  margin: 0;
+
+  color: #2d2418;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  line-height: 1.45;
+
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* =====================================================
+   REASON DESCRIPTION
+===================================================== */
+
+.result-weather-info-card p,
+.result-reason-card p {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  margin:
+    6px
+    0
+    0;
+
+  color: #957c56;
+
+  font-size: 10px;
+
+  line-height: 1.65;
+
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.result-reason-card p b {
+  color: #5b4725;
+
+  font-weight: 800;
+}
+
+.result-reason-sub {
+  margin-top: 9px !important;
+
+  padding-top: 9px;
+
+  border-top:
+    1px solid #eee0b2;
+}
+
+/* =====================================================
+   FAIRNESS FORMULA
+===================================================== */
+
+.result-fairness-formula {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  margin-top: 11px;
+}
+
+.result-fairness-formula span {
+  padding:
+    6px
+    8px;
+
+  border-radius: 999px;
+
+  background: white;
+
+  color: #594829;
+
+  white-space: nowrap;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.result-fairness-formula strong {
+  flex-shrink: 0;
+
+  color: #8f7648;
+
+  font-size: 11px;
+}
+
+.result-fairness-formula b {
+  padding:
+    6px
+    9px;
+
+  border-radius: 999px;
+
+  background: #f4cf45;
+
+  color: #392d18;
+
+  white-space: nowrap;
+
+  font-size: 10px;
+}
+
+/* =====================================================
+   WEATHER PARTICIPANTS
+===================================================== */
+
+.result-weather-travel-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        95px,
+        1fr
+      )
+    );
+
+  gap: 7px;
+
+  margin-top: 13px;
+}
+
+.result-weather-travel-card {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 6px;
+
+  padding:
+    11px
+    6px;
+
+  border-radius: 14px;
+
+  background: white;
+
+  box-shadow:
+    0 4px 12px
+    rgba(64, 47, 21, 0.04);
+}
+
+.result-weather-avatar {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.result-weather-person {
+  min-width: 0;
+
+  width: 100%;
+
+  text-align: center;
+}
+
+.result-weather-person strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #342a1d;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-weather-person span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #9a8056;
+
+  font-size: 8px;
+}
+
+.result-weather-minute {
+  color: #21190f;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.result-state-page {
+  width: 100%;
+  max-width: 480px;
+
+  min-height: 100dvh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  margin: 0 auto;
+
+  padding: 24px;
+
+  background: #fffdf5;
+}
+
+.result-state-card {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    30px
+    20px;
+
+  border-radius: 22px;
+
+  background: white;
+
+  text-align: center;
+
+  box-shadow:
+    0 7px 25px
+    rgba(65, 49, 22, 0.07);
+}
+
+.result-state-icon {
+  font-size: 42px;
+}
+
+.result-state-card h1 {
+  margin:
+    13px
+    0
+    0;
+
+  font-size: 20px;
+}
+
+.result-state-card p {
+  margin:
+    7px
+    0
+    0;
+
+  color: #917b59;
+
+  font-size: 11px;
+}
+
+.result-state-primary {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 20px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   SMALL PHONE
+===================================================== */
+
+@media (max-width: 360px) {
   .result-map-back {
-    position: absolute;
-  
-    z-index: 30;
-  
-    left: 16px;
-    top:
-      max(
-        18px,
-        env(safe-area-inset-top)
-      );
-  
-    width: 43px;
-    height: 43px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    padding: 0;
-  
-    border: none;
-    border-radius: 13px;
-  
-    background: white;
-  
-    color: #21190f;
-  
-    font-size: 22px;
-  
-    cursor: pointer;
-  
-    box-shadow:
-      0 5px 15px
-      rgba(0, 0, 0, 0.08);
+    left: 12px;
   }
-  
-  
-  /* =====================================================
-     WEATHER BADGE
-  ===================================================== */
-  
+
   .result-weather-badge {
-    position: absolute;
-  
-    z-index: 30;
-  
-    right: 16px;
-    top:
-      max(
-        18px,
-        env(safe-area-inset-top)
-      );
-  
-    min-width: 112px;
-  
-    display: flex;
-    align-items: center;
-  
-    gap: 9px;
-  
-    padding: 10px 14px;
-  
-    border: none;
-    border-radius: 999px;
-  
-    background: white;
-  
-    color: #21190f;
-  
-    text-align: left;
-  
-    cursor: pointer;
-  
-    box-shadow:
-      0 5px 15px
-      rgba(0, 0, 0, 0.07);
-  }
-  
-  .result-weather-badge__icon {
-    font-size: 24px;
-  }
-  
-  .result-weather-badge strong {
-    display: block;
-  
-    font-size: 13px;
-    font-weight: 800;
-  }
-  
-  .result-weather-badge small {
-    display: block;
-  
-    margin-top: 2px;
-  
-    color: #9a8056;
-  
-    font-size: 10px;
-  }
-  
-  
-  /* =====================================================
-     ZOOM
-  ===================================================== */
-  
-  .result-map-control {
-    position: absolute;
-  
-    z-index: 30;
-  
-    right: 16px;
-    top: 103px;
-  
-    display: flex;
-    flex-direction: column;
-  
-    gap: 5px;
-  }
-  
-  .result-map-control button {
-    width: 38px;
-    height: 38px;
-  
-    padding: 0;
-  
-    border: none;
-    border-radius: 11px;
-  
-    background: white;
-  
-    color: #21190f;
-  
-    font-size: 21px;
-  
-    box-shadow:
-      0 4px 11px
-      rgba(0, 0, 0, 0.06);
-  }
-  
-  
-  /* =====================================================
-     PARTICIPANT LEGEND
-  
-     ★ Bottom Sheet와 같이 이동
-  ===================================================== */
-  
-  .result-map-participant-chips {
-    position: absolute;
-  
-    z-index: 45;
-  
-    left: 16px;
-    right: 16px;
-  
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-  
-    gap: 6px;
-  
-    pointer-events: none;
-  
-    transition:
-      bottom
-      0.25s
-      ease;
-  }
-  
-  .result-map-participant-chips--dragging {
-    transition: none;
-  }
-  
-  .result-map-participant-chip {
-    display: flex;
-    align-items: center;
-  
-    gap: 5px;
-  
-    min-height: 28px;
-  
-    padding: 6px 10px;
-  
-    border-radius: 999px;
-  
-    background:
-      rgba(
-        255,
-        255,
-        255,
-        0.96
-      );
-  
-    color: #352a1d;
-  
-    font-size: 10px;
-    font-weight: 800;
-  
-    box-shadow:
-      0 3px 10px
-      rgba(0, 0, 0, 0.08);
-  }
-  
-  
-  /* =====================================================
-     PARTICIPANT DOT
-  ===================================================== */
-  
-  .result-participant-dot {
-    width: 9px;
-    height: 9px;
-  
-    flex-shrink: 0;
-  
-    border-radius: 50%;
-  }
-  
-  .result-participant-dot--1 {
-    background: #7144df;
-  }
-  
-  .result-participant-dot--2 {
-    background: #e87570;
-  }
-  
-  .result-participant-dot--3 {
-    background: #f0c936;
-  }
-  
-  .result-participant-dot--4 {
-    background: #79cec5;
-  }
-  
-  
-  /* =====================================================
-     PARTICIPANT MARKER
-  ===================================================== */
-  
-  .result-map-person {
-    position: absolute;
-  
-    z-index: 8;
-  
-    width: 45px;
-    height: 45px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    border: 5px solid white;
-    border-radius: 50%;
-  
-    font-size: 14px;
-    font-weight: 800;
-  
-    box-shadow:
-      0 4px 13px
-      rgba(0, 0, 0, 0.1);
-  }
-  
-  .result-map-person--1 {
-    left: 14%;
-    top: 21%;
-  
-    background: #7144df;
-  
-    color: white;
-  }
-  
-  .result-map-person--2 {
-    right: 10%;
-    top: 41%;
-  
-    background: #e87570;
-  
-    color: #21190f;
-  }
-  
-  .result-map-person--3 {
-    left: 22%;
-    top: 45%;
-  
-    background: #f0c936;
-  
-    color: #21190f;
-  }
-  
-  .result-map-person--4 {
-    right: 17%;
-    top: 17%;
-  
-    background: #79cec5;
-  
-    color: #21190f;
-  }
-  
-  
-  /* =====================================================
-     MIDPOINT
-  ===================================================== */
-  
-  .result-midpoint {
-    position: absolute;
-  
-    z-index: 20;
-  
-    left: 50%;
-    top: 43%;
-  
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  
-    transform:
-      translate(-50%, -50%);
-  }
-  
-  .result-midpoint-label {
-    position: relative;
-  
-    min-width: 170px;
-  
-    padding: 13px 19px;
-  
-    border-radius: 19px;
-  
-    background: #30291a;
-  
-    color: white;
-  
-    text-align: center;
-  
-    box-shadow:
-      0 6px 17px
-      rgba(0, 0, 0, 0.13);
-  }
-  
-  .result-midpoint-label::after {
-    content: "";
-  
-    position: absolute;
-  
-    left: 50%;
-    bottom: -16px;
-  
-    transform:
-      translateX(-50%);
-  
-    border-left:
-      13px solid transparent;
-  
-    border-right:
-      13px solid transparent;
-  
-    border-top:
-      17px solid #30291a;
-  }
-  
-  .result-midpoint-label strong {
-    display: block;
-  
-    font-size: 19px;
-  }
-  
-  .result-midpoint-label span {
-    display: block;
-  
-    margin-top: 4px;
-  
-    color: #f4cf45;
-  
-    font-size: 12px;
-  }
-  
-  .result-midpoint-pin {
-    width: 76px;
-    height: 76px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    margin-top: 21px;
-  
-    border: 7px solid white;
-    border-radius: 50%;
-  
-    background: #f4cf45;
-  
-    font-size: 34px;
-  
-    box-shadow:
-      0 5px 16px
-      rgba(0, 0, 0, 0.1);
-  }
-  
-  
-  /* =====================================================
-     BOTTOM SHEET
-  ===================================================== */
-  
-  .result-sheet {
-    position: fixed;
-  
-    z-index: 50;
-  
-    left: 50%;
-    bottom: 0;
-  
-    width: 100%;
-    max-width: 480px;
-  
-    display: flex;
-    flex-direction: column;
-  
-    overflow: hidden;
-  
-    transform:
-      translateX(-50%);
-  
-    border-radius:
-      25px
-      25px
-      0
-      0;
-  
-    background: #fffdf7;
-  
-    box-shadow:
-      0 -7px 25px
-      rgba(61, 46, 20, 0.1);
-  
-    transition:
-      height
-      0.25s
-      ease;
-  }
-  
-  .result-sheet--dragging {
-    transition: none;
-  }
-  
-  
-  /* =====================================================
-     DRAG HANDLE
-  ===================================================== */
-  
-  .result-sheet-drag-area {
-    width: 100%;
-    height: 31px;
-  
-    flex-shrink: 0;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    cursor: grab;
-  
-    touch-action: none;
-  
-    user-select: none;
-  }
-  
-  .result-sheet--dragging
-  .result-sheet-drag-area {
-    cursor: grabbing;
-  }
-  
-  .result-sheet-handle {
-    width: 46px;
-    height: 5px;
-  
-    border-radius: 999px;
-  
-    background: #c7c1b3;
-  }
-  
-  
-  /* =====================================================
-     SHEET CONTENT
-  ===================================================== */
-  
-  .result-sheet-scroll {
-    flex: 1;
-  
-    overflow-y: auto;
-  
-    overscroll-behavior: contain;
-  
+    right: 12px;
+
+    min-width: 102px;
+
     padding:
-      0
-      18px
-      calc(
-        24px +
-        env(safe-area-inset-bottom)
-      );
-  }
-  
-  .result-sheet-scroll::-webkit-scrollbar {
-    width: 3px;
-  }
-  
-  .result-sheet-scroll::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-  
-    background: #cbc3b3;
-  }
-  
-  
-  /* =====================================================
-     HEADER
-  ===================================================== */
-  
-  .result-sheet-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  
-    gap: 12px;
-  
-    margin-bottom: 11px;
-  }
-  
-  .result-sheet-header h1 {
-    margin: 0;
-  
-    color: #21190f;
-  
-    font-size: 22px;
-    font-weight: 800;
-  }
-  
-  .result-sheet-header p {
-    margin: 5px 0 0;
-  
-    color: #9b8056;
-  
-    font-size: 11px;
-  }
-  
-  .result-fairness-badge {
-    flex-shrink: 0;
-  
-    padding: 11px 14px;
-  
-    border-radius: 999px;
-  
-    background: #f4cf45;
-  
-    color: #21190f;
-  
-    font-size: 11px;
-    font-weight: 800;
-  }
-  
-  
-  /* =====================================================
-     TRAVEL SUMMARY
-  ===================================================== */
-  
-  .result-travel-summary {
-    display: flex;
-    flex-wrap: wrap;
-  
-    gap: 6px;
-  
-    margin-bottom: 16px;
-  }
-  
-  .result-travel-chip {
-    display: flex;
-    align-items: center;
-  
-    gap: 5px;
-  
-    padding: 7px 10px;
-  
-    border-radius: 999px;
-  
-    background: #f4f0e5;
-  
-    color: #463925;
-  
-    font-size: 10px;
-    font-weight: 800;
-  }
-  
-  
-  /* =====================================================
-     PLACE HEADING
-  ===================================================== */
-  
-  .result-place-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  
-    margin:
-      5px
-      0
+      9px
       11px;
   }
-  
-  .result-place-heading h2 {
-    margin: 0;
-  
-    font-size: 18px;
-    font-weight: 800;
+
+  .result-weather-badge__icon {
+    font-size: 21px;
   }
-  
-  .result-place-heading button {
-    padding: 7px 11px;
-  
-    border: 1px solid #e5dac0;
-    border-radius: 999px;
-  
-    background: white;
-  
-    color: #806c4c;
-  
-    font-size: 10px;
+
+  .result-weather-badge strong {
+    font-size: 11px;
   }
-  
-  
-  /* =====================================================
-     PLACE LIST
-  ===================================================== */
-  
-  .result-place-list {
-    display: flex;
-    flex-direction: column;
-  
-    gap: 11px;
+
+  .result-weather-badge small {
+    font-size: 8px;
   }
-  
-  
-  /* =====================================================
-     PLACE CARD
-  ===================================================== */
-  
-  .result-place-card {
-    padding: 14px;
-  
-    border: 2px solid transparent;
-    border-radius: 18px;
-  
-    background: white;
-  
-    cursor: pointer;
-  
-    box-shadow:
-      0 4px 16px
-      rgba(67, 50, 21, 0.05);
-  
-    transition:
-      border-color
-      0.15s
-      ease,
-      transform
-      0.15s
-      ease;
+
+  .result-map-participant-chips {
+    left: 12px;
+    right: 12px;
   }
-  
-  .result-place-card--selected {
-    border-color: #e4b81f;
-  }
-  
-  .result-place-card:active {
-    transform:
-      scale(0.99);
-  }
-  
-  .result-place-main {
-    display: flex;
-  
-    gap: 13px;
-  }
-  
-  
-  /* =====================================================
-     PLACE IMAGE
-  ===================================================== */
-  
-  .result-place-image {
-    width: 59px;
-    height: 59px;
-  
-    flex-shrink: 0;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    border-radius: 16px;
-  
-    background: #fff5c6;
-  
-    font-size: 29px;
-  }
-  
-  .result-place-content {
-    flex: 1;
-  
-    min-width: 0;
-  }
-  
-  
-  /* =====================================================
-     PLACE NAME
-  ===================================================== */
-  
-  .result-place-name-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-  
-    gap: 8px;
-  }
-  
-  .result-place-name-row h3 {
-    margin: 0;
-  
-    overflow: hidden;
-  
-    color: #21190f;
-  
-    font-size: 14px;
-    font-weight: 800;
-  
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .result-place-name-row > span {
-    flex-shrink: 0;
-  
-    color: #a9874c;
-  
-    font-size: 10px;
-  }
-  
-  
-  /* =====================================================
-     TAGS
-  ===================================================== */
-  
-  .result-place-tags {
-    display: flex;
-    flex-wrap: wrap;
-  
-    gap: 5px;
-  
-    margin-top: 8px;
-  }
-  
-  .result-place-tags span {
-    padding: 5px 8px;
-  
-    border-radius: 999px;
-  
-    background: #f4efdf;
-  
-    color: #77633f;
-  
-    font-size: 9px;
-  }
-  
-  .result-place-tags
-  .result-tag-green {
-    background: #e5f2dc;
-  
-    color: #5b8152;
-  }
-  
-  
-  /* =====================================================
-     PLACE TRAVEL TIMES
-  ===================================================== */
-  
-  .result-place-times {
-    display: flex;
-    flex-wrap: wrap;
-  
-    gap: 5px;
-  
-    margin-top: 9px;
-  }
-  
-  .result-place-time {
-    padding: 5px 7px;
-  
-    border-radius: 999px;
-  
-    color: #362c20;
-  
-    font-size: 9px;
-    font-weight: 800;
-  }
-  
-  .result-place-time--1 {
-    background: #ede5ff;
-  }
-  
-  .result-place-time--2 {
-    background: #ffe0dd;
-  }
-  
-  .result-place-time--3 {
-    background: #fff1b6;
-  }
-  
-  .result-place-time--4 {
-    background: #dff4f1;
-  }
-  
-  
-  /* =====================================================
-     SELECT BUTTON
-  ===================================================== */
-  
-  .result-select-place-button {
-    width: 100%;
-    height: 45px;
-  
-    margin-top: 12px;
-  
-    border: none;
-    border-radius: 13px;
-  
-    background: #f4cf45;
-  
-    color: #21190f;
-  
-    font-size: 13px;
-    font-weight: 800;
-  
-    cursor: pointer;
-  }
-  
-  
-  /* =====================================================
-     WEATHER DETAIL
-  ===================================================== */
-  
-  .result-weather-detail {
+
+  .result-map-participant-chip {
     padding:
       5px
-      0
-      28px;
+      8px;
+
+    font-size: 9px;
   }
-  
-  .result-weather-detail-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-  
-    gap: 10px;
-  
-    margin-bottom: 13px;
+
+  .result-sheet-scroll {
+    padding-left: 14px;
+    padding-right: 14px;
   }
-  
-  .result-weather-detail-header h2 {
-    margin: 0;
-  
-    font-size: 18px;
-    font-weight: 800;
+
+  .result-sheet-header {
+    gap: 8px;
   }
-  
-  .result-weather-detail-header p {
-    margin: 5px 0 0;
-  
-    color: #9b8056;
-  
-    font-size: 10px;
+
+  .result-sheet-header h1 {
+    font-size: 20px;
   }
-  
-  .result-weather-detail-header button {
-    padding: 7px 11px;
-  
-    border: 1px solid #e3d8bd;
-    border-radius: 999px;
-  
-    background: white;
-  
-    color: #846f4d;
-  
-    font-size: 10px;
+
+  .result-sheet-header p {
+    font-size: 9px;
   }
-  
-  
-  /* =====================================================
-     WEATHER CARD
-  ===================================================== */
-  
-  .result-weather-info-card,
-  .result-weather-reason-card {
-    display: flex;
-    align-items: center;
-  
-    gap: 13px;
-  
-    margin-bottom: 10px;
-    padding: 15px;
-  
-    border: 1px solid #ead792;
-    border-radius: 16px;
-  
-    background: #fffaf0;
+
+  .result-fairness-badge {
+    padding:
+      9px
+      10px;
+
+    font-size: 9px;
   }
-  
-  .result-weather-info-icon,
-  .result-weather-reason-icon {
-    flex-shrink: 0;
-  
-    font-size: 27px;
+
+  .result-place-heading h2 {
+    font-size: 17px;
   }
-  
-  .result-weather-info-card strong,
-  .result-weather-reason-card strong {
-    display: block;
-  
-    font-size: 13px;
-  }
-  
-  .result-weather-info-card p,
-  .result-weather-reason-card p {
-    margin: 5px 0 0;
-  
-    color: #957c56;
-  
-    font-size: 10px;
-    line-height: 1.5;
-  }
-  
-  
-  /* =====================================================
-     WEATHER FORECAST
-  ===================================================== */
-  
-  .result-weather-forecast {
-    margin-top: 12px;
-    padding: 15px;
-  
-    border: 1px solid #e8d99a;
-    border-radius: 17px;
-  
-    background: #fff6d7;
-  }
-  
-  .result-weather-forecast-top {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-  }
-  
-  .result-weather-forecast-top > div {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .result-weather-forecast-top span {
-    color: #92794f;
-  
-    font-size: 10px;
-  }
-  
-  .result-weather-forecast-top strong {
-    margin-top: 4px;
-  
-    color: #21190f;
-  
+
+  .result-place-image {
+    width: 53px;
+    height: 53px;
+
     font-size: 25px;
   }
-  
-  .result-weather-forecast-top small {
-    margin-top: 2px;
-  
-    color: #967b50;
-  
-    font-size: 10px;
+
+  .result-place-main {
+    gap: 10px;
   }
-  
-  .result-rain-probability {
-    align-items: flex-end;
+
+  .result-place-name-row h3 {
+    font-size: 13px;
   }
-  
-  
-  /* =====================================================
-     HOURLY
-  ===================================================== */
-  
-  .result-hourly-weather {
-    display: grid;
-  
+
+  /* ================================================
+     RESULT REASON
+  ================================================ */
+
+  .result-weather-detail-header {
+    gap: 8px;
+  }
+
+  .result-weather-detail-header h2 {
+    font-size: 17px;
+  }
+
+  .result-weather-detail-header p {
+    font-size: 9px;
+  }
+
+  .result-weather-detail-header button {
+    padding:
+      6px
+      9px;
+
+    font-size: 9px;
+  }
+
+  .result-weather-info-card,
+  .result-reason-card {
+    gap: 9px;
+
+    padding: 13px;
+  }
+
+  .result-weather-info-icon,
+  .result-weather-reason-icon {
+    width: 27px;
+    height: 27px;
+
+    font-size: 21px;
+  }
+
+  .result-weather-info-card strong,
+  .result-reason-card strong {
+    font-size: 12px;
+  }
+
+  .result-weather-info-card p,
+  .result-reason-card p {
+    font-size: 9px;
+
+    line-height: 1.6;
+  }
+
+  .result-fairness-formula {
+    gap: 4px;
+  }
+
+  .result-fairness-formula span {
+    padding:
+      5px
+      6px;
+
+    font-size: 8px;
+  }
+
+  .result-fairness-formula b {
+    padding:
+      5px
+      7px;
+
+    font-size: 8px;
+  }
+
+  .result-weather-travel-list {
     grid-template-columns:
-      repeat(5, 1fr);
-  
-    gap: 6px;
-  
-    margin-top: 14px;
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
   }
-  
-  .result-hourly-item {
-    min-width: 0;
-  
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  
-    gap: 5px;
-  
-    padding: 9px 3px;
-  
-    border-radius: 11px;
-  
-    background:
+}
+
+/* =====================================================
+   WEATHER MAP EFFECT
+===================================================== */
+
+.result-weather-effect {
+  position: absolute;
+
+  z-index: 20;
+
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   RAIN
+
+   움직이는 애니메이션 없이
+   지도 위에 빗줄기가 내려오는 듯한
+   정적 패턴만 표시한다.
+===================================================== */
+
+.result-weather-effect--rain {
+  background:
+    linear-gradient(
+      rgba(82, 105, 132, 0.08),
+      rgba(82, 105, 132, 0.14)
+    );
+}
+
+.result-weather-effect--rain::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -40px;
+
+  opacity: 0.68;
+
+  background-image:
+    repeating-linear-gradient(
+      112deg,
+      transparent 0,
+      transparent 15px,
+      rgba(
+        80,
+        145,
+        195,
+        0.42
+      ) 16px,
+      rgba(
+        80,
+        145,
+        195,
+        0.42
+      ) 18px,
+      transparent 19px,
+      transparent 34px
+    );
+
+  background-size:
+    28px
+    42px;
+}
+
+/* 조금 더 짧은 빗방울을 추가 */
+
+.result-weather-effect--rain::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0.35;
+
+  background-image:
+    repeating-linear-gradient(
+      112deg,
+      transparent 0,
+      transparent 23px,
       rgba(
         255,
         255,
         255,
         0.65
-      );
-  }
-  
-  .result-hourly-item--active {
-    border: 1px solid #e4b81f;
-  
-    background: white;
-  }
-  
-  .result-hourly-item span {
-    color: #907950;
-  
-    font-size: 8px;
-  }
-  
-  .result-hourly-item strong {
-    font-size: 17px;
-  }
-  
-  .result-hourly-item small {
-    color: #4b3b27;
-  
-    font-size: 9px;
-    font-weight: 700;
-  }
-  
-  
-  /* =====================================================
-     WEATHER PARTICIPANTS
-  ===================================================== */
-  
-  .result-weather-travel-list {
-    display: grid;
-  
-    grid-template-columns:
-      repeat(4, 1fr);
-  
-    gap: 7px;
-  
-    margin-top: 13px;
-  }
-  
-  .result-weather-travel-card {
-    min-width: 0;
-  
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  
-    gap: 6px;
-  
-    padding: 10px 5px;
-  
-    border-radius: 14px;
-  
-    background: white;
-  
-    box-shadow:
-      0 4px 12px
-      rgba(64, 47, 21, 0.04);
-  }
-  
-  .result-weather-avatar {
-    width: 34px;
-    height: 34px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    border-radius: 50%;
-  
-    font-size: 10px;
-    font-weight: 800;
-  }
-  
-  .result-weather-avatar--1 {
-    background: #7144df;
-  
-    color: white;
-  }
-  
-  .result-weather-avatar--2 {
-    background: #e87570;
-  }
-  
-  .result-weather-avatar--3 {
-    background: #f0c936;
-  }
-  
-  .result-weather-avatar--4 {
-    background: #79cec5;
-  }
-  
-  .result-weather-person {
-    min-width: 0;
-  
-    text-align: center;
-  }
-  
-  .result-weather-person strong {
-    display: block;
-  
-    overflow: hidden;
-  
-    font-size: 10px;
-  
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .result-weather-person span {
-    display: block;
-  
-    margin-top: 2px;
-  
-    color: #9a8056;
-  
-    font-size: 8px;
-  }
-  
-  .result-weather-minute {
-    font-size: 11px;
-  }
-  
-  
-  /* =====================================================
-     EMPTY
-  ===================================================== */
-  
-  .result-empty-sheet {
-    position: fixed;
-  
-    z-index: 50;
-  
-    left: 50%;
-    bottom: 0;
-  
-    width: 100%;
-    max-width: 480px;
-  
-    min-height: 58dvh;
-  
-    box-sizing: border-box;
-  
-    padding:
-      16px
-      18px
-      calc(
-        22px +
-        env(safe-area-inset-bottom)
-      );
-  
-    transform:
-      translateX(-50%);
-  
-    border-radius:
-      24px
-      24px
-      0
-      0;
-  
-    background: #fffdf7;
-  
-    text-align: center;
-  
-    box-shadow:
-      0 -7px 24px
-      rgba(62, 46, 21, 0.09);
-  }
-  
-  .result-empty-sheet
-  .result-sheet-handle {
-    margin:
-      0
-      auto
-      22px;
-  }
-  
-  .result-empty-icon {
-    margin-bottom: 15px;
-  
-    font-size: 36px;
-  }
-  
-  .result-empty-sheet h1 {
-    margin: 0;
-  
-    font-size: 18px;
-  }
-  
-  .result-empty-sheet > p {
-    max-width: 260px;
-  
-    margin:
-      9px
-      auto
-      20px;
-  
-    color: #927b58;
-  
-    font-size: 11px;
-    line-height: 1.6;
-  }
-  
-  .result-empty-primary,
-  .result-empty-secondary {
-    width: 100%;
-    height: 45px;
-  
-    border-radius: 12px;
-  
-    font-size: 12px;
-    font-weight: 800;
-  }
-  
-  .result-empty-primary {
-    border: none;
-  
-    background: #f4cf45;
-  
-    color: #21190f;
-  }
-  
-  .result-empty-secondary {
-    margin-top: 8px;
-  
-    border: 1px solid #e5dac1;
-  
-    background: white;
-  
-    color: #65553b;
-  }
-  
-  
-  /* =====================================================
-     ERROR
-  ===================================================== */
-  
-  .result-state-page {
-    width: 100%;
-    max-width: 480px;
-  
-    min-height: 100dvh;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    box-sizing: border-box;
-  
-    margin: 0 auto;
-    padding: 24px;
-  
-    background: #fffdf5;
-  }
-  
-  .result-state-card {
-    width: 100%;
-  
-    padding: 30px 20px;
-  
-    border-radius: 22px;
-  
-    background: white;
-  
-    text-align: center;
-  
-    box-shadow:
-      0 7px 25px
-      rgba(65, 49, 22, 0.07);
-  }
-  
-  .result-state-icon {
-    font-size: 42px;
-  }
-  
-  .result-state-card h1 {
-    margin:
-      13px
-      0
-      0;
-  
-    font-size: 20px;
-  }
-  
-  .result-state-card p {
-    margin:
-      7px
-      0
-      0;
-  
-    color: #917b59;
-  
-    font-size: 11px;
-  }
-  
-  .result-state-primary {
-    width: 100%;
-    height: 50px;
-  
-    margin-top: 20px;
-  
-    border: none;
-    border-radius: 14px;
-  
-    background: #f4cf45;
-  
-    color: #21190f;
-  
-    font-size: 13px;
-    font-weight: 800;
-  }
-  
-  
-  /* =====================================================
-     SMALL PHONE
-  ===================================================== */
-  
-  @media (max-width: 360px) {
-    .result-map-participant-chip {
-      padding:
-        5px
-        8px;
-  
-      font-size: 9px;
-    }
-  
-    .result-map-person {
-      width: 40px;
-      height: 40px;
-  
-      border-width: 4px;
-  
-      font-size: 11px;
-    }
-  
-    .result-midpoint-label {
-      min-width: 150px;
-    }
-  
-    .result-midpoint-label strong {
-      font-size: 17px;
-    }
-  
-    .result-midpoint-pin {
-      width: 68px;
-      height: 68px;
-  
-      font-size: 30px;
-    }
-  
-    .result-sheet-scroll {
-      padding-left: 14px;
-      padding-right: 14px;
-    }
-  
-    .result-sheet-header h1 {
-      font-size: 20px;
-    }
-  
-    .result-place-heading h2 {
-      font-size: 17px;
-    }
-  
-    .result-place-image {
-      width: 53px;
-      height: 53px;
-  
-      font-size: 25px;
-    }
-  
-    .result-place-name-row h3 {
-      font-size: 13px;
-    }
-  }
+      ) 24px,
+      rgba(
+        255,
+        255,
+        255,
+        0.65
+      ) 25px,
+      transparent 26px,
+      transparent 47px
+    );
+
+  background-size:
+    39px
+    51px;
+}
+
+/* =====================================================
+   SNOW
+
+   여러 크기의 원형 패턴으로
+   눈송이가 흩날리는 느낌만 표현.
+===================================================== */
+
+.result-weather-effect--snow {
+  background:
+    linear-gradient(
+      rgba(
+        236,
+        246,
+        255,
+        0.1
+      ),
+      rgba(
+        225,
+        241,
+        252,
+        0.19
+      )
+    );
+}
+
+.result-weather-effect--snow::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0.85;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(
+        255,
+        255,
+        255,
+        0.95
+      ) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle,
+      rgba(
+        255,
+        255,
+        255,
+        0.9
+      ) 0 3px,
+      transparent 4px
+    ),
+    radial-gradient(
+      circle,
+      rgba(
+        241,
+        249,
+        255,
+        0.95
+      ) 0 1.5px,
+      transparent 2.5px
+    );
+
+  background-size:
+    38px 38px,
+    63px 63px,
+    49px 49px;
+
+  background-position:
+    5px 7px,
+    21px 13px,
+    11px 29px;
+}
+
+.result-weather-effect--snow::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0.55;
+
+  background-image:
+    radial-gradient(
+      circle,
+      white
+        0
+        2px,
+      transparent
+        3px
+    );
+
+  background-size:
+    79px
+    79px;
+
+  background-position:
+    32px
+    16px;
+}
+
+/* =====================================================
+   WEATHER PAGE TINT
+
+   결과 페이지 배경도
+   날씨에 따라 아주 미세하게 변경.
+===================================================== */
+
+.result-page--rain {
+  background:
+    #eef3f6;
+}
+
+.result-page--snow {
+  background:
+    #f3f8fb;
+}
+
+.result-page--clear {
+  background:
+    #fffdf5;
+}

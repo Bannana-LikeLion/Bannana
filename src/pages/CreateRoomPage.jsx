@@ -5,6 +5,11 @@ import LocationSearch from "../components/common/LocationSearch";
 import KakaoMap from "../components/map/KakaoMap";
 
 import {
+  createRoom,
+  registerHost,
+} from "../api/bannanaApi";
+
+import {
   saveRoomDraft,
 } from "../data/roomStorage";
 
@@ -18,6 +23,11 @@ function CreateRoomPage() {
     step,
     setStep,
   ] = useState(1);
+
+  const [
+    isSubmitting,
+    setIsSubmitting,
+  ] = useState(false);
 
   /* =====================================================
      FORM
@@ -66,7 +76,7 @@ function CreateRoomPage() {
   };
 
   /* =====================================================
-     HOST ORIGIN INPUT
+     ORIGIN TEXT CHANGE
   ===================================================== */
 
   const handleOriginInputChange = (
@@ -80,9 +90,8 @@ function CreateRoomPage() {
 
         /*
           검색 결과를 선택한 뒤
-          사용자가 다시 직접 텍스트를
-          수정하면 기존 좌표는
-          정확하지 않으므로 초기화.
+          직접 글자를 수정하면
+          기존 좌표는 더 이상 정확하지 않음.
         */
         hostOriginLat: null,
 
@@ -92,7 +101,7 @@ function CreateRoomPage() {
   };
 
   /* =====================================================
-     HOST ORIGIN SELECT
+     KAKAO PLACE SELECT
   ===================================================== */
 
   const handleOriginSelect = (
@@ -194,87 +203,272 @@ function CreateRoomPage() {
   };
 
   /* =====================================================
-     ROOM CREATE
+     REAL ROOM CREATE
   ===================================================== */
 
-  const handleCreate = () => {
-    if (
-      !formData.hostName.trim()
-    ) {
-      alert(
-        "이름을 입력해주세요."
-      );
+  const handleCreate =
+    async () => {
+      if (
+        !formData.hostName.trim()
+      ) {
+        alert(
+          "이름을 입력해주세요."
+        );
 
-      return;
-    }
+        return;
+      }
 
-    if (
-      !formData.hostOrigin.trim()
-    ) {
-      alert(
-        "출발지를 입력해주세요."
-      );
+      if (
+        !formData.hostOrigin.trim()
+      ) {
+        alert(
+          "출발지를 입력해주세요."
+        );
 
-      return;
-    }
+        return;
+      }
 
-    if (
-      !Number.isFinite(
-        formData.hostOriginLat
-      ) ||
-      !Number.isFinite(
-        formData.hostOriginLng
-      )
-    ) {
-      alert(
-        "출발지를 검색한 뒤 검색 결과에서 하나를 선택해주세요."
-      );
+      if (
+        !Number.isFinite(
+          formData.hostOriginLat
+        ) ||
+        !Number.isFinite(
+          formData.hostOriginLng
+        )
+      ) {
+        alert(
+          "출발지를 검색한 뒤 검색 결과에서 하나를 선택해주세요."
+        );
 
-      return;
-    }
+        return;
+      }
 
-    /*
-      아직 이번 단계에서는
-      기존 Mock 저장을 유지한다.
+      if (isSubmitting) {
+        return;
+      }
 
-      다음 단계에서 실제 백엔드의
+      setIsSubmitting(true);
 
-      POST /rooms
-      POST /rooms/{roomId}/host
+      try {
+        /* ================================================
+           1. ROOM CREATE
 
-      로 교체한다.
-    */
+           POST /rooms
+        ================================================ */
 
-    saveRoomDraft({
-      title:
-        formData.title.trim(),
+        const roomResponse =
+          await createRoom({
+            title:
+              formData.title.trim(),
 
-      meetingDate:
-        formData.meetingDate,
+            meetingDate:
+              formData.meetingDate,
 
-      meetingTime:
-        formData.meetingTime,
+            meetingTime:
+              formData.meetingTime,
 
-      hostName:
-        formData.hostName.trim(),
+            transportMode:
+              "transit",
 
-      hostOrigin:
-        formData.hostOrigin.trim(),
+            /*
+              프론트에서는
+              CAFE / RESTAURANT를 사용하지만
 
-      hostOriginLat:
-        formData.hostOriginLat,
+              API 요청에서는
+              cafe / restaurant로 전달.
+            */
+            placeTypes:
+              formData.preferredCategories.map(
+                (category) =>
+                  category.toLowerCase()
+              ),
+          });
 
-      hostOriginLng:
-        formData.hostOriginLng,
+        const roomId =
+          roomResponse.roomId;
 
-      preferredCategories:
-        formData.preferredCategories,
-    });
+        if (!roomId) {
+          throw new Error(
+            "방 생성 응답에서 roomId를 받지 못했습니다."
+          );
+        }
 
-    navigate(
-      "/room/room-demo-001/share"
-    );
-  };
+        /* ================================================
+           2. HOST REGISTER
+
+           POST /rooms/{roomId}/host
+        ================================================ */
+
+        const hostResponse =
+          await registerHost(
+            roomId,
+            {
+              name:
+                formData.hostName.trim(),
+
+              originText:
+                formData.hostOrigin.trim(),
+
+              originLat:
+                formData.hostOriginLat,
+
+              originLng:
+                formData.hostOriginLng,
+            }
+          );
+
+        /* ================================================
+           3. FRONTEND INVITE LINK
+
+           백엔드는 현재 /invite/{roomId}를 반환하지만
+           프론트 Route는 /join/{roomId}이므로
+           프론트에서 직접 생성.
+        ================================================ */
+
+        const inviteLink =
+          `${window.location.origin}/join/${roomId}`;
+
+        /* ================================================
+           4. FRONTEND ROOM DATA
+
+           기존 화면들이 사용하는 데이터 구조와
+           최대한 호환되도록 저장.
+        ================================================ */
+
+        const frontendRoom = {
+          id:
+            roomResponse.roomId,
+
+          roomId:
+            roomResponse.roomId,
+
+          title:
+            roomResponse.title,
+
+          meetingDate:
+            roomResponse.meetingDate,
+
+          meetingTime:
+            roomResponse.meetingTime,
+
+          meetingDateTime:
+            `${roomResponse.meetingDate}T${roomResponse.meetingTime}`,
+
+          transportMode:
+            roomResponse.transportMode,
+
+          preferredCategories:
+            roomResponse.placeTypes,
+
+          status:
+            roomResponse.status,
+
+          host: {
+            id:
+              hostResponse.participantId,
+
+            nickname:
+              formData.hostName.trim(),
+
+            origin: {
+              text:
+                formData.hostOrigin.trim(),
+
+              lat:
+                formData.hostOriginLat,
+
+              lng:
+                formData.hostOriginLng,
+            },
+          },
+
+          inviteLink,
+        };
+
+        /* ================================================
+           5. LOCAL FRONTEND CACHE
+
+           화면 새로고침 시에도
+           방 정보를 사용할 수 있도록 저장.
+        ================================================ */
+
+        saveRoomDraft({
+          roomId,
+
+          title:
+            formData.title.trim(),
+
+          meetingDate:
+            formData.meetingDate,
+
+          meetingTime:
+            formData.meetingTime,
+
+          hostParticipantId:
+            hostResponse.participantId,
+
+          hostName:
+            formData.hostName.trim(),
+
+          hostOrigin:
+            formData.hostOrigin.trim(),
+
+          hostOriginLat:
+            formData.hostOriginLat,
+
+          hostOriginLng:
+            formData.hostOriginLng,
+
+          preferredCategories:
+            roomResponse.placeTypes,
+
+          transportMode:
+            roomResponse.transportMode,
+
+          inviteLink,
+
+          /*
+            현재 백엔드가 실제로 반환한 값도
+            확인용으로 저장.
+          */
+          backendInviteUrl:
+            hostResponse.inviteUrl,
+        });
+
+        /* ================================================
+           6. SHARE PAGE
+        ================================================ */
+
+        navigate(
+          `/room/${roomId}/share`,
+          {
+            state: {
+              room:
+                frontendRoom,
+
+              inviteLink,
+
+              hostParticipantId:
+                hostResponse.participantId,
+            },
+          }
+        );
+      } catch (error) {
+        console.error(
+          "약속방 생성 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+            "약속방 생성에 실패했습니다."
+        );
+      } finally {
+        setIsSubmitting(
+          false
+        );
+      }
+    };
 
   /* =====================================================
      STEP 2
@@ -335,10 +529,6 @@ function CreateRoomPage() {
         </header>
 
         <div className="create-content">
-          {/* ===============================
-              REAL KAKAO MAP
-          =============================== */}
-
           <KakaoMap
             lat={
               formData.hostOriginLat
@@ -353,10 +543,6 @@ function CreateRoomPage() {
               formData.hostName.trim()
             }
           />
-
-          {/* ===============================
-              HOST CARD
-          =============================== */}
 
           <section className="create-card host-card">
             <div className="host-card__header">
@@ -376,8 +562,6 @@ function CreateRoomPage() {
               </div>
             </div>
 
-            {/* NAME */}
-
             <div className="host-field">
               <label htmlFor="hostName">
                 이름
@@ -395,10 +579,11 @@ function CreateRoomPage() {
                   handleChange
                 }
                 placeholder="예: 박지수"
+                disabled={
+                  isSubmitting
+                }
               />
             </div>
-
-            {/* ORIGIN */}
 
             <div className="host-field">
               <label>
@@ -419,8 +604,6 @@ function CreateRoomPage() {
                 inputClassName="create-input"
               />
             </div>
-
-            {/* NOTICE */}
 
             <div className="host-notice">
               <span>
@@ -447,8 +630,13 @@ function CreateRoomPage() {
             onClick={
               handleCreate
             }
+            disabled={
+              isSubmitting
+            }
           >
-            🔗 초대 링크 생성하기
+            {isSubmitting
+              ? "약속방 만드는 중..."
+              : "🔗 초대 링크 생성하기"}
           </button>
         </footer>
       </main>
@@ -507,8 +695,6 @@ function CreateRoomPage() {
       </header>
 
       <div className="create-content">
-        {/* ROOM NAME */}
-
         <section className="create-card">
           <label
             className="create-card-title"
@@ -531,8 +717,6 @@ function CreateRoomPage() {
             placeholder="약속 이름을 입력해주세요"
           />
         </section>
-
-        {/* DATE / TIME */}
 
         <section className="create-card">
           <h2 className="create-card-title">
@@ -586,8 +770,6 @@ function CreateRoomPage() {
           </div>
         </section>
 
-        {/* TRANSPORT */}
-
         <section className="create-card">
           <h2 className="create-card-title">
             🚇 이동수단
@@ -609,8 +791,6 @@ function CreateRoomPage() {
             </button>
           </div>
         </section>
-
-        {/* PLACE TYPE */}
 
         <section className="create-card">
           <h2 className="create-card-title">

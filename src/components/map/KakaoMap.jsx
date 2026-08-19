@@ -1,62 +1,408 @@
 import {
     useEffect,
-    useMemo,
     useRef,
     useState,
   } from "react";
   
-  import {
-    loadKakaoMapSdk,
-  } from "../../api/kakaoMap";
-  
   import "./KakaoMap.css";
   
-  const DEFAULT_LAT = 37.5665;
-  const DEFAULT_LNG = 126.978;
+  /* =====================================================
+     SDK
+  ===================================================== */
+  
+  let kakaoMapPromise =
+    null;
+  
+  function loadKakaoMapSdk() {
+    /* 이미 SDK 사용 가능 */
+  
+    if (
+      window.kakao?.maps
+    ) {
+      return new Promise(
+        (
+          resolve
+        ) => {
+          window.kakao.maps.load(
+            () =>
+              resolve(
+                window.kakao
+              )
+          );
+        }
+      );
+    }
+  
+    if (
+      kakaoMapPromise
+    ) {
+      return kakaoMapPromise;
+    }
+  
+    const appKey =
+      import.meta.env
+        .VITE_KAKAO_JAVASCRIPT_KEY;
+  
+    if (!appKey) {
+      return Promise.reject(
+        new Error(
+          "VITE_KAKAO_JAVASCRIPT_KEY가 없습니다."
+        )
+      );
+    }
+  
+    kakaoMapPromise =
+      new Promise(
+        (
+          resolve,
+          reject
+        ) => {
+          const existingScript =
+            document.querySelector(
+              'script[src*="dapi.kakao.com/v2/maps/sdk.js"]'
+            );
+  
+          const handleLoad =
+            () => {
+              if (
+                !window.kakao
+                  ?.maps
+              ) {
+                reject(
+                  new Error(
+                    "카카오맵 SDK를 불러오지 못했습니다."
+                  )
+                );
+  
+                return;
+              }
+  
+              window.kakao.maps.load(
+                () =>
+                  resolve(
+                    window.kakao
+                  )
+              );
+            };
+  
+          if (
+            existingScript
+          ) {
+            if (
+              window.kakao?.maps
+            ) {
+              handleLoad();
+  
+              return;
+            }
+  
+            existingScript.addEventListener(
+              "load",
+              handleLoad,
+              {
+                once: true,
+              }
+            );
+  
+            existingScript.addEventListener(
+              "error",
+              () => {
+                reject(
+                  new Error(
+                    "카카오맵 SDK 로드에 실패했습니다."
+                  )
+                );
+              },
+              {
+                once: true,
+              }
+            );
+  
+            return;
+          }
+  
+          const script =
+            document.createElement(
+              "script"
+            );
+  
+          script.src =
+            `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false&libraries=services`;
+  
+          script.async = true;
+  
+          script.onload =
+            handleLoad;
+  
+          script.onerror =
+            () => {
+              reject(
+                new Error(
+                  "카카오맵 SDK 로드에 실패했습니다."
+                )
+              );
+            };
+  
+          document.head.appendChild(
+            script
+          );
+        }
+      );
+  
+    return kakaoMapPromise;
+  }
+  
+  /* =====================================================
+     NUMBER
+  ===================================================== */
+  
+  function toFiniteNumber(
+    value
+  ) {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return null;
+    }
+  
+    const number =
+      Number(value);
+  
+    return Number.isFinite(
+      number
+    )
+      ? number
+      : null;
+  }
+  
+  /* =====================================================
+     CUSTOM MARKER
+  ===================================================== */
+  
+  function createMarkerElement(
+    marker
+  ) {
+    const wrapper =
+      document.createElement(
+        "div"
+      );
+  
+    wrapper.style.position =
+      "relative";
+  
+    wrapper.style.display =
+      "flex";
+  
+    wrapper.style.flexDirection =
+      "column";
+  
+    wrapper.style.alignItems =
+      "center";
+  
+    wrapper.style.transform =
+      "translateY(-12px)";
+  
+    wrapper.style.pointerEvents =
+      "auto";
+  
+    /* ===================================================
+       CIRCLE
+    =================================================== */
+  
+    const circle =
+      document.createElement(
+        "div"
+      );
+  
+    const isMidpoint =
+      marker.type ===
+      "midpoint";
+  
+    const isPlace =
+      marker.type ===
+      "place";
+  
+    const markerSize =
+      isMidpoint
+        ? 58
+        : isPlace
+          ? 46
+          : 52;
+  
+    circle.style.width =
+      `${markerSize}px`;
+  
+    circle.style.height =
+      `${markerSize}px`;
+  
+    circle.style.display =
+      "flex";
+  
+    circle.style.alignItems =
+      "center";
+  
+    circle.style.justifyContent =
+      "center";
+  
+    circle.style.boxSizing =
+      "border-box";
+  
+    circle.style.borderRadius =
+      "50%";
+  
+    circle.style.backgroundColor =
+      marker.color ??
+      "#ffffff";
+  
+    circle.style.color =
+      marker.textColor ??
+      "#21190f";
+  
+    circle.style.border =
+      "6px solid rgba(255, 255, 255, 0.97)";
+  
+    circle.style.boxShadow =
+      "0 5px 14px rgba(33, 25, 15, 0.22)";
+  
+    circle.style.fontWeight =
+      "900";
+  
+    circle.style.fontSize =
+      isMidpoint
+        ? "23px"
+        : isPlace
+          ? "14px"
+          : "16px";
+  
+    circle.style.lineHeight =
+      "1";
+  
+    circle.style.whiteSpace =
+      "nowrap";
+  
+    circle.style.userSelect =
+      "none";
+  
+    circle.textContent =
+      marker.initial ??
+      "?";
+  
+    wrapper.appendChild(
+      circle
+    );
+  
+    return wrapper;
+  }
+  
+  /* =====================================================
+     SINGLE MARKER
+  ===================================================== */
+  
+  function createSingleMarkerElement({
+    userName,
+  }) {
+    const wrapper =
+      document.createElement(
+        "div"
+      );
+  
+    wrapper.style.width =
+      "58px";
+  
+    wrapper.style.height =
+      "58px";
+  
+    wrapper.style.display =
+      "flex";
+  
+    wrapper.style.alignItems =
+      "center";
+  
+    wrapper.style.justifyContent =
+      "center";
+  
+    wrapper.style.boxSizing =
+      "border-box";
+  
+    wrapper.style.borderRadius =
+      "50%";
+  
+    wrapper.style.backgroundColor =
+      "#7144df";
+  
+    wrapper.style.color =
+      "#ffffff";
+  
+    wrapper.style.border =
+      "6px solid #ffffff";
+  
+    wrapper.style.boxShadow =
+      "0 6px 18px rgba(33, 25, 15, 0.22)";
+  
+    wrapper.style.fontSize =
+      "19px";
+  
+    wrapper.style.fontWeight =
+      "900";
+  
+    wrapper.style.transform =
+      "translateY(-12px)";
+  
+    wrapper.textContent =
+      userName
+        ?.trim()
+        ?.charAt(0) ??
+      "📍";
+  
+    return wrapper;
+  }
+  
+  /* =====================================================
+     KAKAO MAP
+  ===================================================== */
   
   function KakaoMap({
-    lat,
-    lng,
+    lat = null,
+    lng = null,
+  
     placeName = "",
     userName = "",
   
-    /*
-      여러 사람의 위치를 표시할 때 사용
-    */
     markers = [],
   
-    /*
-      일반 단일 위치 지도 확대 수준
-    */
-    level = 4,
+    height = 300,
   
-    /*
-      참여자 카드 등을 눌렀을 때
-      특정 위치로 이동하기 위한 값
+    level = 5,
   
-      {
-        lat,
-        lng,
-        requestId
-      }
-    */
     focusLocation = null,
-  
-    /*
-      특정 사람을 눌렀을 때
-      얼마나 확대할지
-      Kakao Map은 숫자가 작을수록 확대됨
-    */
     focusLevel = 3,
   
-    height = 190,
+    /*
+      위치가 없을 때 사용할
+      기본 지도 중심.
   
-    className = "",
+      기본값 = 서울시청 인근
+    */
+  
+    defaultLat = 37.5665,
+    defaultLng = 126.978,
+  
+    /*
+      true:
+      위치가 없으면 안내문 표시
+  
+      false:
+      위치가 없어도 실제 지도만 표시
+    */
+  
+    showEmptyMessage = true,
   
     emptyMessage =
-      "출발지를 검색하고 선택해주세요",
+      "위치 정보를 표시할 수 없어요",
   }) {
-    const mapContainerRef =
+    const containerRef =
       useRef(null);
   
     const mapRef =
@@ -66,13 +412,8 @@ import {
       useRef([]);
   
     const [
-      isLoading,
-      setIsLoading,
-    ] = useState(true);
-  
-    const [
-      isMapReady,
-      setIsMapReady,
+      isReady,
+      setIsReady,
     ] = useState(false);
   
     const [
@@ -81,85 +422,71 @@ import {
     ] = useState("");
   
     /* =====================================================
-       SINGLE LOCATION CHECK
+       VALID MARKERS
     ===================================================== */
+  
+    const validMarkers =
+      Array.isArray(
+        markers
+      )
+        ? markers.filter(
+            (
+              marker
+            ) =>
+              toFiniteNumber(
+                marker.lat
+              ) !== null &&
+              toFiniteNumber(
+                marker.lng
+              ) !== null
+          )
+        : [];
+  
+    const singleLat =
+      toFiniteNumber(
+        lat
+      );
+  
+    const singleLng =
+      toFiniteNumber(
+        lng
+      );
+  
+    const validDefaultLat =
+      toFiniteNumber(
+        defaultLat
+      ) ??
+      37.5665;
+  
+    const validDefaultLng =
+      toFiniteNumber(
+        defaultLng
+      ) ??
+      126.978;
   
     const hasSingleLocation =
-      Number.isFinite(lat) &&
-      Number.isFinite(lng);
+      singleLat !== null &&
+      singleLng !== null;
+  
+    const hasMarkerLocations =
+      validMarkers.length >
+      0;
+  
+    const hasAnyLocation =
+      hasSingleLocation ||
+      hasMarkerLocations;
   
     /* =====================================================
-       MARKER NORMALIZE
-  
-       1. markers 배열이 있으면 여러 마커
-       2. 없으면 lat/lng 하나만 표시
-    ===================================================== */
-  
-    const normalizedMarkers =
-      useMemo(() => {
-        if (
-          Array.isArray(markers) &&
-          markers.length > 0
-        ) {
-          return markers.filter(
-            (marker) =>
-              Number.isFinite(
-                marker.lat
-              ) &&
-              Number.isFinite(
-                marker.lng
-              )
-          );
-        }
-  
-        if (hasSingleLocation) {
-          const label =
-            userName ||
-            placeName ||
-            "선택 위치";
-  
-          return [
-            {
-              id: "selected-location",
-  
-              lat,
-              lng,
-  
-              label,
-  
-              initial:
-                label.charAt(0),
-  
-              color: "#7144df",
-  
-              textColor:
-                "#ffffff",
-            },
-          ];
-        }
-  
-        return [];
-      }, [
-        markers,
-        hasSingleLocation,
-        lat,
-        lng,
-        placeName,
-        userName,
-      ]);
-  
-    /* =====================================================
-       MAP INITIALIZE
+       INITIALIZE MAP
     ===================================================== */
   
     useEffect(() => {
       let cancelled =
         false;
   
-      const initializeMap =
+      const initialize =
         async () => {
           try {
-            setIsLoading(true);
             setError("");
   
             const kakao =
@@ -167,25 +494,61 @@ import {
   
             if (
               cancelled ||
-              !mapContainerRef.current
+              !containerRef.current
             ) {
               return;
             }
   
-            const defaultCenter =
-              new kakao.maps.LatLng(
-                DEFAULT_LAT,
-                DEFAULT_LNG
-              );
+            /*
+              첫 화면 중심 결정
+  
+              1. markers
+              2. single location
+              3. default Seoul
+            */
+  
+            let centerLat =
+              validDefaultLat;
+  
+            let centerLng =
+              validDefaultLng;
+  
+            if (
+              validMarkers.length >
+              0
+            ) {
+              centerLat =
+                Number(
+                  validMarkers[0]
+                    .lat
+                );
+  
+              centerLng =
+                Number(
+                  validMarkers[0]
+                    .lng
+                );
+            } else if (
+              hasSingleLocation
+            ) {
+              centerLat =
+                singleLat;
+  
+              centerLng =
+                singleLng;
+            }
   
             const map =
               new kakao.maps.Map(
-                mapContainerRef.current,
+                containerRef.current,
                 {
                   center:
-                    defaultCenter,
+                    new kakao.maps.LatLng(
+                      centerLat,
+                      centerLng
+                    ),
   
-                  level: 8,
+                  level,
                 }
               );
   
@@ -193,37 +556,30 @@ import {
               map;
   
             /*
-              부모 요소 크기에 맞춰
-              지도를 다시 계산
+              부모 레이아웃이 완전히 그려진 뒤
+              카카오맵 크기 재계산
             */
-            requestAnimationFrame(
+  
+            window.requestAnimationFrame(
               () => {
                 map.relayout();
               }
             );
   
-            if (!cancelled) {
-              setIsMapReady(
-                true
-              );
-  
-              setIsLoading(
-                false
-              );
-            }
+            setIsReady(
+              true
+            );
           } catch (
             initializeError
           ) {
             console.error(
-              "카카오 지도 생성 오류:",
+              "카카오맵 초기화 실패:",
               initializeError
             );
   
-            if (!cancelled) {
-              setIsLoading(
-                false
-              );
-  
+            if (
+              !cancelled
+            ) {
               setError(
                 initializeError.message ||
                   "지도를 불러오지 못했습니다."
@@ -232,13 +588,15 @@ import {
           }
         };
   
-      initializeMap();
+      initialize();
   
       return () => {
         cancelled = true;
   
         overlaysRef.current.forEach(
-          (overlay) => {
+          (
+            overlay
+          ) => {
             overlay.setMap(
               null
             );
@@ -254,147 +612,169 @@ import {
     }, []);
   
     /* =====================================================
-       MARKER UPDATE
+       DRAW MARKERS
     ===================================================== */
   
     useEffect(() => {
       if (
-        !isMapReady ||
+        !isReady ||
         !mapRef.current ||
         !window.kakao?.maps
       ) {
         return;
       }
   
-      const kakao =
-        window.kakao;
-  
       const map =
         mapRef.current;
   
-      /*
-        기존 마커 삭제
-      */
+      const kakao =
+        window.kakao;
+  
+      /* 기존 overlay 제거 */
+  
       overlaysRef.current.forEach(
-        (overlay) => {
-          overlay.setMap(null);
+        (
+          overlay
+        ) => {
+          overlay.setMap(
+            null
+          );
         }
       );
   
       overlaysRef.current =
         [];
   
-      /*
-        마커가 없는 경우
-        서울 기본 위치
-      */
+      /* =================================================
+         MULTI MARKERS
+      ================================================= */
+  
       if (
-        normalizedMarkers.length ===
+        validMarkers.length >
         0
       ) {
-        const defaultCenter =
-          new kakao.maps.LatLng(
-            DEFAULT_LAT,
-            DEFAULT_LNG
-          );
+        const bounds =
+          new kakao.maps.LatLngBounds();
   
-        map.setCenter(
-          defaultCenter
+        validMarkers.forEach(
+          (
+            marker,
+            index
+          ) => {
+            const markerLat =
+              Number(
+                marker.lat
+              );
+  
+            const markerLng =
+              Number(
+                marker.lng
+              );
+  
+            const position =
+              new kakao.maps.LatLng(
+                markerLat,
+                markerLng
+              );
+  
+            bounds.extend(
+              position
+            );
+  
+            const element =
+              createMarkerElement(
+                marker
+              );
+  
+            const overlay =
+              new kakao.maps.CustomOverlay(
+                {
+                  map,
+  
+                  position,
+  
+                  content:
+                    element,
+  
+                  xAnchor: 0.5,
+  
+                  yAnchor: 0.5,
+  
+                  zIndex:
+                    marker.zIndex ??
+                    50 +
+                      index,
+                }
+              );
+  
+            overlaysRef.current.push(
+              overlay
+            );
+          }
         );
   
-        map.setLevel(8);
+        /*
+          2개 이상 → 모든 마커가 보이도록 bounds
+        */
+  
+        if (
+          validMarkers.length >
+            1 &&
+          !focusLocation
+        ) {
+          map.setBounds(
+            bounds,
+            45,
+            45,
+            45,
+            45
+          );
+        }
+  
+        /*
+          1개만 있고 focusLocation이 없다면
+          해당 마커 중심으로 이동
+        */
+  
+        if (
+          validMarkers.length ===
+            1 &&
+          !focusLocation
+        ) {
+          const onlyMarker =
+            validMarkers[0];
+  
+          map.setCenter(
+            new kakao.maps.LatLng(
+              Number(
+                onlyMarker.lat
+              ),
+  
+              Number(
+                onlyMarker.lng
+              )
+            )
+          );
+  
+          map.setLevel(
+            level
+          );
+        }
   
         return;
       }
   
-      const bounds =
-        new kakao.maps.LatLngBounds();
-  
       /* =================================================
-         MARKER CREATE
-      ================================================= */
-  
-      normalizedMarkers.forEach(
-        (marker) => {
-          const position =
-            new kakao.maps.LatLng(
-              marker.lat,
-              marker.lng
-            );
-  
-          bounds.extend(
-            position
-          );
-  
-          /*
-            기존 디자인처럼
-            동그란 사람 마커를 직접 만듦
-          */
-          const markerElement =
-            document.createElement(
-              "div"
-            );
-  
-          markerElement.className =
-            "kakao-map__participant-marker";
-  
-          markerElement.style.backgroundColor =
-            marker.color ||
-            "#7144df";
-  
-          markerElement.style.color =
-            marker.textColor ||
-            "#ffffff";
-  
-          markerElement.textContent =
-            marker.initial ||
-            marker.label?.charAt(
-              0
-            ) ||
-            "●";
-  
-          markerElement.title =
-            marker.label || "";
-  
-          const overlay =
-            new kakao.maps.CustomOverlay(
-              {
-                map,
-  
-                position,
-  
-                content:
-                  markerElement,
-  
-                xAnchor: 0.5,
-  
-                yAnchor: 0.5,
-  
-                zIndex: 5,
-              }
-            );
-  
-          overlaysRef.current.push(
-            overlay
-          );
-        }
-      );
-  
-      /* =================================================
-         INITIAL MAP POSITION
+         SINGLE LOCATION
       ================================================= */
   
       if (
-        normalizedMarkers.length ===
-        1
+        hasSingleLocation
       ) {
-        const onlyMarker =
-          normalizedMarkers[0];
-  
         const position =
           new kakao.maps.LatLng(
-            onlyMarker.lat,
-            onlyMarker.lng
+            singleLat,
+            singleLng
           );
   
         map.setCenter(
@@ -405,183 +785,292 @@ import {
           level
         );
   
+        const element =
+          createSingleMarkerElement(
+            {
+              userName,
+              placeName,
+            }
+          );
+  
+        const overlay =
+          new kakao.maps.CustomOverlay(
+            {
+              map,
+  
+              position,
+  
+              content:
+                element,
+  
+              xAnchor: 0.5,
+  
+              yAnchor: 0.5,
+  
+              zIndex: 100,
+            }
+          );
+  
+        overlaysRef.current.push(
+          overlay
+        );
+  
         return;
       }
   
-      /*
-        여러 명이면 모든 참여자가
-        지도 안에 들어오도록 자동 조절
-      */
-      map.setBounds(
-        bounds,
-        45,
-        35,
-        55,
-        35
+      /* =================================================
+         NO LOCATION
+  
+         ★ 마커가 하나도 없으면
+           실제 지도는 유지하고
+           기본 서울 위치로 돌아간다.
+      ================================================= */
+  
+      map.setCenter(
+        new kakao.maps.LatLng(
+          validDefaultLat,
+          validDefaultLng
+        )
+      );
+  
+      map.setLevel(
+        level
       );
     }, [
-      normalizedMarkers,
-      isMapReady,
+      isReady,
+  
+      markers,
+  
+      lat,
+      lng,
+  
+      placeName,
+      userName,
+  
       level,
+  
+      defaultLat,
+      defaultLng,
     ]);
   
     /* =====================================================
-       FOCUS LOCATION
-  
-       참여자 카드를 눌렀을 때
-       해당 참여자의 위치로 이동 + 확대
+       FOCUS
     ===================================================== */
   
     useEffect(() => {
       if (
-        !isMapReady ||
+        !isReady ||
         !mapRef.current ||
-        !window.kakao?.maps ||
-        !focusLocation
+        !focusLocation ||
+        !window.kakao?.maps
       ) {
         return;
       }
   
       const focusLat =
-        Number(
+        toFiniteNumber(
           focusLocation.lat
         );
   
       const focusLng =
-        Number(
+        toFiniteNumber(
           focusLocation.lng
         );
   
       if (
-        !Number.isFinite(
-          focusLat
-        ) ||
-        !Number.isFinite(
-          focusLng
-        )
+        focusLat === null ||
+        focusLng === null
       ) {
         return;
       }
   
-      const kakao =
-        window.kakao;
-  
-      const map =
-        mapRef.current;
-  
-      const focusPosition =
-        new kakao.maps.LatLng(
+      const position =
+        new window.kakao.maps.LatLng(
           focusLat,
           focusLng
         );
   
-      /*
-        선택한 사람 위치로
-        부드럽게 지도 이동
-      */
-      map.panTo(
-        focusPosition
+      mapRef.current.panTo(
+        position
       );
   
-      /*
-        해당 위치 기준으로 확대
-      */
-      map.setLevel(
-        focusLevel,
-        {
-          anchor:
-            focusPosition,
-  
-          animate: true,
-        }
+      mapRef.current.setLevel(
+        focusLevel
       );
     }, [
+      isReady,
+  
       focusLocation,
+  
       focusLevel,
-      isMapReady,
     ]);
+  
+    /* =====================================================
+       RESIZE
+    ===================================================== */
+  
+    useEffect(() => {
+      if (
+        !isReady ||
+        !mapRef.current
+      ) {
+        return;
+      }
+  
+      const handleResize =
+        () => {
+          mapRef.current.relayout();
+        };
+  
+      window.addEventListener(
+        "resize",
+        handleResize
+      );
+  
+      return () => {
+        window.removeEventListener(
+          "resize",
+          handleResize
+        );
+      };
+    }, [isReady]);
   
     /* =====================================================
        RENDER
     ===================================================== */
   
     return (
-      <section
-        className={`kakao-map ${className}`}
+      <div
+        className="kakao-map"
         style={{
-          height,
+          position:
+            "relative",
+  
+          width: "100%",
+  
+          height:
+            typeof height ===
+            "number"
+              ? `${height}px`
+              : height,
+  
+          overflow:
+            "hidden",
+  
+          borderRadius:
+            "inherit",
+  
+          background:
+            "#eeeade",
         }}
       >
+        {/* 실제 지도 */}
+  
         <div
           ref={
-            mapContainerRef
+            containerRef
           }
-          className="kakao-map__canvas"
+          style={{
+            width:
+              "100%",
+  
+            height:
+              "100%",
+          }}
         />
   
-        {isLoading && (
-          <div className="kakao-map__state">
-            <span>
-              🗺️
-            </span>
+        {/* ===============================================
+            EMPTY MESSAGE
   
-            <p>
-              지도를 불러오는 중이에요
-            </p>
-          </div>
-        )}
+            showEmptyMessage=false이면
+            이 레이어 자체를 만들지 않는다.
+        =============================================== */}
+  
+        {!hasAnyLocation &&
+          !error &&
+          showEmptyMessage && (
+            <div
+              style={{
+                position:
+                  "absolute",
+  
+                inset: 0,
+  
+                display:
+                  "flex",
+  
+                alignItems:
+                  "center",
+  
+                justifyContent:
+                  "center",
+  
+                padding:
+                  "24px",
+  
+                background:
+                  "rgba(243, 240, 231, 0.88)",
+  
+                color:
+                  "#9a8056",
+  
+                textAlign:
+                  "center",
+  
+                fontSize:
+                  "12px",
+  
+                pointerEvents:
+                  "none",
+              }}
+            >
+              {
+                emptyMessage
+              }
+            </div>
+          )}
+  
+        {/* ERROR */}
   
         {error && (
-          <div className="kakao-map__state kakao-map__state--error">
-            <span>
-              ⚠️
-            </span>
+          <div
+            style={{
+              position:
+                "absolute",
   
-            <p>
-              {error}
-            </p>
+              inset: 0,
+  
+              display:
+                "flex",
+  
+              alignItems:
+                "center",
+  
+              justifyContent:
+                "center",
+  
+              padding:
+                "24px",
+  
+              background:
+                "#f3f0e7",
+  
+              color:
+                "#9a8056",
+  
+              textAlign:
+                "center",
+  
+              fontSize:
+                "12px",
+            }}
+          >
+            {
+              error
+            }
           </div>
         )}
-  
-        {!isLoading &&
-          !error &&
-          normalizedMarkers
-            .length === 0 && (
-            <div className="kakao-map__guide">
-              <span>
-                📍
-              </span>
-  
-              {emptyMessage}
-            </div>
-          )}
-  
-        {/*
-          CreateRoomPage처럼
-          단일 위치를 보여줄 때만
-          아래 장소 라벨 표시
-        */}
-  
-        {markers.length === 0 &&
-          hasSingleLocation &&
-          placeName && (
-            <div className="kakao-map__label">
-              <span className="kakao-map__dot" />
-  
-              {userName && (
-                <strong>
-                  {userName}
-                </strong>
-              )}
-  
-              <span className="kakao-map__place">
-                {userName
-                  ? `· ${placeName}`
-                  : placeName}
-              </span>
-            </div>
-          )}
-      </section>
+      </div>
     );
   }
   

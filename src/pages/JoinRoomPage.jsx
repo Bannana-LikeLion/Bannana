@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -14,142 +15,260 @@ import KakaoMap from "../components/map/KakaoMap";
 import bannanaLogo from "../assets/bannana-logo.svg";
 
 import {
-  getMockParticipants,
-  getMockRoom,
-} from "../data/mockData";
+  getRoomStatus,
+  registerParticipant,
+} from "../api/bannanaApi";
 
 import "./JoinRoomPage.css";
 
+/* =====================================================
+   CATEGORY LABEL
+===================================================== */
+
+const CATEGORY_LABELS = {
+  CAFE: "카페",
+  RESTAURANT: "식당",
+  EXHIBITION: "전시",
+  SHOPPING: "쇼핑",
+  PARK: "공원",
+};
+
+/* =====================================================
+   JOIN ROOM PAGE
+===================================================== */
+
 function JoinRoomPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   /*
-    현재 App.jsx의 Route가
-    /join/:inviteCode 이므로 일단 그대로 읽는다.
+    현재 Route 이름은 inviteCode지만
+    실제로는 roomId를 사용한다.
 
-    실제 값은 앞으로 roomId로 사용한다.
+    /join/2
+    → roomId = "2"
   */
-  const { inviteCode } = useParams();
+  const { inviteCode } =
+    useParams();
 
-  const roomId = inviteCode;
+  const roomId =
+    inviteCode;
 
   /* =====================================================
-     MOCK ROOM
+     API ROOM DATA
   ===================================================== */
 
-  const room = useMemo(
-    () => getMockRoom(),
-    []
-  );
+  const [
+    roomStatus,
+    setRoomStatus,
+  ] = useState(null);
 
-  const mockParticipants = useMemo(
-    () => getMockParticipants(),
-    []
-  );
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(true);
 
-  /*
-    Mock 데모에서는
-
-    1. 호스트
-    2. 송현석
-    3. 김보경
-
-    까지 참여한 상태이고,
-
-    현재 초대 링크로 접속한 사용자가
-    4번째 참여자가 된다고 가정한다.
-  */
-
-  const existingParticipants =
-    mockParticipants.slice(0, -1);
-
-  const participantTemplate =
-    mockParticipants[
-      mockParticipants.length - 1
-    ];
-
-  const totalParticipantCount =
-    existingParticipants.length + 1;
-
-  const participantStorageKey =
-    `bannana-participant-${roomId}`;
+  const [
+    loadError,
+    setLoadError,
+  ] = useState("");
 
   /* =====================================================
      STEP
+
+     invite
+     → input
+     → complete
   ===================================================== */
 
-  const [step, setStep] =
-    useState("invite");
+  const [
+    step,
+    setStep,
+  ] = useState("invite");
 
   /* =====================================================
-     PARTICIPANT FORM
+     FORM
   ===================================================== */
 
-  const [formData, setFormData] =
-    useState({
-      nickname: "",
+  const [
+    formData,
+    setFormData,
+  ] = useState({
+    nickname: "",
 
-      originText: "",
+    originText: "",
 
-      originLat: null,
+    originLat: null,
 
-      originLng: null,
-    });
+    originLng: null,
+  });
 
-  const [errors, setErrors] =
-    useState({});
+  const [
+    errors,
+    setErrors,
+  ] = useState({});
+
+  const [
+    isSubmitting,
+    setIsSubmitting,
+  ] = useState(false);
+
+  /* =====================================================
+     LOAD ROOM
+
+     GET /rooms/{roomId}/status
+  ===================================================== */
+
+  useEffect(() => {
+    let cancelled =
+      false;
+
+    const loadRoom =
+      async () => {
+        try {
+          setIsLoading(true);
+          setLoadError("");
+
+          const data =
+            await getRoomStatus(
+              roomId
+            );
+
+          if (!cancelled) {
+            setRoomStatus(data);
+          }
+        } catch (error) {
+          console.error(
+            "초대방 정보 조회 실패:",
+            error
+          );
+
+          if (!cancelled) {
+            setLoadError(
+              error.message ||
+                "약속방 정보를 불러오지 못했습니다."
+            );
+          }
+        } finally {
+          if (!cancelled) {
+            setIsLoading(false);
+          }
+        }
+      };
+
+    loadRoom();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [roomId]);
+
+  /* =====================================================
+     PARTICIPANTS
+
+     Backend:
+     host
+     participants[]
+
+     두 데이터를 하나의 배열로 합친다.
+  ===================================================== */
+
+  const existingParticipants =
+    useMemo(() => {
+      if (!roomStatus) {
+        return [];
+      }
+
+      return [
+        roomStatus.host,
+        ...(roomStatus.participants ??
+          []),
+      ].filter(Boolean);
+    }, [roomStatus]);
 
   /* =====================================================
      MEETING INFO
   ===================================================== */
 
-  const meetingDate = new Date(
-    room.meetingDateTime
-  );
-
   const meetingDateText =
-    new Intl.DateTimeFormat(
-      "ko-KR",
-      {
-        month: "long",
-        day: "numeric",
-        weekday: "short",
+    useMemo(() => {
+      if (
+        !roomStatus?.meetingDate
+      ) {
+        return "";
       }
-    ).format(meetingDate);
+
+      const date =
+        new Date(
+          `${roomStatus.meetingDate}T00:00:00`
+        );
+
+      return new Intl.DateTimeFormat(
+        "ko-KR",
+        {
+          month: "long",
+          day: "numeric",
+          weekday: "short",
+        }
+      ).format(date);
+    }, [
+      roomStatus?.meetingDate,
+    ]);
 
   const meetingTimeText =
-    new Intl.DateTimeFormat(
-      "ko-KR",
-      {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
+    useMemo(() => {
+      if (
+        !roomStatus?.meetingTime
+      ) {
+        return "";
       }
-    ).format(meetingDate);
+
+      const [
+        hour,
+        minute,
+      ] =
+        roomStatus.meetingTime.split(
+          ":"
+        );
+
+      const date =
+        new Date();
+
+      date.setHours(
+        Number(hour),
+        Number(minute),
+        0,
+        0
+      );
+
+      return new Intl.DateTimeFormat(
+        "ko-KR",
+        {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        }
+      ).format(date);
+    }, [
+      roomStatus?.meetingTime,
+    ]);
 
   const categoryText =
-    room.preferredCategories
-      .map((category) => {
-        if (category === "CAFE") {
-          return "카페";
-        }
-
-        if (
-          category ===
-          "RESTAURANT"
-        ) {
-          return "식당";
-        }
-
-        if (
-          category === "CULTURE"
-        ) {
-          return "문화";
-        }
-
-        return category;
-      })
-      .join(", ");
+    useMemo(() => {
+      return (
+        roomStatus?.placeTypes ??
+        []
+      )
+        .map(
+          (category) =>
+            CATEGORY_LABELS[
+              category
+            ] ?? category
+        )
+        .join(", ");
+    }, [
+      roomStatus?.placeTypes,
+    ]);
 
   /* =====================================================
      NAME INPUT
@@ -181,7 +300,11 @@ function JoinRoomPage() {
   };
 
   /* =====================================================
-     ORIGIN TEXT INPUT
+     ORIGIN INPUT
+
+     검색 결과를 선택한 뒤
+     사용자가 텍스트를 다시 수정하면
+     기존 좌표는 무효 처리.
   ===================================================== */
 
   const handleOriginInputChange = (
@@ -193,11 +316,6 @@ function JoinRoomPage() {
 
         originText: value,
 
-        /*
-          검색 결과를 선택한 후
-          사용자가 텍스트를 다시 수정하면
-          기존 좌표는 더 이상 유효하지 않음.
-        */
         originLat: null,
 
         originLng: null,
@@ -214,7 +332,7 @@ function JoinRoomPage() {
   };
 
   /* =====================================================
-     KAKAO PLACE SELECT
+     KAKAO LOCATION SELECT
   ===================================================== */
 
   const handleOriginSelect = (
@@ -248,131 +366,258 @@ function JoinRoomPage() {
      VALIDATION
   ===================================================== */
 
-  const validateForm = () => {
-    const nextErrors = {};
+  const validateForm =
+    () => {
+      const nextErrors = {};
 
-    if (
-      !formData.nickname.trim()
-    ) {
-      nextErrors.nickname =
-        "이름을 입력해주세요.";
-    }
-
-    if (
-      !formData.originText.trim()
-    ) {
-      nextErrors.originText =
-        "출발지를 입력해주세요.";
-    } else if (
-      !Number.isFinite(
-        formData.originLat
-      ) ||
-      !Number.isFinite(
-        formData.originLng
-      )
-    ) {
-      nextErrors.originText =
-        "출발지를 검색한 뒤 검색 결과에서 하나를 선택해주세요.";
-    }
-
-    setErrors(nextErrors);
-
-    return (
-      Object.keys(nextErrors)
-        .length === 0
-    );
-  };
-
-  /* =====================================================
-     PARTICIPANT SUBMIT
-  ===================================================== */
-
-  const handleSubmit = () => {
-    if (!validateForm()) {
-      return;
-    }
-
-    /*
-      지금은 Mock 저장.
-
-      실제 API 연결 후에는:
-
-      POST /rooms/{roomId}/participants
-
-      {
-        name,
-        originText,
-        originLat,
-        originLng
+      if (
+        !formData.nickname.trim()
+      ) {
+        nextErrors.nickname =
+          "이름을 입력해주세요.";
       }
 
-      형태로 서버에 전달한다.
-    */
+      if (
+        !formData.originText.trim()
+      ) {
+        nextErrors.originText =
+          "출발지를 입력해주세요.";
+      } else if (
+        !Number.isFinite(
+          formData.originLat
+        ) ||
+        !Number.isFinite(
+          formData.originLng
+        )
+      ) {
+        nextErrors.originText =
+          "출발지를 검색한 뒤 검색 결과에서 하나를 선택해주세요.";
+      }
 
-    const participant = {
-      id:
-        participantTemplate?.id ??
-        4,
+      setErrors(nextErrors);
 
-      nickname:
-        formData.nickname.trim(),
-
-      originType:
-        "PLACE",
-
-      originText:
-        formData.originText.trim(),
-
-      originLat:
-        formData.originLat,
-
-      originLng:
-        formData.originLng,
-
-      transportMode:
-        "TRANSIT",
-
-      submitted: true,
-
-      isHost: false,
-
-      /*
-        실제 API 연결 후
-        Recommendation 결과로 교체.
-      */
-      travelTime: 37,
+      return (
+        Object.keys(nextErrors)
+          .length === 0
+      );
     };
 
-    /*
-      다음 Participant 화면에서도
-      현재 입력값을 사용할 수 있도록
-      sessionStorage에 임시 저장.
-    */
-
-    sessionStorage.setItem(
-      participantStorageKey,
-      JSON.stringify(
-        participant
-      )
-    );
-
-    setStep("complete");
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
   /* =====================================================
-     WAITING PAGE
+     REAL PARTICIPANT REGISTER
+
+     POST /rooms/{roomId}/participants
   ===================================================== */
 
-  const handleWaitResult = () => {
-    navigate(
-      `/join/${roomId}/waiting`
+  const handleSubmit =
+    async () => {
+      if (!validateForm()) {
+        return;
+      }
+
+      if (isSubmitting) {
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      try {
+        const participantResponse =
+          await registerParticipant(
+            roomId,
+            {
+              name:
+                formData.nickname.trim(),
+
+              originText:
+                formData.originText.trim(),
+
+              originLat:
+                formData.originLat,
+
+              originLng:
+                formData.originLng,
+            }
+          );
+
+        /*
+          Backend 응답:
+
+          participant_id
+          nickname
+          origin_text
+          origin_lat
+          origin_lng
+          role
+
+          ↓
+
+          기존 Participant 화면들이
+          사용하기 편한 형태로 변환.
+        */
+
+        const participant = {
+          id:
+            participantResponse.participant_id,
+
+          participantId:
+            participantResponse.participant_id,
+
+          nickname:
+            participantResponse.nickname,
+
+          originText:
+            participantResponse.origin_text,
+
+          originLat:
+            participantResponse.origin_lat,
+
+          originLng:
+            participantResponse.origin_lng,
+
+          role:
+            participantResponse.role,
+
+          submitted: true,
+
+          isHost: false,
+        };
+
+        /* ===============================================
+           SESSION STORAGE
+
+           기다리기/확정 화면에서
+           현재 참가자 정보를 사용하기 위해 저장.
+        =============================================== */
+
+        sessionStorage.setItem(
+          `bannana-participant-${roomId}`,
+          JSON.stringify(
+            participant
+          )
+        );
+
+        /*
+          현재 roomStatus에도
+          방금 참여자를 즉시 추가한다.
+
+          이 때문에 POST 성공 후
+          다시 GET을 보내지 않아도
+          완료 화면의 인원수가 바로 반영된다.
+        */
+
+        setRoomStatus(
+          (prev) => {
+            if (!prev) {
+              return prev;
+            }
+
+            return {
+              ...prev,
+
+              participants: [
+                ...(prev.participants ??
+                  []),
+
+                participantResponse,
+              ],
+
+              joinedCount:
+                Number(
+                  prev.joinedCount ??
+                    existingParticipants.length
+                ) + 1,
+            };
+          }
+        );
+
+        setStep(
+          "complete"
+        );
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      } catch (error) {
+        console.error(
+          "참여자 등록 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+            "참여자 등록에 실패했습니다."
+        );
+      } finally {
+        setIsSubmitting(
+          false
+        );
+      }
+    };
+
+  /* =====================================================
+     WAIT RESULT
+  ===================================================== */
+
+  const handleWaitResult =
+    () => {
+      navigate(
+        `/join/${roomId}/waiting`
+      );
+    };
+
+  /* =====================================================
+     LOADING
+  ===================================================== */
+
+  if (isLoading) {
+    return (
+      <main className="join-page join-page--invite app-container">
+        <section className="join-invite-card">
+          <h1>
+            약속방을 불러오는 중이에요
+          </h1>
+
+          <p>
+            잠시만 기다려주세요 🍌
+          </p>
+        </section>
+      </main>
     );
-  };
+  }
+
+  /* =====================================================
+     LOAD ERROR
+  ===================================================== */
+
+  if (
+    loadError ||
+    !roomStatus
+  ) {
+    return (
+      <main className="join-page join-page--invite app-container">
+        <section className="join-invite-card">
+          <h1>
+            약속방을 찾을 수 없어요
+          </h1>
+
+          <p>
+            {loadError}
+          </p>
+
+          <button
+            type="button"
+            className="join-primary-button"
+            onClick={() =>
+              window.location.reload()
+            }
+          >
+            다시 시도하기
+          </button>
+        </section>
+      </main>
+    );
+  }
 
   /* =====================================================
      STEP 1
@@ -382,6 +627,8 @@ function JoinRoomPage() {
   if (step === "invite") {
     return (
       <main className="join-page join-page--invite app-container">
+        {/* HEADER */}
+
         <header className="join-invite-header">
           <div className="join-logo">
             <img
@@ -404,17 +651,24 @@ function JoinRoomPage() {
           🐵
         </div>
 
+        {/* INVITE CARD */}
+
         <section className="join-invite-card">
           <p className="join-invite-host">
-            {room.host.nickname}님이
-            초대했어요
+            {
+              roomStatus.host
+                ?.nickname
+            }
+            님이 초대했어요
           </p>
 
           <h1>
-            {room.title}
+            {roomStatus.title}
           </h1>
 
           <div className="join-invite-info">
+            {/* DATE */}
+
             <div className="join-invite-info__row">
               <span>
                 🗓️ 날짜
@@ -426,6 +680,8 @@ function JoinRoomPage() {
               </strong>
             </div>
 
+            {/* TRANSPORT */}
+
             <div className="join-invite-info__row">
               <span>
                 🚇 이동수단
@@ -435,6 +691,8 @@ function JoinRoomPage() {
                 대중교통
               </strong>
             </div>
+
+            {/* PLACE TYPE */}
 
             <div className="join-invite-info__row">
               <span>
@@ -447,6 +705,8 @@ function JoinRoomPage() {
             </div>
           </div>
 
+          {/* EXISTING PARTICIPANTS */}
+
           <div className="join-existing">
             <div className="join-existing__avatars">
               {existingParticipants.map(
@@ -456,15 +716,17 @@ function JoinRoomPage() {
                 ) => (
                   <div
                     key={
-                      participant.id
+                      participant.participant_id
                     }
                     className={`join-mini-avatar join-mini-avatar--${
-                      index + 1
+                      (index %
+                        4) +
+                      1
                     }`}
                   >
-                    {participant.nickname.charAt(
+                    {participant.nickname?.charAt(
                       0
-                    )}
+                    ) ?? "?"}
                   </div>
                 )
               )}
@@ -472,12 +734,14 @@ function JoinRoomPage() {
 
             <strong>
               {
-                existingParticipants.length
+                roomStatus.joinedCount
               }
               명이 이미 참여했어요
             </strong>
           </div>
         </section>
+
+        {/* NO LOGIN */}
 
         <div className="join-no-login">
           <span>
@@ -489,6 +753,8 @@ function JoinRoomPage() {
             바로 참여할 수 있어요
           </p>
         </div>
+
+        {/* BOTTOM */}
 
         <footer className="join-fixed-bottom">
           <button
@@ -514,12 +780,14 @@ function JoinRoomPage() {
 
   /* =====================================================
      STEP 2
-     PARTICIPANT INPUT
+     INPUT
   ===================================================== */
 
   if (step === "input") {
     return (
       <main className="join-page join-input-page app-container">
+        {/* HEADER */}
+
         <header className="join-input-header">
           <button
             type="button"
@@ -555,9 +823,7 @@ function JoinRoomPage() {
           </p>
         </header>
 
-        {/* =================================================
-            ROOM SUMMARY
-        ================================================= */}
+        {/* ROOM SUMMARY */}
 
         <section className="join-room-summary">
           <div className="join-room-summary__icon">
@@ -566,7 +832,9 @@ function JoinRoomPage() {
 
           <div>
             <strong>
-              {room.title}
+              {
+                roomStatus.title
+              }
             </strong>
 
             <p>
@@ -576,9 +844,7 @@ function JoinRoomPage() {
           </div>
         </section>
 
-        {/* =================================================
-            FORM
-        ================================================= */}
+        {/* FORM */}
 
         <section className="join-form">
           {/* NAME */}
@@ -599,16 +865,15 @@ function JoinRoomPage() {
                   ? "join-input--error"
                   : ""
               }`}
-              placeholder={`예: ${
-                participantTemplate
-                  ?.nickname ??
-                "이지은"
-              }`}
+              placeholder="예: 이지은"
               value={
                 formData.nickname
               }
               onChange={
                 handleChange
+              }
+              disabled={
+                isSubmitting
               }
             />
 
@@ -657,9 +922,7 @@ function JoinRoomPage() {
               </p>
             )}
 
-            {/* =============================================
-                REAL KAKAO MAP
-            ============================================= */}
+            {/* REAL MAP */}
 
             <div className="join-origin-map">
               <KakaoMap
@@ -698,6 +961,8 @@ function JoinRoomPage() {
           </div>
         </section>
 
+        {/* SUBMIT */}
+
         <footer className="join-input-bottom">
           <button
             type="button"
@@ -705,8 +970,13 @@ function JoinRoomPage() {
             onClick={
               handleSubmit
             }
+            disabled={
+              isSubmitting
+            }
           >
-            출발지 제출하기 →
+            {isSubmitting
+              ? "출발지 등록 중..."
+              : "출발지 제출하기 →"}
           </button>
         </footer>
       </main>
@@ -720,6 +990,8 @@ function JoinRoomPage() {
 
   return (
     <main className="join-page join-complete-page app-container">
+      {/* PROGRESS */}
+
       <div className="join-complete-progress">
         <div className="join-progress">
           <div className="join-progress__bar join-progress__bar--active" />
@@ -733,6 +1005,8 @@ function JoinRoomPage() {
           </span>
         </div>
       </div>
+
+      {/* COMPLETE HERO */}
 
       <section className="join-complete-hero">
         <div className="join-complete-character">
@@ -753,10 +1027,12 @@ function JoinRoomPage() {
           <br />
 
           <strong>
-            바로 알려드릴게요!
+            바로 확인할 수 있어요!
           </strong>
         </p>
       </section>
+
+      {/* SUBMITTED DATA */}
 
       <section className="join-submitted-card">
         <h2>
@@ -789,10 +1065,12 @@ function JoinRoomPage() {
           </span>
 
           <strong>
-            {room.title}
+            {roomStatus.title}
           </strong>
         </div>
       </section>
+
+      {/* PARTICIPANT COUNT */}
 
       <section className="join-complete-count">
         <div className="join-complete-avatars">
@@ -803,38 +1081,37 @@ function JoinRoomPage() {
             ) => (
               <div
                 key={
-                  participant.id
+                  participant.participant_id
                 }
                 className={`join-complete-avatar join-complete-avatar--${
-                  index + 1
+                  (index % 4) +
+                  1
                 }`}
               >
-                {participant.nickname.charAt(
+                {participant.nickname?.charAt(
                   0
-                )}
+                ) ?? "?"}
               </div>
             )
           )}
-
-          <div className="join-complete-avatar join-complete-avatar--4">
-            {formData.nickname.charAt(
-              0
-            )}
-          </div>
         </div>
 
         <div>
           <strong>
-            {totalParticipantCount}
+            {
+              roomStatus.joinedCount
+            }
             명 참여 완료
           </strong>
 
           <p>
-            모든 참여자가 출발지를
-            입력했어요
+            출발지 등록이
+            완료됐어요
           </p>
         </div>
       </section>
+
+      {/* WAIT */}
 
       <footer className="join-complete-bottom">
         <button
