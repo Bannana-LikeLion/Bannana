@@ -56,7 +56,7 @@ bannana:
     # auto = 카카오 우선 + 정적 목록 폴백 / kakao / static
     station-provider: auto
     # ODsay 동시 호출 수
-    concurrency: 8
+    concurrency: 4
 
 logging:
   level:

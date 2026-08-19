@@ -8,12 +8,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  * ODsay 대중교통 이동시간 조회.
@@ -47,12 +50,21 @@ public class OdsayClient {
      *
      * @return 조회 실패 시 {@link Optional#empty()} — 호출부는 해당 조합만 제외하고 진행한다.
      */
-    public Optional<Integer> travelMinutes(GeoPoint origin, GeoPoint destination) {
-        if (!properties.hasApiKey()) {
-            log.warn("ODSAY_API_KEY가 설정되지 않아 이동시간을 조회할 수 없습니다.");
-            return Optional.empty();
-        }
+    private static final int MAX_RETRIES = 3;
+    private static final long BASE_BACKOFF_MILLIS = 500;
+    private static final long MIN_DISPATCH_INTERVAL_MILLIS = 150;
 
+    private final Object paceLock = new Object();
+    private volatile long nextAllowedDispatchMillis = 0;
+
+    public Optional<Integer> travelMinutes(GeoPoint origin, GeoPoint destination) {
+    if (!properties.hasApiKey()) {
+        log.warn("ODSAY_API_KEY가 설정되지 않아 이동시간을 조회할 수 없습니다.");
+        return Optional.empty();
+    }
+
+    for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        awaitDispatchSlot();
         try {
             OdsayPathResponse response = restClient.get()
                     .uri(buildUri(origin, destination))
@@ -60,14 +72,52 @@ public class OdsayClient {
                     .body(OdsayPathResponse.class);
 
             return extractMinutes(response, origin, destination);
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            if (attempt == MAX_RETRIES) {
+                log.warn("ODsay 429 재시도 초과 ({},{} -> {},{})",
+                        origin.lat(), origin.lng(), destination.lat(), destination.lng());
+                return Optional.empty();
+            }
+            long backoff = jitteredBackoff(attempt);
+            log.debug("ODsay 429, {}ms 후 재시도 ({}/{})", backoff, attempt + 1, MAX_RETRIES);
+            sleepQuietly(backoff);
         } catch (Exception e) {
-            // 타임아웃, 5xx, 파싱 오류 등 — 이 조합만 버리고 나머지는 계속 간다.
             log.warn("ODsay 경로 조회 실패 ({},{} -> {},{}): {}",
                     origin.lat(), origin.lng(), destination.lat(), destination.lng(), e.toString());
             return Optional.empty();
         }
     }
+    return Optional.empty();
+}
 
+/** 이 메서드를 통과해야 실제 요청이 나간다 — 인스턴스 전체에서 최소 간격을 강제한다. */
+private void awaitDispatchSlot() {
+    long waitMillis;
+    synchronized (paceLock) {
+        long now = System.currentTimeMillis();
+        long earliest = Math.max(now, nextAllowedDispatchMillis);
+        nextAllowedDispatchMillis = earliest + MIN_DISPATCH_INTERVAL_MILLIS;
+        waitMillis = earliest - now;
+    }
+    if (waitMillis > 0) {
+        sleepQuietly(waitMillis);
+    }
+}
+
+/** 같은 순간에 여러 스레드가 동시에 재시도하지 않도록 무작위성을 섞는다. */
+private long jitteredBackoff(int attempt) {
+    long base = BASE_BACKOFF_MILLIS * (1L << attempt);
+    long jitter = ThreadLocalRandom.current().nextLong(base / 2);
+    return base + jitter;
+}
+
+private void sleepQuietly(long millis) {
+    try {
+        Thread.sleep(millis);
+    } catch (InterruptedException ie) {
+        Thread.currentThread().interrupt();
+    }
+}
     private Optional<Integer> extractMinutes(OdsayPathResponse response, GeoPoint origin, GeoPoint destination) {
         if (response == null) {
             log.warn("ODsay 응답 본문이 비어 있습니다.");

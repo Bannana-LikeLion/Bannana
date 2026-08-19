@@ -43,7 +43,7 @@ public class RecommendationService {
     private static final Logger log = LoggerFactory.getLogger(RecommendationService.class);
 
     /** 전체 ODsay 조회에 허용하는 총 시간. 넘기면 그때까지 모인 결과만으로 계산한다. */
-    private static final Duration LOOKUP_BUDGET = Duration.ofSeconds(25);
+    private static final Duration LOOKUP_BUDGET = Duration.ofSeconds(30);
 
     private final StationProvider stationProvider;
     private final OdsayClient odsayClient;
