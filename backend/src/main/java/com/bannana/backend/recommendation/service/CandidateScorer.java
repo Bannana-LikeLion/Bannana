@@ -41,7 +41,7 @@ public class CandidateScorer {
             }
         }
 
-        if (travelTimes.isEmpty()) {
+        if (travelTimes.size() < participants.size()) {
             return Optional.empty();
         }
 
