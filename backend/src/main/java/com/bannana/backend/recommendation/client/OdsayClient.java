@@ -124,7 +124,7 @@ private void sleepQuietly(long millis) {
             return Optional.empty();
         }
 
-        OdsayPathResponse.Error error = response.error();
+        OdsayPathResponse.Error error = response.firstError();
         if (error != null) {
             if (isTooClose(error)) {
                 // 참여자가 후보 역 바로 옆인 경우다. 여기서 조합을 버리면 gap이 오히려 왜곡되므로
