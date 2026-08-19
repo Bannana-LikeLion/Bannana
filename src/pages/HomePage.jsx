@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+import bannanaLogo from "../assets/bannana-logo.svg";
 import "./HomePage.css";
 
 function HomePage() {
@@ -9,9 +9,11 @@ function HomePage() {
     <main className="home app-container">
       <section className="home__brand">
         <div className="home__brand-line">
-          <span className="home__logo-symbol">
-            🍌
-          </span>
+          <img
+            src={bannanaLogo}
+            alt="반나나 로고"
+            className="home-logo"
+          />
 
           <span className="home__brand-name">
             반나나
@@ -19,7 +21,7 @@ function HomePage() {
         </div>
 
         <h1 className="home__title">
-          반나나
+          출발지는 달라도, <br /> 만남은 공평하게
         </h1>
       </section>
 

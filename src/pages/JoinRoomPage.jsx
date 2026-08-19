@@ -14,6 +14,8 @@ import {
   } from "../data/mockData";
   
   import "./JoinRoomPage.css";
+
+import bannanaLogo from "../assets/bannana-logo.svg";
   
   function JoinRoomPage() {
     const navigate = useNavigate();
@@ -277,15 +279,17 @@ import {
         <main className="join-page join-page--invite app-container">
           <header className="join-invite-header">
             <div className="join-logo">
-              <div className="join-logo__icon">
-                🍌
-              </div>
-  
+              <img
+                src={bannanaLogo}
+                alt="반나나 로고"
+                className="join-logo__image"
+              />
+
               <strong>
                 반나나
               </strong>
             </div>
-  
+
             <div className="join-invite-badge">
               초대장
             </div>

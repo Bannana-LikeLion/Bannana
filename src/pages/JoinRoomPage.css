@@ -79,58 +79,52 @@
       #fffdf5;
   }
   
-  
   /* =====================================================
-     INVITE HEADER
+   INVITE HEADER
   ===================================================== */
-  
+
   .join-invite-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  
+
   .join-logo {
     display: flex;
     align-items: center;
-  
-    gap: 9px;
+
+    gap: 10px;
   }
-  
-  .join-logo__icon {
-    width: 35px;
-    height: 35px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    border: 2px solid #e5bd28;
-    border-radius: 50%;
-  
-    background: #fff8c8;
-  
-    font-size: 17px;
+
+  .join-logo__image {
+    display: block;
+
+    width: 48px;
+    height: auto;
+
+    object-fit: contain;
   }
-  
+
   .join-logo strong {
+    color: #21190f;
+
     font-size: 20px;
+    font-weight: 800;
   }
-  
+
   .join-invite-badge {
     padding: 9px 13px;
-  
+
     border: 1px solid #ead27c;
     border-radius: 999px;
-  
+
     background: #fff5c9;
-  
+
     color: #8b6d18;
-  
+
     font-size: 10px;
     font-weight: 700;
   }
-  
   
   /* =====================================================
      MONKEY
@@ -142,7 +136,7 @@
       auto
       25px;
   
-    font-size: 43px;
+    font-size: 50px;
   
     text-align: center;
   }
