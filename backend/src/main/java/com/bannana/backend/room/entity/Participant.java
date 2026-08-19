@@ -56,6 +56,9 @@ public class Participant {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 
+	@Column(name = "travel_minutes")
+	private Integer travelMinutes;
+
 	public Participant(Room room, String name, String originText, Double originLat, Double originLng,
 		ParticipantRole role) {
 		this.room = room;
@@ -84,5 +87,9 @@ public class Participant {
 		this.originText = originText;
 		this.originLat = originLat;
 		this.originLng = originLng;
+	}
+
+	public void updateTravelMinutes(Integer travelMinutes) {
+	this.travelMinutes = travelMinutes;
 	}
 }

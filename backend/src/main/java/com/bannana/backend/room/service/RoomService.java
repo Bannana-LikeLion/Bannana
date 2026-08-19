@@ -26,6 +26,8 @@ import com.bannana.backend.room.exception.RoomNotFoundException;
 import com.bannana.backend.room.repository.ParticipantRepository;
 import com.bannana.backend.room.repository.RoomRepository;
 import com.bannana.backend.room.dto.FinalPlaceRequest;
+import com.bannana.backend.recommendation.client.OdsayClient;
+import com.bannana.backend.recommendation.domain.GeoPoint;
 
 @Service
 public class RoomService {
@@ -35,14 +37,18 @@ public class RoomService {
 	private final RoomRepository roomRepository;
 	private final ParticipantRepository participantRepository;
 	private final String inviteBaseUrl;
+	private final OdsayClient odsayClient;
+
 
 	public RoomService(
 		RoomRepository roomRepository,
 		ParticipantRepository participantRepository,
+		OdsayClient odsayClient,
 		@Value("${app.invite-base-url:http://localhost:5173/invite}") String inviteBaseUrl
 	) {
 		this.roomRepository = roomRepository;
 		this.participantRepository = participantRepository;
+		this.odsayClient = odsayClient;
 		this.inviteBaseUrl = inviteBaseUrl;
 	}
 
@@ -169,8 +175,19 @@ public class RoomService {
 
 	@Transactional
 	public void setFinalPlace(Long roomId, FinalPlaceRequest request) {
-		Room room = findRoom(roomId);
-		room.markFinalPlace(request.placeName(), request.lat(), request.lng());
-		roomRepository.save(room);
+	Room room = findRoom(roomId);
+	room.markFinalPlace(request.placeName(), request.lat(), request.lng());
+	roomRepository.save(room);
+
+	GeoPoint destination = new GeoPoint(request.lat(), request.lng());
+	List<Participant> all = participantRepository.findAllByRoomIdOrderBySubmittedAtAsc(roomId);
+	for (Participant participant : all) {
+		if (participant.getOriginLat() == null || participant.getOriginLng() == null) {
+			continue;
+		}
+		GeoPoint origin = new GeoPoint(participant.getOriginLat(), participant.getOriginLng());
+		odsayClient.travelMinutes(origin, destination)
+			.ifPresent(participant::updateTravelMinutes);
+		}
 	}
 }

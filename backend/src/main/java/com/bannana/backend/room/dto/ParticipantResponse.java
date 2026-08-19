@@ -11,7 +11,8 @@ public record ParticipantResponse(
 	@JsonProperty("origin_text") String originText,
 	@JsonProperty("origin_lat") Double originLat,
 	@JsonProperty("origin_lng") Double originLng,
-	@JsonProperty("role") ParticipantRole role
+	@JsonProperty("role") ParticipantRole role,
+	@JsonProperty("travel_minutes") Integer travelMinutes
 ) {
 	public static ParticipantResponse from(Participant participant) {
 		return new ParticipantResponse(
@@ -20,7 +21,8 @@ public record ParticipantResponse(
 			participant.getOriginText(),
 			participant.getOriginLat(),
 			participant.getOriginLng(),
-			participant.getRole()
+			participant.getRole(),
+			participant.getTravelMinutes()
 		);
 	}
 }

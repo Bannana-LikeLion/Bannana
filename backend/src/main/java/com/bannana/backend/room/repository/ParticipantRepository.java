@@ -17,4 +17,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 	List<Participant> findAllByRoomIdAndRoleOrderBySubmittedAtAsc(Long roomId, ParticipantRole role);
 
 	long countByRoomId(Long roomId);
+
+	List<Participant> findAllByRoomIdOrderBySubmittedAtAsc(Long roomId);
 }

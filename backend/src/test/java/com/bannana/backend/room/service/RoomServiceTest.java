@@ -25,6 +25,7 @@ import com.bannana.backend.room.entity.TransportMode;
 import com.bannana.backend.room.exception.BadRequestException;
 import com.bannana.backend.room.repository.ParticipantRepository;
 import com.bannana.backend.room.repository.RoomRepository;
+import com.bannana.backend.recommendation.client.OdsayClient;
 
 @ExtendWith(MockitoExtension.class)
 class RoomServiceTest {
@@ -37,9 +38,12 @@ class RoomServiceTest {
 
 	private RoomService roomService;
 
+	@Mock
+	private OdsayClient odsayClient;
+
 	@BeforeEach
 	void setUp() {
-		roomService = new RoomService(roomRepository, participantRepository, "http://localhost:5173/invite");
+		roomService = new RoomService(roomRepository, participantRepository, odsayClient, "http://localhost:5173/invite");
 	}
 
 	@Test
