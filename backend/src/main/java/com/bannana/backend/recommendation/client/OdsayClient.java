@@ -2,6 +2,7 @@ package com.bannana.backend.recommendation.client;
 
 import com.bannana.backend.recommendation.config.ExternalApiProperties;
 import com.bannana.backend.recommendation.domain.GeoPoint;
+
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;

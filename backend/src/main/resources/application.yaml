@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:classpath:application-local.yaml
   application:
     name: backend
   datasource:
@@ -61,3 +63,4 @@ bannana:
 logging:
   level:
     com.bannana.backend.recommendation: INFO
+    org.springframework.boot.context.config: DEBUG

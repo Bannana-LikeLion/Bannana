@@ -1,0 +1,545 @@
+/* =====================================================
+   PAGE
+===================================================== */
+
+.quick-page {
+  width: 100%;
+  max-width: 480px;
+
+  min-height: 100dvh;
+
+  box-sizing: border-box;
+
+  margin: 0 auto;
+
+  padding:
+    max(
+      22px,
+      env(safe-area-inset-top)
+    )
+    20px
+    calc(
+      110px +
+      env(safe-area-inset-bottom)
+    );
+
+  background: #fffdf5;
+
+  color: #21190f;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.quick-header {
+  margin-bottom: 19px;
+}
+
+.quick-back-button {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  margin-bottom: 13px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #21190f;
+
+  font-size: 26px;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.quick-title-area h1 {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 25px;
+  font-weight: 800;
+
+  letter-spacing: -0.5px;
+}
+
+.quick-title-area h1 span {
+  font-size: 17px;
+}
+
+.quick-title-area p {
+  margin:
+    6px
+    0
+    0;
+
+  color: #9a8056;
+
+  font-size: 11px;
+}
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+.quick-progress {
+  display: flex;
+
+  gap: 7px;
+
+  margin-top: 18px;
+}
+
+.quick-progress__bar {
+  flex: 1;
+
+  height: 5px;
+
+  border-radius: 999px;
+
+  background: #ebe5d1;
+}
+
+.quick-progress__bar--active {
+  background: #f4cf45;
+}
+
+.quick-step-text {
+  margin:
+    7px
+    0
+    0;
+
+  color: #937a51;
+
+  font-size: 10px;
+}
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.quick-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.quick-card {
+  padding: 18px;
+
+  border:
+    1.5px solid
+    transparent;
+
+  border-radius: 21px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 6px 20px
+    rgba(
+      70,
+      53,
+      25,
+      0.05
+    );
+
+  transition:
+    border-color
+      0.15s ease;
+}
+
+/* 장소 유형 validation 오류 */
+
+.quick-card--error {
+  border-color:
+    rgba(
+      218,
+      77,
+      67,
+      0.3
+    );
+}
+
+.quick-card-title {
+  margin: 0;
+
+  color: #312619;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.quick-card-help {
+  margin:
+    6px
+    0
+    12px;
+
+  color: #9a8056;
+
+  font-size: 9px;
+}
+
+/* =====================================================
+   DATE + TIME
+===================================================== */
+
+.quick-date-time {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 10px;
+
+  margin-top: 15px;
+}
+
+.quick-field {
+  min-width: 0;
+}
+
+.quick-field label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #94794f;
+
+  font-size: 9px;
+}
+
+.quick-input {
+  width: 100%;
+  height: 47px;
+
+  box-sizing: border-box;
+
+  padding:
+    0
+    12px;
+
+  border:
+    1.5px solid
+    #eadfbd;
+
+  border-radius: 13px;
+
+  outline: none;
+
+  background: #fffdf6;
+
+  color: #302618;
+
+  font-size: 11px;
+
+  transition:
+    border-color
+      0.15s ease,
+    box-shadow
+      0.15s ease,
+    background
+      0.15s ease;
+}
+
+.quick-input:focus {
+  border-color: #dcb026;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      244,
+      207,
+      69,
+      0.13
+    );
+}
+
+/* =====================================================
+   INPUT ERROR
+===================================================== */
+
+.quick-input--error {
+  border-color: #dc5b53;
+
+  background: #fff9f8;
+}
+
+.quick-input--error:focus {
+  border-color: #dc5b53;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      220,
+      91,
+      83,
+      0.1
+    );
+}
+
+/* =====================================================
+   ERROR MESSAGE
+===================================================== */
+
+.quick-error-message {
+  margin:
+    6px
+    0
+    0;
+
+  color: #d84c44;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  line-height: 1.45;
+}
+
+.quick-error-message--category {
+  margin-top: 11px;
+}
+
+/* =====================================================
+   TRANSPORT
+===================================================== */
+
+.quick-transport-list {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.quick-transport-button {
+  width: 94px;
+  height: 80px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border:
+    1.5px solid
+    transparent;
+
+  border-radius: 16px;
+
+  background: #f3eedf;
+
+  color: #7b6644;
+
+  font-size: 11px;
+
+  cursor: default;
+}
+
+.quick-transport-button--selected {
+  border-color: #d6a91e;
+
+  background: #f4cf45;
+
+  color: #21190f;
+}
+
+.quick-transport-icon {
+  font-size: 22px;
+}
+
+.quick-transport-button strong {
+  font-size: 10px;
+}
+
+/* =====================================================
+   PLACE TYPE
+===================================================== */
+
+.quick-place-types {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.quick-place-type {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding:
+    8px
+    13px;
+
+  border:
+    1.5px solid
+    transparent;
+
+  border-radius: 999px;
+
+  background: #f3eedf;
+
+  color: #86704c;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background
+      0.15s ease,
+    border-color
+      0.15s ease,
+    transform
+      0.1s ease;
+}
+
+.quick-place-type span {
+  font-size: 11px;
+}
+
+.quick-place-type--selected {
+  border-color: #d4a719;
+
+  background: #f4cf45;
+
+  color: #21190f;
+}
+
+.quick-place-type:active {
+  transform:
+    scale(0.96);
+}
+
+/* =====================================================
+   BOTTOM FIXED BUTTON
+===================================================== */
+
+.quick-bottom {
+  position: fixed;
+
+  z-index: 30;
+
+  left: 50%;
+  bottom: 0;
+
+  width: 100%;
+  max-width: 480px;
+
+  box-sizing: border-box;
+
+  padding:
+    14px
+    20px
+    max(
+      20px,
+      env(
+        safe-area-inset-bottom
+      )
+    );
+
+  transform:
+    translateX(-50%);
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(
+        255,
+        253,
+        245,
+        0
+      ),
+      #fffdf5 28%
+    );
+}
+
+.quick-next-button {
+  width: 100%;
+  height: 59px;
+
+  border: none;
+
+  border-radius: 17px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 22px
+    rgba(
+      221,
+      176,
+      31,
+      0.18
+    );
+}
+
+.quick-next-button:active {
+  transform:
+    scale(0.985);
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (
+  max-width: 360px
+) {
+  .quick-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .quick-card {
+    padding: 16px;
+  }
+
+  .quick-date-time {
+    gap: 8px;
+  }
+
+  .quick-place-type {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .quick-error-message {
+    font-size: 8px;
+  }
+}

@@ -1,0 +1,1062 @@
+/* =====================================================
+   PAGE
+===================================================== */
+
+.participant-confirmed-page {
+  width: 100%;
+  min-height: 100dvh;
+
+  box-sizing: border-box;
+
+  padding:
+    max(
+      24px,
+      env(safe-area-inset-top)
+    )
+    22px
+    calc(
+      30px +
+      env(safe-area-inset-bottom)
+    );
+
+  background: #fffdf5;
+
+  color: #21190f;
+}
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+.participant-confirmed-progress {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 22px;
+}
+
+.participant-confirmed-progress-bars {
+  display: flex;
+
+  gap: 6px;
+}
+
+.participant-confirmed-progress-bars span {
+  width: 28px;
+  height: 7px;
+
+  border-radius: 999px;
+
+  background: #f4cf45;
+}
+
+.participant-confirmed-progress strong {
+  color: #8c754e;
+
+  font-size: 10px;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.participant-confirmed-header {
+  margin-bottom: 19px;
+}
+
+.participant-confirmed-header h1 {
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 25px;
+  font-weight: 800;
+
+  letter-spacing: -0.4px;
+}
+
+.participant-confirmed-header p {
+  margin: 7px 0 0;
+
+  color: #9a8056;
+
+  font-size: 11px;
+}
+
+/* =====================================================
+   MY TRAVEL GUIDE
+===================================================== */
+
+.participant-my-travel {
+  position: relative;
+
+  overflow: hidden;
+
+  margin-bottom: 15px;
+
+  padding: 20px;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff2ad,
+      #ffeda2
+    );
+
+  box-shadow:
+    0 6px 20px
+    rgba(
+      222,
+      179,
+      31,
+      0.08
+    );
+}
+
+.participant-my-travel::after {
+  content: "";
+
+  position: absolute;
+
+  width: 105px;
+  height: 105px;
+
+  right: -30px;
+  top: -38px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      244,
+      207,
+      69,
+      0.22
+    );
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.participant-my-travel-title {
+  position: relative;
+
+  z-index: 2;
+
+  margin:
+    0
+    0
+    15px;
+
+  color: #826b43;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   MAIN STAT
+===================================================== */
+
+.participant-my-travel-top {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 18px;
+}
+
+.participant-my-travel-stat {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-my-travel-stat--right {
+  flex-shrink: 0;
+
+  align-items: flex-end;
+
+  text-align: right;
+}
+
+.participant-my-travel-value {
+  color: #21190f;
+
+  font-size: 40px;
+  font-weight: 900;
+
+  line-height: 1;
+}
+
+.participant-my-travel-value span {
+  margin-left: 4px;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.participant-departure-time {
+  color: #725913;
+
+  font-size: 19px;
+  font-weight: 900;
+
+  line-height: 1.15;
+}
+
+.participant-my-travel-label {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #92764c;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* =====================================================
+   TRAVEL PROGRESS
+===================================================== */
+
+.participant-travel-progress {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  margin-top: 17px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
+}
+
+.participant-travel-progress > div {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #7acbc5;
+
+  transition:
+    width
+    0.4s
+    ease;
+}
+
+/* =====================================================
+   ORIGIN GUIDE
+===================================================== */
+
+.participant-origin-guide {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: 14px;
+
+  padding:
+    10px
+    11px;
+
+  border-radius: 13px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.48
+    );
+}
+
+.participant-origin-guide__icon {
+  flex-shrink: 0;
+
+  font-size: 17px;
+}
+
+.participant-origin-guide > div {
+  min-width: 0;
+}
+
+.participant-origin-guide strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #594620;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.participant-origin-guide span:not(
+  .participant-origin-guide__icon
+) {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #91764c;
+
+  font-size: 8px;
+
+  line-height: 1.4;
+}
+
+/* =====================================================
+   FINAL PLACE
+===================================================== */
+
+.participant-final-place {
+  margin-bottom: 15px;
+
+  padding: 18px;
+
+  border-radius: 21px;
+
+  background: white;
+
+  box-shadow:
+    0 5px 18px
+    rgba(
+      67,
+      50,
+      23,
+      0.05
+    );
+}
+
+.participant-final-place > h2 {
+  margin:
+    0
+    0
+    14px;
+
+  color: #5d4728;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.participant-final-place-main {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+/* =====================================================
+   PLACE IMAGE
+===================================================== */
+
+.participant-final-place-image {
+  width: 70px;
+  height: 70px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background: #fff5c5;
+
+  font-size: 34px;
+}
+
+.participant-final-place-info {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.participant-final-place-info h3 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #21190f;
+
+  font-size: 17px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   PLACE TAG
+===================================================== */
+
+.participant-final-place-tags {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  margin-top: 8px;
+}
+
+.participant-final-place-tags span {
+  padding:
+    5px
+    8px;
+
+  border-radius: 999px;
+
+  background: #f4efdf;
+
+  color: #77613f;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.participant-final-place-tags
+  .participant-final-place-tag--indoor {
+  background: #e3f0db;
+
+  color: #5b7f55;
+}
+
+.participant-final-place-info p {
+  margin:
+    8px
+    0
+    0;
+
+  color: #9b8054;
+
+  font-size: 10px;
+
+  line-height: 1.45;
+}
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.participant-confirmed-map {
+  position: relative;
+
+  height: 260px;
+
+  overflow: hidden;
+
+  margin-bottom: 15px;
+
+  border-radius: 22px;
+
+  background: #e4e3dc;
+}
+
+.participant-confirmed-map .kakao-map {
+  border: none;
+
+  border-radius: 22px;
+
+  box-shadow: none;
+}
+
+/* =====================================================
+   FAIR LABEL
+===================================================== */
+
+.participant-map-fair-label {
+  position: absolute;
+
+  z-index: 10;
+
+  left: 50%;
+  bottom: 9px;
+
+  max-width:
+    calc(
+      100% -
+      30px
+    );
+
+  padding:
+    8px
+    12px;
+
+  transform:
+    translateX(-50%);
+
+  border-radius: 999px;
+
+  background: white;
+
+  color: #423622;
+
+  white-space: nowrap;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  box-shadow:
+    0 4px 12px
+    rgba(
+      0,
+      0,
+      0,
+      0.08
+    );
+}
+
+/* =====================================================
+   ALL PARTICIPANTS
+===================================================== */
+
+.participant-all-travel {
+  margin-bottom: 15px;
+
+  padding: 18px;
+
+  border-radius: 21px;
+
+  background: white;
+
+  box-shadow:
+    0 5px 18px
+    rgba(
+      65,
+      49,
+      22,
+      0.05
+    );
+}
+
+.participant-all-travel > h2 {
+  margin: 0;
+
+  color: #2e2417;
+
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.participant-all-description {
+  margin:
+    5px
+    0
+    14px;
+
+  color: #9a8056;
+
+  font-size: 9px;
+}
+
+.participant-all-travel-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =====================================================
+   PARTICIPANT ROW
+===================================================== */
+
+.participant-all-travel-row {
+  min-height: 67px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  border-bottom:
+    1px solid #eee5d2;
+}
+
+.participant-all-travel-row:last-child {
+  border-bottom: none;
+}
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+.participant-all-avatar {
+  width: 41px;
+  height: 41px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: #21190f;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   PERSON
+===================================================== */
+
+.participant-all-person {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.participant-all-person > strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #312719;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.participant-all-origin {
+  display: block;
+
+  margin-top: 5px;
+
+  overflow: hidden;
+
+  color: #9a8056;
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.participant-ready-badge {
+  flex-shrink: 0;
+
+  padding:
+    6px
+    8px;
+
+  border-radius: 999px;
+
+  background: #e6f4df;
+
+  color: #64845d;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   WEATHER + DATE SUMMARY
+===================================================== */
+
+.participant-final-summary {
+  display: grid;
+
+  grid-template-columns:
+    0.8fr
+    1.5fr;
+
+  gap: 10px;
+
+  margin-bottom: 14px;
+}
+
+/* =====================================================
+   WEATHER
+===================================================== */
+
+.participant-final-weather,
+.participant-final-date {
+  min-height: 93px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 14px;
+
+  border-radius: 18px;
+
+  background: white;
+
+  box-shadow:
+    0 5px 17px
+    rgba(
+      64,
+      49,
+      23,
+      0.05
+    );
+}
+
+.participant-final-weather {
+  flex-direction: column;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.participant-final-weather-icon {
+  margin-bottom: 5px;
+
+  font-size: 27px;
+}
+
+.participant-final-weather strong {
+  display: block;
+
+  color: #342819;
+
+  font-size: 11px;
+}
+
+.participant-final-weather small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #987c52;
+
+  font-size: 8px;
+}
+
+/* =====================================================
+   DATE
+===================================================== */
+
+.participant-final-date {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.participant-final-date strong {
+  display: block;
+
+  color: #342819;
+
+  font-size: 12px;
+}
+
+.participant-final-date span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #947950;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+}
+
+/* =====================================================
+   CALENDAR SUCCESS
+===================================================== */
+
+.participant-calendar-success {
+  margin-bottom: 10px;
+
+  padding: 10px;
+
+  border-radius: 12px;
+
+  background: #e5f5e3;
+
+  color: #548850;
+
+  text-align: center;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.participant-confirmed-actions {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.participant-calendar-button,
+.participant-share-button {
+  width: 100%;
+  height: 57px;
+
+  border-radius: 17px;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.participant-calendar-button {
+  border: none;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  box-shadow:
+    0 7px 20px
+    rgba(
+      221,
+      176,
+      31,
+      0.17
+    );
+}
+
+.participant-share-button {
+  border:
+    1.5px solid
+    #e5dac1;
+
+  background: white;
+
+  color: #68563b;
+}
+
+.participant-calendar-button:active,
+.participant-share-button:active {
+  transform:
+    scale(
+      0.987
+    );
+}
+
+/* =====================================================
+   LOADING / ERROR / WAITING
+===================================================== */
+
+.participant-confirmed-state-page {
+  width: 100%;
+
+  min-height: 100dvh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  padding: 24px;
+
+  background: #fffdf5;
+}
+
+.participant-confirmed-state-card {
+  width: 100%;
+  max-width: 380px;
+
+  padding:
+    34px
+    24px;
+
+  border-radius: 22px;
+
+  background: white;
+
+  text-align: center;
+
+  box-shadow:
+    0 7px 24px
+    rgba(
+      65,
+      49,
+      22,
+      0.07
+    );
+}
+
+.participant-confirmed-state-icon {
+  margin-bottom: 14px;
+
+  font-size: 38px;
+}
+
+.participant-confirmed-state-card h1 {
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 20px;
+
+  line-height: 1.45;
+}
+
+.participant-confirmed-state-card p {
+  margin:
+    10px
+    0
+    0;
+
+  color: #927b58;
+
+  font-size: 11px;
+
+  line-height: 1.6;
+}
+
+.participant-confirmed-state-card button {
+  width: 100%;
+  height: 49px;
+
+  margin-top: 20px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.participant-confirmed-spinner {
+  width: 35px;
+  height: 35px;
+
+  margin:
+    0
+    auto
+    18px;
+
+  border:
+    4px solid
+    #f0ead9;
+
+  border-top-color:
+    #f4cf45;
+
+  border-radius: 50%;
+
+  animation:
+    participant-confirmed-spin
+    0.8s
+    linear
+    infinite;
+}
+
+@keyframes participant-confirmed-spin {
+  to {
+    transform:
+      rotate(
+        360deg
+      );
+  }
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+  .participant-confirmed-page {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .participant-confirmed-header h1 {
+    font-size: 22px;
+  }
+
+  .participant-my-travel {
+    padding: 17px;
+  }
+
+  .participant-my-travel-value {
+    font-size: 35px;
+  }
+
+  .participant-departure-time {
+    font-size: 16px;
+  }
+
+  .participant-origin-guide {
+    padding:
+      9px
+      10px;
+  }
+
+  .participant-final-place {
+    padding: 15px;
+  }
+
+  .participant-final-place-image {
+    width: 60px;
+    height: 60px;
+
+    font-size: 29px;
+  }
+
+  .participant-confirmed-map {
+    height: 220px;
+  }
+
+  .participant-all-travel {
+    padding: 15px;
+  }
+
+  .participant-all-avatar {
+    width: 37px;
+    height: 37px;
+
+    font-size: 10px;
+  }
+
+  .participant-ready-badge {
+    padding:
+      5px
+      7px;
+
+    font-size: 7px;
+  }
+}

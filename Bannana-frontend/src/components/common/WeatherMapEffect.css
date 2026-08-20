@@ -1,0 +1,222 @@
+/* =====================================================
+   COMMON
+===================================================== */
+
+.weather-map-effect {
+    position: absolute;
+  
+    z-index: 12;
+  
+    inset: 0;
+  
+    overflow: hidden;
+  
+    pointer-events: none;
+  }
+  
+  /* =====================================================
+     RAIN
+  ===================================================== */
+  
+  .weather-map-effect--rain {
+    background:
+      linear-gradient(
+        rgba(
+          74,
+          99,
+          124,
+          0.08
+        ),
+        rgba(
+          74,
+          99,
+          124,
+          0.16
+        )
+      );
+  }
+  
+  .weather-map-effect--rain::before {
+    content: "";
+  
+    position: absolute;
+  
+    inset: -40px;
+  
+    opacity: 0.65;
+  
+    background-image:
+      repeating-linear-gradient(
+        112deg,
+  
+        transparent 0,
+        transparent 15px,
+  
+        rgba(
+            79,
+            143,
+            192,
+            0.48
+          )
+          16px,
+  
+        rgba(
+            79,
+            143,
+            192,
+            0.48
+          )
+          18px,
+  
+        transparent 19px,
+        transparent 34px
+      );
+  
+    background-size:
+      28px
+      42px;
+  }
+  
+  .weather-map-effect--rain::after {
+    content: "";
+  
+    position: absolute;
+  
+    inset: 0;
+  
+    opacity: 0.28;
+  
+    background-image:
+      repeating-linear-gradient(
+        112deg,
+  
+        transparent 0,
+        transparent 23px,
+  
+        rgba(
+            255,
+            255,
+            255,
+            0.75
+          )
+          24px,
+  
+        rgba(
+            255,
+            255,
+            255,
+            0.75
+          )
+          25px,
+  
+        transparent 26px,
+        transparent 47px
+      );
+  
+    background-size:
+      39px
+      51px;
+  }
+  
+  /* =====================================================
+     SNOW
+  ===================================================== */
+  
+  .weather-map-effect--snow {
+    background:
+      linear-gradient(
+        rgba(
+          235,
+          246,
+          255,
+          0.08
+        ),
+        rgba(
+          222,
+          240,
+          252,
+          0.17
+        )
+      );
+  }
+  
+  .weather-map-effect--snow::before {
+    content: "";
+  
+    position: absolute;
+  
+    inset: 0;
+  
+    opacity: 0.9;
+  
+    background-image:
+      radial-gradient(
+        circle,
+        rgba(
+            255,
+            255,
+            255,
+            0.98
+          )
+          0
+          2px,
+        transparent 3px
+      ),
+      radial-gradient(
+        circle,
+        rgba(
+            255,
+            255,
+            255,
+            0.95
+          )
+          0
+          3px,
+        transparent 4px
+      ),
+      radial-gradient(
+        circle,
+        rgba(
+            245,
+            251,
+            255,
+            0.95
+          )
+          0
+          1.5px,
+        transparent 2.5px
+      );
+  
+    background-size:
+      38px 38px,
+      63px 63px,
+      49px 49px;
+  
+    background-position:
+      5px 7px,
+      21px 13px,
+      11px 29px;
+  }
+  
+  .weather-map-effect--snow::after {
+    content: "";
+  
+    position: absolute;
+  
+    inset: 0;
+  
+    opacity: 0.55;
+  
+    background-image:
+      radial-gradient(
+        circle,
+        #ffffff 0 2px,
+        transparent 3px
+      );
+  
+    background-size:
+      79px 79px;
+  
+    background-position:
+      32px 16px;
+  }

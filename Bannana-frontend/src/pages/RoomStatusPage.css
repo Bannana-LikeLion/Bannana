@@ -1,0 +1,818 @@
+/* =====================================================
+   PAGE
+===================================================== */
+
+.status-page {
+    min-height: 100dvh;
+  
+    box-sizing: border-box;
+  
+    padding:
+      max(22px, env(safe-area-inset-top))
+      20px
+      calc(105px + env(safe-area-inset-bottom));
+  
+    background: #fffdf5;
+  
+    color: #21190f;
+  }
+  
+  
+  /* =====================================================
+     HEADER
+  ===================================================== */
+  
+  .status-header {
+    margin-bottom: 16px;
+  }
+  
+  .status-back-button {
+    width: 42px;
+    height: 42px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  
+    margin-bottom: 12px;
+    padding: 0;
+  
+    border: none;
+  
+    background: transparent;
+  
+    color: #21190f;
+  
+    font-size: 27px;
+  
+    cursor: pointer;
+  }
+  
+  .status-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  
+    gap: 15px;
+  }
+  
+  .status-title-row h1 {
+    margin: 0;
+  
+    color: #21190f;
+  
+    font-size: 26px;
+    font-weight: 800;
+  }
+  
+  .status-title-row p {
+    margin: 6px 0 0;
+  
+    color: #9a8056;
+  
+    font-size: 11px;
+  }
+  
+  .status-refresh-button {
+    flex-shrink: 0;
+  
+    padding: 9px 12px;
+  
+    border: 1px solid #e8dec2;
+    border-radius: 999px;
+  
+    background: white;
+  
+    color: #8c744c;
+  
+    font-size: 10px;
+    font-weight: 700;
+  
+    cursor: pointer;
+  }
+  
+  
+  /* =====================================================
+     PROGRESS
+  ===================================================== */
+  
+  .status-progress {
+    margin-top: 17px;
+  }
+  
+  .status-progress-bars {
+    display: flex;
+  
+    gap: 7px;
+  }
+  
+  .status-progress-bars span {
+    flex: 1;
+  
+    height: 5px;
+  
+    border-radius: 999px;
+  
+    background: #f4cf45;
+  }
+  
+  .status-progress p {
+    margin: 7px 0 0;
+  
+    color: #92784d;
+  
+    font-size: 10px;
+  }
+  
+  
+  /* =====================================================
+     SUMMARY CARD
+  ===================================================== */
+  
+  .status-summary-card {
+    margin-bottom: 13px;
+    padding: 14px 15px;
+  
+    border: 1.5px solid #eadb9a;
+    border-radius: 18px;
+  
+    background: white;
+  
+    box-shadow:
+      0 5px 18px
+      rgba(68, 52, 25, 0.04);
+  }
+  
+  .status-summary-card--complete {
+    border-color: #edc62f;
+  
+    background: #fff6b5;
+  }
+  
+  .status-summary-top {
+    display: flex;
+    align-items: center;
+  
+    gap: 11px;
+  }
+  
+  .status-summary-avatars {
+    display: flex;
+  
+    flex-shrink: 0;
+  }
+  
+  .status-summary-avatar {
+    width: 31px;
+    height: 31px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    margin-left: -7px;
+  
+    border: 2px solid white;
+    border-radius: 50%;
+  
+    font-size: 9px;
+    font-weight: 800;
+  }
+  
+  .status-summary-avatar:first-child {
+    margin-left: 0;
+  }
+  
+  .status-summary-avatar--waiting {
+    opacity: 0.4;
+  }
+  
+  .status-summary-text {
+    flex: 1;
+  
+    min-width: 0;
+  }
+  
+  .status-summary-text strong {
+    display: block;
+  
+    color: #2a2115;
+  
+    font-size: 11px;
+    font-weight: 800;
+  }
+  
+  .status-summary-text p {
+    margin: 4px 0 0;
+  
+    overflow: hidden;
+  
+    color: #9a8056;
+  
+    font-size: 9px;
+  
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .status-summary-badge {
+    flex-shrink: 0;
+  
+    padding: 8px 10px;
+  
+    border: 1px solid #eadfbd;
+    border-radius: 999px;
+  
+    background: #fffdf6;
+  
+    color: #8d774e;
+  
+    font-size: 9px;
+    font-weight: 700;
+  }
+  
+  
+  /* =====================================================
+     TAB
+  ===================================================== */
+  
+  .status-tab {
+    display: grid;
+  
+    grid-template-columns:
+      1fr 1fr;
+  
+    margin-bottom: 10px;
+    padding: 4px;
+  
+    border-radius: 14px;
+  
+    background: #eee8d0;
+  }
+  
+  .status-tab-button {
+    height: 39px;
+  
+    border: none;
+    border-radius: 11px;
+  
+    background: transparent;
+  
+    color: #92794f;
+  
+    font-size: 11px;
+    font-weight: 700;
+  
+    cursor: pointer;
+  }
+  
+  .status-tab-button--active {
+    background: white;
+  
+    color: #21190f;
+  
+    box-shadow:
+      0 3px 9px
+      rgba(60, 46, 21, 0.06);
+  }
+  
+  
+  /* =====================================================
+     MAP
+  ===================================================== */
+  
+  .status-map {
+    position: relative;
+  
+    height: 230px;
+  
+    overflow: hidden;
+  
+    margin-bottom: 18px;
+  
+    border-radius: 20px;
+  
+    background: #e5e3dc;
+  }
+  
+  .status-map-road {
+    position: absolute;
+  
+    z-index: 1;
+  
+    background:
+      rgba(255, 255, 255, 0.9);
+  }
+  
+  .status-map-road--vertical {
+    width: 9px;
+    height: 100%;
+  
+    left: 50%;
+    top: 0;
+  
+    transform:
+      translateX(-50%);
+  }
+  
+  .status-map-road--horizontal {
+    width: 100%;
+    height: 9px;
+  
+    left: 0;
+    top: 48%;
+  }
+  
+  .status-map-green {
+    position: absolute;
+  
+    z-index: 0;
+  
+    width: 92px;
+    height: 68px;
+  
+    left: 41%;
+    top: 24%;
+  
+    border-radius: 18px;
+  
+    background: #cedeaf;
+  }
+  
+  .status-map-water {
+    position: absolute;
+  
+    z-index: 0;
+  
+    width: 160px;
+    height: 50px;
+  
+    left: 33%;
+    bottom: 15%;
+  
+    background: #d2e1ea;
+  
+    transform:
+      rotate(7deg);
+  }
+  
+  
+  /* =====================================================
+     MIDPOINT
+  ===================================================== */
+  
+  .status-midpoint-preview {
+    position: absolute;
+  
+    z-index: 5;
+  
+    left: 50%;
+    top: 50%;
+  
+    width: 68px;
+    height: 68px;
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+    transform:
+      translate(-50%, -50%);
+  
+    border:
+      5px dashed rgba(
+        255,
+        255,
+        255,
+        0.85
+      );
+  
+    border-radius: 50%;
+  
+    background:
+      rgba(
+        244,
+        207,
+        69,
+        0.68
+      );
+  
+    color: #66511e;
+  }
+  
+  .status-midpoint-preview strong {
+    font-size: 18px;
+  }
+  
+  .status-midpoint-preview span {
+    margin-top: 2px;
+  
+    font-size: 7px;
+  
+    white-space: nowrap;
+  }
+  
+  
+  /* =====================================================
+     MAP MARKER COMMON
+  ===================================================== */
+  
+  .status-map-marker {
+    position: absolute;
+  
+    z-index: 6;
+  
+    width: 44px;
+    height: 44px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border: 5px solid white;
+    border-radius: 50%;
+  
+    font-size: 13px;
+    font-weight: 800;
+  
+    box-shadow:
+      0 4px 12px
+      rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  /* =====================================================
+     PARTICIPANT COLOR
+  
+     1 = 호스트
+     2 = 송현석
+     3 = 김보경
+     4 = 이지은
+  ===================================================== */
+  
+  /* 호스트 - 보라 */
+  
+  .status-avatar--one,
+  .status-marker--one {
+    background: #7144df;
+  
+    color: #ffffff;
+  }
+  
+  
+  /* 송현석 - 빨강 */
+  
+  .status-avatar--two,
+  .status-marker--two {
+    background: #e87570;
+  
+    color: #21190f;
+  }
+  
+  
+  /* 김보경 - 노랑 */
+  
+  .status-avatar--three,
+  .status-marker--three {
+    background: #f0c936;
+  
+    color: #21190f;
+  }
+  
+  
+  /* 이지은 - 민트 */
+  
+  .status-avatar--four,
+  .status-marker--four {
+    background: #79cec5;
+  
+    color: #21190f;
+  }
+  
+  
+  /* =====================================================
+     MARKER POSITION
+  ===================================================== */
+  
+  .status-marker--one {
+    left: 13%;
+    top: 8%;
+  }
+  
+  .status-marker--two {
+    right: 10%;
+    bottom: 16%;
+  }
+  
+  .status-marker--three {
+    left: 38%;
+    bottom: 10%;
+  }
+  
+  .status-marker--four {
+    right: 19%;
+    top: 13%;
+  }
+  
+  
+  /* =====================================================
+     LEGEND
+  ===================================================== */
+  
+  .status-map-legend {
+    position: absolute;
+  
+    z-index: 10;
+  
+    left: 10px;
+    right: 10px;
+    bottom: 9px;
+  
+    display: flex;
+    flex-wrap: wrap;
+  
+    gap: 5px;
+  }
+  
+  .status-map-legend-item {
+    display: flex;
+    align-items: center;
+  
+    gap: 5px;
+  
+    padding: 5px 8px;
+  
+    border-radius: 999px;
+  
+    background: white;
+  
+    color: #4f422e;
+  
+    font-size: 7px;
+    font-weight: 700;
+  
+    box-shadow:
+      0 2px 7px
+      rgba(0, 0, 0, 0.06);
+  }
+  
+  .status-legend-dot {
+    width: 7px;
+    height: 7px;
+  
+    flex-shrink: 0;
+  
+    border-radius: 50%;
+  }
+  
+  .status-legend-dot--1 {
+    background: #7144df;
+  }
+  
+  .status-legend-dot--2 {
+    background: #e87570;
+  }
+  
+  .status-legend-dot--3 {
+    background: #f0c936;
+  }
+  
+  .status-legend-dot--4 {
+    background: #79cec5;
+  }
+  
+  
+  /* =====================================================
+     PARTICIPANT SECTION
+  ===================================================== */
+  
+  .status-participant-section {
+    margin-top: 4px;
+  }
+  
+  .status-participant-section h2 {
+    margin:
+      0
+      0
+      12px;
+  
+    color: #21190f;
+  
+    font-size: 16px;
+    font-weight: 800;
+  }
+  
+  .status-participant-list {
+    display: flex;
+    flex-direction: column;
+  
+    gap: 10px;
+  }
+  
+  .status-participant-card {
+    display: flex;
+    align-items: center;
+  
+    gap: 13px;
+  
+    min-height: 71px;
+  
+    padding: 12px 14px;
+  
+    border-radius: 18px;
+  
+    background: white;
+  
+    box-shadow:
+      0 4px 15px
+      rgba(65, 50, 25, 0.04);
+  }
+  
+  .status-participant-card--waiting {
+    opacity: 0.62;
+  }
+  
+  
+  /* =====================================================
+     LIST AVATAR
+  ===================================================== */
+  
+  .status-list-avatar {
+    width: 43px;
+    height: 43px;
+  
+    flex-shrink: 0;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 50%;
+  
+    font-size: 13px;
+    font-weight: 800;
+  }
+  
+  .status-list-avatar--waiting {
+    background: #eee7cf;
+  
+    color: #927c50;
+  }
+  
+  
+  /* =====================================================
+     LIST INFORMATION
+  ===================================================== */
+  
+  .status-list-info {
+    flex: 1;
+  
+    min-width: 0;
+  }
+  
+  .status-list-name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  
+    gap: 5px;
+  }
+  
+  .status-list-name strong {
+    color: #2a2115;
+  
+    font-size: 12px;
+  }
+  
+  .status-list-info p {
+    margin: 5px 0 0;
+  
+    color: #9a8056;
+  
+    font-size: 9px;
+  }
+  
+  .status-host-tag,
+  .status-complete-tag,
+  .status-waiting-tag {
+    padding: 4px 6px;
+  
+    border-radius: 999px;
+  
+    font-size: 7px;
+    font-weight: 700;
+  }
+  
+  .status-host-tag {
+    background: #eee8ff;
+  
+    color: #7144df;
+  }
+  
+  .status-complete-tag {
+    background: #e7f6e5;
+  
+    color: #57915a;
+  }
+  
+  .status-waiting-tag {
+    background: #f2ead2;
+  
+    color: #987942;
+  }
+  
+  
+  /* =====================================================
+     BOTTOM
+  ===================================================== */
+  
+  .status-bottom {
+    position: fixed;
+  
+    z-index: 30;
+  
+    left: 50%;
+    bottom: 0;
+  
+    width: 100%;
+    max-width: 480px;
+  
+    box-sizing: border-box;
+  
+    padding:
+      15px
+      20px
+      max(
+        20px,
+        env(safe-area-inset-bottom)
+      );
+  
+    transform:
+      translateX(-50%);
+  
+    background:
+      linear-gradient(
+        transparent,
+        #fffdf5 28%
+      );
+  }
+  
+  .status-find-button {
+    width: 100%;
+    height: 61px;
+  
+    border: none;
+    border-radius: 18px;
+  
+    background: #f4cf45;
+  
+    color: #21190f;
+  
+    font-size: 16px;
+    font-weight: 800;
+  
+    cursor: pointer;
+  
+    box-shadow:
+      0 8px 22px
+      rgba(221, 176, 31, 0.18);
+  }
+  
+  .status-find-button:active {
+    transform:
+      scale(0.985);
+  }
+  
+  
+  /* =====================================================
+     SMALL PHONE
+  ===================================================== */
+  
+  @media (max-width: 360px) {
+    .status-page {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  
+    .status-map {
+      height: 210px;
+    }
+  
+    .status-map-marker {
+      width: 39px;
+      height: 39px;
+  
+      font-size: 11px;
+    }
+  
+    .status-summary-card {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+  
+    .status-summary-avatar {
+      width: 28px;
+      height: 28px;
+    }
+  }

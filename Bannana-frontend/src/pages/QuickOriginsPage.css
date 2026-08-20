@@ -1,0 +1,852 @@
+/* =====================================================
+   PAGE
+===================================================== */
+
+.quick-origin-page {
+  width: 100%;
+  max-width: 480px;
+
+  min-height: 100dvh;
+
+  box-sizing: border-box;
+
+  margin: 0 auto;
+
+  padding:
+    max(
+      22px,
+      env(safe-area-inset-top)
+    )
+    20px
+    calc(
+      155px +
+      env(safe-area-inset-bottom)
+    );
+
+  background: #fffdf5;
+
+  color: #21190f;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.quick-origin-header {
+  margin-bottom: 14px;
+}
+
+.quick-origin-back {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  margin-bottom: 12px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #21190f;
+
+  font-size: 25px;
+
+  cursor: pointer;
+}
+
+.quick-origin-title h1 {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.quick-origin-title h1 span {
+  font-size: 16px;
+}
+
+.quick-origin-title p {
+  margin:
+    6px
+    0
+    0;
+
+  color: #9a8056;
+
+  font-size: 10px;
+}
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+.quick-origin-progress {
+  display: flex;
+
+  gap: 6px;
+
+  margin-top: 17px;
+}
+
+.quick-origin-progress__bar {
+  flex: 1;
+
+  height: 5px;
+
+  border-radius: 999px;
+
+  background: #e9e4d2;
+}
+
+.quick-origin-progress__bar--active {
+  background: #f4cf45;
+}
+
+.quick-origin-step {
+  margin:
+    7px
+    0
+    0;
+
+  color: #93784d;
+
+  font-size: 10px;
+}
+
+/* =====================================================
+   MAP
+
+   ★ 빈 상태에서도 실제 지도 표시
+===================================================== */
+
+.quick-origin-map {
+  position: relative;
+
+  width: 100%;
+  height: 190px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #eee8da;
+
+  border-radius: 20px;
+
+  background: #e7e4dc;
+
+  box-shadow:
+    0 5px 16px
+    rgba(
+      65,
+      49,
+      22,
+      0.05
+    );
+}
+
+/* =====================================================
+   MAP STATUS
+===================================================== */
+
+.quick-origin-map-status {
+  min-height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin:
+    5px
+    0
+    12px;
+
+  color: #9b825a;
+
+  text-align: center;
+
+  font-size: 9px;
+}
+
+.quick-origin-map-status span {
+  margin-right: 1px;
+
+  color: #c69a1e;
+
+  font-weight: 800;
+}
+
+/* =====================================================
+   PARTICIPANT LIST
+===================================================== */
+
+.quick-origin-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.quick-origin-card {
+  padding: 17px;
+
+  border:
+    1.5px solid
+    transparent;
+
+  border-radius: 20px;
+
+  background: white;
+
+  box-shadow:
+    0 5px 18px
+    rgba(
+      66,
+      50,
+      24,
+      0.05
+    );
+
+  transition:
+    border-color
+    0.15s
+    ease;
+}
+
+.quick-origin-card--complete {
+  border-color:
+    rgba(
+      111,
+      156,
+      84,
+      0.28
+    );
+}
+
+.quick-origin-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 14px;
+}
+
+.quick-origin-card__title {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.quick-origin-number {
+  width: 31px;
+  height: 31px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.quick-origin-card__title > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.quick-origin-card__title strong {
+  color: #34291b;
+
+  font-size: 12px;
+}
+
+.quick-origin-card__title small {
+  color: #719268;
+
+  font-size: 8px;
+  font-weight: 700;
+}
+
+/* =====================================================
+   REMOVE
+===================================================== */
+
+.quick-origin-remove {
+  width: 31px;
+  height: 31px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #faf7ef;
+
+  color: #aa9c82;
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.quick-origin-remove:hover {
+  background: #fff0ef;
+
+  color: #e87570;
+}
+
+/* =====================================================
+   FIELD
+===================================================== */
+
+.quick-origin-field {
+  margin-top: 12px;
+}
+
+.quick-origin-field:first-of-type {
+  margin-top: 0;
+}
+
+.quick-origin-field > label {
+  display: block;
+
+  margin:
+    0
+    0
+    6px
+    2px;
+
+  color: #806b49;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+.quick-origin-input {
+  width: 100%;
+  height: 47px;
+
+  display: block;
+
+  box-sizing: border-box;
+
+  padding:
+    0
+    13px;
+
+  border:
+    1.5px solid
+    #eadfbd;
+
+  border-radius: 13px;
+
+  outline: none;
+
+  background: #fffdf6;
+
+  color: #302619;
+
+  font-size: 11px;
+
+  transition:
+    border-color
+      0.15s ease,
+    box-shadow
+      0.15s ease;
+}
+
+.quick-origin-input::placeholder {
+  color: #b7aa90;
+}
+
+.quick-origin-input:focus {
+  border-color: #d9ac1f;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      244,
+      207,
+      69,
+      0.13
+    );
+}
+
+.quick-origin-input--error {
+  border-color: #e87570;
+
+  background: #fffafa;
+}
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.quick-origin-search-row {
+  display: flex;
+  align-items: stretch;
+
+  gap: 8px;
+}
+
+.quick-origin-search-input {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.quick-origin-search-button {
+  width: 65px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 13px;
+
+  background: #f4cf45;
+
+  color: #2e2517;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.quick-origin-search-button:active {
+  transform: scale(0.98);
+}
+
+.quick-origin-search-button:disabled {
+  opacity: 0.6;
+
+  cursor: default;
+}
+
+/* =====================================================
+   SEARCH RESULTS
+===================================================== */
+
+.quick-origin-search-results {
+  overflow: hidden;
+
+  margin-top: 8px;
+
+  border:
+    1px solid
+    #ebe1ca;
+
+  border-radius: 14px;
+
+  background: white;
+
+  box-shadow:
+    0 7px 20px
+    rgba(
+      60,
+      45,
+      20,
+      0.07
+    );
+}
+
+.quick-origin-search-result {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  box-sizing: border-box;
+
+  padding:
+    11px
+    12px;
+
+  border: none;
+  border-bottom:
+    1px solid #f0e9dc;
+
+  background: white;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.quick-origin-search-result:last-child {
+  border-bottom: none;
+}
+
+.quick-origin-search-result:hover {
+  background: #fffaf0;
+}
+
+.quick-origin-search-result > div {
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.quick-origin-search-result strong {
+  overflow: hidden;
+
+  color: #2d2417;
+
+  font-size: 10px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quick-origin-search-result
+div
+span {
+  overflow: hidden;
+
+  color: #998261;
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quick-origin-result-select {
+  flex-shrink: 0;
+
+  padding:
+    5px
+    7px;
+
+  border-radius: 999px;
+
+  background: #fff4c7;
+
+  color: #9b7710;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   SELECTED ORIGIN
+===================================================== */
+
+.quick-origin-selected {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 8px;
+
+  padding:
+    11px
+    12px;
+
+  border:
+    1px solid
+    #d4e4c8;
+
+  border-radius: 13px;
+
+  background: #f2f8ec;
+}
+
+.quick-origin-selected__check {
+  width: 25px;
+  height: 25px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #80a94d;
+
+  color: white;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.quick-origin-selected__content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.quick-origin-selected__content strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #436137;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quick-origin-selected__content span {
+  display: block;
+
+  overflow: hidden;
+
+  margin-top: 3px;
+
+  color: #7b956c;
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.quick-origin-error {
+  margin:
+    6px
+    2px
+    0;
+
+  color: #d75750;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  line-height: 1.45;
+}
+
+/* =====================================================
+   ADD PARTICIPANT
+===================================================== */
+
+.quick-origin-add {
+  width: 100%;
+  min-height: 58px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  margin-top: 13px;
+
+  border:
+    1.5px dashed
+    #dfb62e;
+
+  border-radius: 16px;
+
+  background: transparent;
+
+  color: #bf9216;
+
+  cursor: pointer;
+}
+
+.quick-origin-add strong {
+  font-size: 11px;
+}
+
+.quick-origin-add span {
+  color: #aa9567;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.quick-origin-add:active {
+  transform: scale(0.987);
+}
+
+/* =====================================================
+   MAX
+===================================================== */
+
+.quick-origin-max-message {
+  margin-top: 13px;
+
+  padding: 13px;
+
+  border-radius: 14px;
+
+  background: #f5f0e3;
+
+  color: #917a53;
+
+  text-align: center;
+
+  font-size: 9px;
+}
+
+/* =====================================================
+   BOTTOM
+===================================================== */
+
+.quick-origin-bottom {
+  position: fixed;
+
+  z-index: 30;
+
+  left: 50%;
+  bottom: 0;
+
+  width: 100%;
+  max-width: 480px;
+
+  box-sizing: border-box;
+
+  padding:
+    20px
+    20px
+    max(
+      18px,
+      env(safe-area-inset-bottom)
+    );
+
+  transform:
+    translateX(-50%);
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(
+        255,
+        253,
+        245,
+        0
+      ),
+      #fffdf5 25%,
+      #fffdf5 100%
+    );
+}
+
+.quick-origin-find-button {
+  width: 100%;
+  height: 58px;
+
+  border: none;
+  border-radius: 17px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 21px
+    rgba(
+      221,
+      176,
+      31,
+      0.18
+    );
+}
+
+.quick-origin-find-button:active {
+  transform: scale(0.985);
+}
+
+.quick-origin-count {
+  margin:
+    7px
+    0
+    0;
+
+  color: #9b845c;
+
+  text-align: center;
+
+  font-size: 8px;
+}
+
+.quick-origin-count strong {
+  color: #bd9118;
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (
+  max-width: 360px
+) {
+  .quick-origin-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .quick-origin-map {
+    height: 170px;
+  }
+
+  .quick-origin-card {
+    padding: 14px;
+  }
+
+  .quick-origin-search-button {
+    width: 58px;
+  }
+}

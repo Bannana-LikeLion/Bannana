@@ -1,0 +1,655 @@
+/* =====================================================
+   PAGE
+===================================================== */
+
+.confirmed-page {
+  width: 100%;
+  max-width: 480px;
+
+  min-height: 100dvh;
+
+  margin: 0 auto;
+
+  box-sizing: border-box;
+
+  padding:
+    max(22px, env(safe-area-inset-top))
+    20px
+    calc(30px + env(safe-area-inset-bottom));
+
+  background: #fffdf5;
+
+  color: #21190f;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.confirmed-header {
+  margin-bottom: 18px;
+}
+
+.confirmed-back-button {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 14px;
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #21190f;
+
+  font-size: 26px;
+
+  cursor: pointer;
+}
+
+.confirmed-header h1 {
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.confirmed-header p {
+  margin: 7px 0 0;
+
+  color: #9a8056;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   PLACE CARD
+===================================================== */
+
+.confirmed-place-card {
+  overflow: hidden;
+
+  margin-bottom: 14px;
+
+  border-radius: 22px;
+
+  background: white;
+
+  box-shadow:
+    0 6px 20px
+    rgba(65, 49, 22, 0.06);
+}
+
+.confirmed-place-image {
+  height: 108px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff3b0,
+      #ffed93
+    );
+
+  font-size: 52px;
+}
+
+.confirmed-place-info {
+  padding: 17px 18px;
+}
+
+.confirmed-place-name > div {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-bottom: 7px;
+}
+
+.confirmed-place-name > div span {
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  background: #f3eedf;
+
+  color: #7e6845;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.confirmed-place-name > div span:nth-child(2) {
+  background: #e7f3dd;
+
+  color: #5b8055;
+}
+
+.confirmed-place-name h2 {
+  margin: 0;
+
+  color: #21190f;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.confirmed-place-name p {
+  margin: 7px 0 0;
+
+  color: #94794d;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.confirmed-map {
+  position: relative;
+
+  height: 230px;
+
+  overflow: hidden;
+
+  margin-bottom: 16px;
+
+  border-radius: 22px;
+
+  background: #e5e3dc;
+
+  box-shadow:
+    0 5px 18px
+    rgba(65, 49, 22, 0.05);
+}
+
+.confirmed-map .kakao-map {
+  border: none;
+  border-radius: 22px;
+
+  box-shadow: none;
+}
+
+
+/* =====================================================
+   FAIRNESS
+===================================================== */
+
+.confirmed-fair-label {
+  position: absolute;
+
+  z-index: 20;
+
+  left: 50%;
+  bottom: 10px;
+
+  max-width:
+    calc(
+      100% - 30px
+    );
+
+  padding: 8px 12px;
+
+  transform:
+    translateX(-50%);
+
+  border-radius: 999px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
+
+  color: #4d3c26;
+
+  white-space: nowrap;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  box-shadow:
+    0 4px 12px
+    rgba(0, 0, 0, 0.08);
+}
+
+
+/* =====================================================
+   COMMON SECTION
+===================================================== */
+
+.confirmed-section {
+  margin-top: 15px;
+  padding: 18px;
+
+  border-radius: 21px;
+
+  background: white;
+
+  box-shadow:
+    0 5px 18px
+    rgba(65, 49, 22, 0.05);
+}
+
+.confirmed-section-title {
+  margin: 0 0 14px;
+
+  color: #2b2216;
+
+  font-size: 16px;
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   MEETING INFO
+===================================================== */
+
+.confirmed-meeting-info {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 8px;
+}
+
+.confirmed-info-box {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 13px 6px;
+
+  border-radius: 14px;
+
+  background: #fff9e9;
+
+  text-align: center;
+}
+
+.confirmed-info-box span {
+  color: #9a8056;
+
+  font-size: 9px;
+}
+
+.confirmed-info-box strong {
+  color: #2e2418;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.confirmed-section-description {
+  margin: -7px 0 13px;
+
+  color: #9a8056;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   TRAVEL LIST
+===================================================== */
+
+.confirmed-travel-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.confirmed-travel-card {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  min-height: 64px;
+
+  padding: 10px 12px;
+
+  border-radius: 16px;
+
+  background: #fffdf8;
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+.confirmed-avatar {
+  width: 41px;
+  height: 41px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   TRAVEL INFO
+===================================================== */
+
+.confirmed-travel-info {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.confirmed-travel-info strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #2b2217;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirmed-travel-info span {
+  display: block;
+
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: #9a8056;
+
+  font-size: 9px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   TRAVEL TIME
+===================================================== */
+
+.confirmed-travel-time {
+  flex-shrink: 0;
+
+  text-align: right;
+}
+
+.confirmed-travel-time strong {
+  display: block;
+
+  color: #21190f;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.confirmed-travel-time > span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #b1842b;
+
+  font-size: 8px;
+}
+
+.confirmed-travel-time
+.confirmed-travel-unavailable {
+  max-width: 70px;
+
+  color: #aaa08f;
+
+  line-height: 1.4;
+}
+
+
+/* =====================================================
+   COMPLETE
+===================================================== */
+
+.confirmed-complete-message {
+  margin-top: 13px;
+  padding: 11px;
+
+  border-radius: 12px;
+
+  background: #e7f5e5;
+
+  color: #548551;
+
+  text-align: center;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.confirmed-actions {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+
+  margin-top: 18px;
+}
+
+.confirmed-primary-button,
+.confirmed-secondary-button {
+  width: 100%;
+  height: 56px;
+
+  border-radius: 16px;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.confirmed-primary-button {
+  border: none;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  box-shadow:
+    0 7px 20px
+    rgba(221, 176, 31, 0.17);
+}
+
+.confirmed-secondary-button {
+  border: 1.5px solid #e6ddc8;
+
+  background: white;
+
+  color: #68563c;
+}
+
+.confirmed-primary-button:active,
+.confirmed-secondary-button:active {
+  transform: scale(0.987);
+}
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+.confirmed-state-page {
+  width: 100%;
+  max-width: 480px;
+
+  min-height: 100dvh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  margin: 0 auto;
+  padding: 24px;
+
+  background: #fffdf5;
+}
+
+.confirmed-state-card {
+  width: 100%;
+
+  padding: 30px 20px;
+
+  border-radius: 22px;
+
+  background: white;
+
+  text-align: center;
+
+  box-shadow:
+    0 7px 25px
+    rgba(65, 49, 22, 0.07);
+}
+
+.confirmed-state-card h1 {
+  margin: 14px 0 0;
+
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.confirmed-state-card p {
+  margin: 8px 0 0;
+
+  color: #917b59;
+
+  font-size: 10px;
+}
+
+.confirmed-state-icon {
+  font-size: 36px;
+}
+
+.confirmed-state-card button {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 20px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #f4cf45;
+
+  color: #21190f;
+
+  font-weight: 800;
+}
+
+.confirmed-state-spinner {
+  width: 40px;
+  height: 40px;
+
+  box-sizing: border-box;
+
+  margin: 0 auto;
+
+  border: 5px solid #eee7d4;
+  border-top-color: #f4cf45;
+  border-radius: 50%;
+
+  animation:
+    confirmed-spin
+    0.8s
+    linear
+    infinite;
+}
+
+@keyframes confirmed-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =====================================================
+   SMALL PHONE
+===================================================== */
+
+@media (max-width: 360px) {
+  .confirmed-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .confirmed-header h1 {
+    font-size: 23px;
+  }
+
+  .confirmed-place-image {
+    height: 95px;
+
+    font-size: 46px;
+  }
+
+  .confirmed-map {
+    height: 205px;
+  }
+
+  .confirmed-section {
+    padding: 15px;
+  }
+
+  .confirmed-meeting-info {
+    gap: 6px;
+  }
+
+  .confirmed-info-box {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}

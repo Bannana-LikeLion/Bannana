@@ -1,0 +1,180 @@
+.location-search {
+    position: relative;
+  
+    width: 100%;
+  }
+  
+  .location-search__form {
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  }
+  
+  .location-search__input {
+    flex: 1;
+  
+    min-width: 0;
+  }
+  
+  .location-search__button {
+    flex-shrink: 0;
+  
+    width: 70px;
+    height: 54px;
+  
+    border: 1.5px solid #dcae1d;
+    border-radius: 14px;
+  
+    background: #f4cf45;
+  
+    color: #21190f;
+  
+    font-size: 13px;
+    font-weight: 800;
+  
+    cursor: pointer;
+  }
+  
+  .location-search__button:disabled {
+    opacity: 0.55;
+  
+    cursor: default;
+  }
+  
+  .location-search__results {
+    position: relative;
+  
+    z-index: 20;
+  
+    display: flex;
+    flex-direction: column;
+  
+    width: 100%;
+  
+    margin-top: 8px;
+  
+    overflow: hidden;
+  
+    border: 1px solid #eee3c6;
+    border-radius: 14px;
+  
+    background: white;
+  
+    box-shadow:
+      0 8px 24px
+      rgba(61, 46, 23, 0.09);
+  }
+  
+  .location-search__result {
+    width: 100%;
+  
+    display: flex;
+    flex-direction: column;
+  
+    align-items: flex-start;
+  
+    gap: 4px;
+  
+    padding: 12px 14px;
+  
+    border: none;
+    border-bottom: 1px solid #f1ead9;
+  
+    background: white;
+  
+    text-align: left;
+  
+    cursor: pointer;
+  }
+  
+  .location-search__result:last-child {
+    border-bottom: none;
+  }
+  
+  .location-search__result:hover {
+    background: #fffaf0;
+  }
+  
+  .location-search__result:active {
+    background: #fff5cf;
+  }
+  
+  .location-search__result strong {
+    color: #21190f;
+  
+    font-size: 13px;
+  }
+  
+  .location-search__result span {
+    color: #806b48;
+  
+    font-size: 10px;
+  }
+  
+  .location-search__result small {
+    color: #b09a72;
+  
+    font-size: 9px;
+  }
+  
+  .location-search__error {
+    margin: 7px 2px 0;
+  
+    color: #d95d58;
+  
+    font-size: 10px;
+  }
+  
+  .location-search__selected {
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 9px;
+  
+    margin-top: 9px;
+    padding: 10px 12px;
+  
+    border: 1px solid #cfe1ad;
+    border-radius: 12px;
+  
+    background: #f4fae9;
+  }
+  
+  .location-search__selected > span {
+    width: 23px;
+    height: 23px;
+  
+    flex-shrink: 0;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 50%;
+  
+    background: #7aa63b;
+  
+    color: white;
+  
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .location-search__selected strong {
+    display: block;
+  
+    color: #3e5522;
+  
+    font-size: 11px;
+  }
+  
+  .location-search__selected p {
+    margin: 2px 0 0;
+  
+    color: #75904f;
+  
+    font-size: 9px;
+  }
