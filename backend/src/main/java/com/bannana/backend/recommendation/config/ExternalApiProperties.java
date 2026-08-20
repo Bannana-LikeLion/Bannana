@@ -4,10 +4,10 @@ import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 외부 API 설정. 키는 application.yml에서 환경변수(KAKAO_API_KEY / ODSAY_API_KEY)로 바인딩된다.
+ * 외부 API 설정. 키는 application.yml에서 환경변수(KAKAO_API_KEY / ODSAY_API_KEY / TMAP_APP_KEY)로 바인딩된다.
  */
 @ConfigurationProperties(prefix = "bannana.api")
-public record ExternalApiProperties(Kakao kakao, Odsay odsay) {
+public record ExternalApiProperties(Kakao kakao, Odsay odsay, Tmap tmap) {
 
     public record Kakao(String apiKey, String baseUrl, Duration connectTimeout, Duration readTimeout) {
         public Kakao {
@@ -30,6 +30,18 @@ public record ExternalApiProperties(Kakao kakao, Odsay odsay) {
 
         public boolean hasApiKey() {
             return apiKey != null && !apiKey.isBlank();
+        }
+    }
+
+    public record Tmap(String appKey, String baseUrl, Duration connectTimeout, Duration readTimeout) {
+        public Tmap {
+            baseUrl = baseUrl == null ? "https://apis.openapi.sk.com" : baseUrl;
+            connectTimeout = connectTimeout == null ? Duration.ofSeconds(3) : connectTimeout;
+            readTimeout = readTimeout == null ? Duration.ofSeconds(6) : readTimeout;
+        }
+
+        public boolean hasAppKey() {
+            return appKey != null && !appKey.isBlank();
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.bannana.backend.recommendation.service;
 
-import com.bannana.backend.recommendation.client.OdsayClient;
+import com.bannana.backend.recommendation.client.TravelTimeClient;
 import com.bannana.backend.recommendation.config.RecommendationProperties;
 import com.bannana.backend.recommendation.domain.GeoPoint;
 import com.bannana.backend.recommendation.domain.Participant;
@@ -42,23 +42,23 @@ public class RecommendationService {
 
     private static final Logger log = LoggerFactory.getLogger(RecommendationService.class);
 
-    /** 전체 ODsay 조회에 허용하는 총 시간. 넘기면 그때까지 모인 결과만으로 계산한다. */
+    /** 전체 이동시간 조회에 허용하는 총 시간. 넘기면 그때까지 모인 결과만으로 계산한다. */
     private static final Duration LOOKUP_BUDGET = Duration.ofSeconds(30);
 
     private final StationProvider stationProvider;
-    private final OdsayClient odsayClient;
+    private final TravelTimeClient travelTimeClient;
     private final CandidateScorer candidateScorer;
     private final RecommendationProperties properties;
     private final ExecutorService travelTimeExecutor;
 
     public RecommendationService(
             StationProvider stationProvider,
-            OdsayClient odsayClient,
+            TravelTimeClient travelTimeClient,
             CandidateScorer candidateScorer,
             RecommendationProperties properties,
             ExecutorService travelTimeExecutor) {
         this.stationProvider = stationProvider;
-        this.odsayClient = odsayClient;
+        this.travelTimeClient = travelTimeClient;
         this.candidateScorer = candidateScorer;
         this.properties = properties;
         this.travelTimeExecutor = travelTimeExecutor;
@@ -126,10 +126,10 @@ public class RecommendationService {
 
     private void lookupOne(TravelTimeMatrix matrix, Station station, Participant participant) {
         try {
-            Optional<Integer> minutes = odsayClient.travelMinutes(participant.origin(), station.location());
+            Optional<Integer> minutes = travelTimeClient.travelMinutes(participant.origin(), station.location());
             minutes.ifPresent(value -> matrix.put(station, participant, value));
         } catch (RuntimeException e) {
-            // OdsayClient가 이미 예외를 흡수하지만, 여기서 새는 예외가 allOf를 깨뜨리지 않도록 한 번 더 막는다.
+            // 클라이언트가 이미 예외를 흡수하지만, 여기서 새는 예외가 allOf를 깨뜨리지 않도록 한 번 더 막는다.
             log.warn("이동시간 조회 실패 ({} <- {}): {}", station.name(), participant.nickname(), e.toString());
         }
     }

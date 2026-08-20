@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @param travelTimes 닉네임 -> 이동시간(분). ODsay 조회에 실패한 참여자는 키가 빠진다.
+ * @param travelTimes 닉네임 -> 이동시간(분). 참여자 전원이 조회된 후보만 응답에 담기므로 항상 전원이 들어있다.
  */
 public record CandidateDto(
         @JsonProperty("name") String name,

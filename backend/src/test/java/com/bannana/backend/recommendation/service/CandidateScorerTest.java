@@ -47,18 +47,16 @@ class CandidateScorerTest {
     }
 
     @Test
-    @DisplayName("조회에 실패한 참여자는 빼고 나머지로 계산한다")
-    void skipsFailedParticipants() {
+    @DisplayName("참여자 중 한 명이라도 조회에 실패하면 그 후보는 빠진다")
+    void dropsCandidateWhenAnyParticipantIsMissing() {
         Station station = station("성수역");
         List<Participant> participants = List.of(participant("김보경", null), participant("송현석", null));
 
         TravelTimeMatrix matrix = new TravelTimeMatrix();
         matrix.put(station, participants.get(0), 30);
 
-        ScoredCandidate candidate = scorer.score(station, participants, matrix).orElseThrow();
-
-        assertThat(candidate.travelTimes()).containsOnlyKeys("김보경");
-        assertThat(candidate.gapMinutes()).isZero();
+        // 김보경만 있는 상태로 gap을 내면 0분이 되어 실제보다 공평해 보인다. 그래서 후보 자체를 버린다.
+        assertThat(scorer.score(station, participants, matrix)).isEmpty();
     }
 
     @Test

@@ -10,8 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param maxCandidates   후보 역 최대 개수 (명세: 10)
  * @param topN            응답에 담을 후보 수 (명세: 3)
  * @param searchRadii     Kakao 검색 반경(m). 앞에서부터 시도하며 minCandidates를 채우면 멈춘다.
- * @param stationProvider auto | kakao | static
- * @param concurrency     ODsay 동시 호출 수
+ * @param stationProvider    auto | kakao | static
+ * @param travelTimeProvider tmap | odsay
+ * @param concurrency        이동시간 API 동시 호출 수
  */
 @ConfigurationProperties(prefix = "bannana.recommendation")
 public record RecommendationProperties(
@@ -20,6 +21,7 @@ public record RecommendationProperties(
         int topN,
         List<Integer> searchRadii,
         String stationProvider,
+        String travelTimeProvider,
         int concurrency) {
 
     public RecommendationProperties {
@@ -30,6 +32,7 @@ public record RecommendationProperties(
                 ? List.of(3000, 5000, 10000, 20000)
                 : List.copyOf(searchRadii);
         stationProvider = (stationProvider == null || stationProvider.isBlank()) ? "auto" : stationProvider;
+        travelTimeProvider = (travelTimeProvider == null || travelTimeProvider.isBlank()) ? "tmap" : travelTimeProvider;
         concurrency = concurrency <= 0 ? 8 : concurrency;
 
         if (maxCandidates < minCandidates) {

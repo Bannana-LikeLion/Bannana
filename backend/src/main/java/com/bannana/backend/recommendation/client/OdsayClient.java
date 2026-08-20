@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
@@ -25,8 +24,7 @@ import org.springframework.web.client.HttpClientErrorException;
  * <p>이 클라이언트는 예외를 밖으로 던지지 않는다. 실패한 (참여자 × 후보) 조합만 빠지고 나머지 계산은
  * 계속돼야 하므로, 모든 실패를 {@link Optional#empty()}로 흡수하고 로그만 남긴다.
  */
-@Component
-public class OdsayClient {
+public class OdsayClient implements TravelTimeClient {
 
     private static final Logger log = LoggerFactory.getLogger(OdsayClient.class);
 
@@ -58,6 +56,7 @@ public class OdsayClient {
     private final Object paceLock = new Object();
     private volatile long nextAllowedDispatchMillis = 0;
 
+    @Override
     public Optional<Integer> travelMinutes(GeoPoint origin, GeoPoint destination) {
     if (!properties.hasApiKey()) {
         log.warn("ODSAY_API_KEY가 설정되지 않아 이동시간을 조회할 수 없습니다.");

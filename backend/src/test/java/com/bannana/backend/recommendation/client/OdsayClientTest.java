@@ -31,7 +31,8 @@ class OdsayClientTest {
         server = MockRestServiceServer.bindTo(builder).build();
         ExternalApiProperties properties = new ExternalApiProperties(
                 new ExternalApiProperties.Kakao(null, null, null, null),
-                new ExternalApiProperties.Odsay("test-key", "https://api.odsay.com", null, null));
+                new ExternalApiProperties.Odsay("test-key", "https://api.odsay.com", null, null),
+                new ExternalApiProperties.Tmap(null, null, null, null));
         client = new OdsayClient(builder.build(), properties);
     }
 
@@ -105,7 +106,8 @@ class OdsayClientTest {
     void skipsCallWithoutApiKey() {
         ExternalApiProperties noKey = new ExternalApiProperties(
                 new ExternalApiProperties.Kakao(null, null, null, null),
-                new ExternalApiProperties.Odsay("", null, null, null));
+                new ExternalApiProperties.Odsay("", null, null, null),
+                new ExternalApiProperties.Tmap(null, null, null, null));
         OdsayClient keyless = new OdsayClient(RestClient.builder().build(), noKey);
 
         assertThat(keyless.travelMinutes(ORIGIN, DESTINATION)).isEmpty();

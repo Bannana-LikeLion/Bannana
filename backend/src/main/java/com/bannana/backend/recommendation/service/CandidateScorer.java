@@ -15,9 +15,13 @@ import org.springframework.stereotype.Component;
 public class CandidateScorer {
 
     /**
-     * 조회에 성공한 참여자들만으로 후보 점수를 만든다.
+     * 후보 점수를 만든다.
      *
-     * @return 성공한 조합이 하나도 없으면 {@link Optional#empty()} — 해당 후보는 응답에서 빠진다.
+     * <p>참여자 전원의 이동시간이 모여야 후보로 인정한다. 한 명이라도 조회에 실패하면 그 사람만 빠진
+     * 채로 gap을 계산하게 되는데, 그러면 실제보다 공평해 보이는 값이 나와 후보 순위가 왜곡된다.
+     * 그래서 구멍이 있는 후보는 아예 제외한다.
+     *
+     * @return 조회에 실패한 참여자가 한 명이라도 있으면 {@link Optional#empty()} — 해당 후보는 응답에서 빠진다.
      */
     public Optional<ScoredCandidate> score(Station station, List<Participant> participants, TravelTimeMatrix matrix) {
         // 병렬 조회 순서와 무관하게 응답이 일정하도록 참여자 입력 순서대로 다시 담는다.

@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.bannana.backend.recommendation.client.OdsayClient;
+import com.bannana.backend.recommendation.client.TravelTimeClient;
 import com.bannana.backend.recommendation.domain.GeoPoint;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * ODsay만 스텁으로 바꾸고 나머지(정적 역 목록 -> 병렬 조회 -> 점수화 -> JSON 직렬화)는 실제 빈으로 태우는
+ * 이동시간 조회만 스텁으로 바꾸고 나머지(정적 역 목록 -> 병렬 조회 -> 점수화 -> JSON 직렬화)는 실제 빈으로 태우는
  * 성공 경로 검증. 프론트가 받게 될 응답 형태를 그대로 확인한다.
  */
 @SpringBootTest(properties = {
@@ -50,14 +50,14 @@ class RecommendationEndToEndTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private OdsayClient odsayClient;
+    private TravelTimeClient travelTimeClient;
 
     @BeforeEach
     void stubTravelTimes() {
-        // 출발지별로 고정값을 주되, 두 번째 참여자는 항상 실패시켜 부분 실패 경로도 함께 태운다.
-        when(odsayClient.travelMinutes(any(), any())).thenReturn(Optional.of(30));
-        when(odsayClient.travelMinutes(eq(new GeoPoint(37.4979, 127.0276)), any())).thenReturn(Optional.empty());
-        when(odsayClient.travelMinutes(eq(new GeoPoint(37.5445, 127.0557)), any())).thenReturn(Optional.of(36));
+        // 출발지별로 고정값을 준다. 후보는 참여자 전원이 조회돼야 살아남는다.
+        when(travelTimeClient.travelMinutes(any(), any())).thenReturn(Optional.of(30));
+        when(travelTimeClient.travelMinutes(eq(new GeoPoint(37.4979, 127.0276)), any())).thenReturn(Optional.of(33));
+        when(travelTimeClient.travelMinutes(eq(new GeoPoint(37.5445, 127.0557)), any())).thenReturn(Optional.of(36));
     }
 
     @Test
@@ -71,16 +71,27 @@ class RecommendationEndToEndTest {
                 .andExpect(jsonPath("$.candidates[0].lat").isNumber())
                 .andExpect(jsonPath("$.candidates[0].lng").isNumber())
                 .andExpect(jsonPath("$.candidates[0].gap_minutes").value(6))
-                // 조회에 실패한 송현석은 travel_times에서 빠지고 나머지 둘만 남는다.
                 .andExpect(jsonPath("$.candidates[0].travel_times.김보경").value(30))
-                .andExpect(jsonPath("$.candidates[0].travel_times.이지은").value(36))
-                .andExpect(jsonPath("$.candidates[0].travel_times.송현석").doesNotExist());
+                .andExpect(jsonPath("$.candidates[0].travel_times.송현석").value(33))
+                .andExpect(jsonPath("$.candidates[0].travel_times.이지은").value(36));
+    }
+
+    @Test
+    @DisplayName("한 명이라도 조회에 실패한 후보는 응답에서 빠진다")
+    void dropsCandidatesMissingAnyParticipant() throws Exception {
+        // 송현석이 전 후보에서 실패하면 살아남는 후보가 하나도 없다.
+        when(travelTimeClient.travelMinutes(eq(new GeoPoint(37.4979, 127.0276)), any()))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/recommendations").contentType(MediaType.APPLICATION_JSON).content(BODY))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.error").value("recommendation_unavailable"));
     }
 
     @Test
     @DisplayName("모든 조회가 실패하면 502")
     void returnsBadGatewayWhenEverythingFails() throws Exception {
-        when(odsayClient.travelMinutes(any(), any())).thenReturn(Optional.empty());
+        when(travelTimeClient.travelMinutes(any(), any())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/recommendations").contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isBadGateway())

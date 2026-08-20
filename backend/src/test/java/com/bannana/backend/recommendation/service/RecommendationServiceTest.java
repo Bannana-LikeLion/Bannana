@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.bannana.backend.recommendation.client.OdsayClient;
+import com.bannana.backend.recommendation.client.TravelTimeClient;
 import com.bannana.backend.recommendation.config.RecommendationProperties;
 import com.bannana.backend.recommendation.domain.GeoPoint;
 import com.bannana.backend.recommendation.domain.Station;
@@ -33,7 +33,7 @@ class RecommendationServiceTest {
     private static final Station HONGDAE = new Station("홍대입구역", new GeoPoint(37.5571, 126.9245));
 
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
-    private final OdsayClient odsayClient = mock(OdsayClient.class);
+    private final TravelTimeClient travelTimeClient = mock(TravelTimeClient.class);
 
     @AfterEach
     void tearDown() {
@@ -43,8 +43,8 @@ class RecommendationServiceTest {
     private RecommendationService serviceWith(List<Station> stations) {
         StationProvider stationProvider = (center, minCount, maxCount) -> stations;
         RecommendationProperties properties =
-                new RecommendationProperties(1, 10, 3, List.of(3000), "static", 4);
-        return new RecommendationService(stationProvider, odsayClient, new CandidateScorer(), properties, executor);
+                new RecommendationProperties(1, 10, 3, List.of(3000), "static", "tmap", 4);
+        return new RecommendationService(stationProvider, travelTimeClient, new CandidateScorer(), properties, executor);
     }
 
     private static RecommendationRequest request() {
@@ -76,30 +76,26 @@ class RecommendationServiceTest {
     }
 
     @Test
-    @DisplayName("일부 조합이 실패해도 나머지로 계산을 계속한다")
-    void continuesWhenSomeLookupsFail() {
+    @DisplayName("구멍 난 후보만 버리고 전원 조회된 후보로 응답을 만든다")
+    void dropsIncompleteCandidateButKeepsGoing() {
         stubMinutes(SEONGSU, 30, 31, 32);
-        // 강남역은 두 번째 참여자만 실패
-        when(odsayClient.travelMinutes(originOf(0), GANGNAM.location())).thenReturn(Optional.of(20));
-        when(odsayClient.travelMinutes(originOf(1), GANGNAM.location())).thenReturn(Optional.empty());
-        when(odsayClient.travelMinutes(originOf(2), GANGNAM.location())).thenReturn(Optional.of(21));
+        // 강남역은 두 번째 참여자만 실패 -> 강남역 후보 자체가 빠진다
+        when(travelTimeClient.travelMinutes(originOf(0), GANGNAM.location())).thenReturn(Optional.of(20));
+        when(travelTimeClient.travelMinutes(originOf(1), GANGNAM.location())).thenReturn(Optional.empty());
+        when(travelTimeClient.travelMinutes(originOf(2), GANGNAM.location())).thenReturn(Optional.of(21));
 
         RecommendationResponse response = serviceWith(List.of(SEONGSU, GANGNAM)).recommend(request());
 
-        CandidateDto gangnam = response.candidates().stream()
-                .filter(c -> c.name().equals("강남역"))
-                .findFirst()
-                .orElseThrow();
-
-        assertThat(gangnam.travelTimes()).containsOnlyKeys("김보경", "이지은");
-        assertThat(gangnam.gapMinutes()).isEqualTo(1);
-        assertThat(response.candidates()).hasSize(2);
+        // 일부 조합이 실패해도 요청 전체가 실패하지는 않는다.
+        assertThat(response.candidates()).extracting(CandidateDto::name).containsExactly("성수역");
+        assertThat(response.candidates().getFirst().travelTimes())
+                .containsOnlyKeys("김보경", "송현석", "이지은");
     }
 
     @Test
     @DisplayName("모든 후보 계산이 실패하면 502로 이어질 예외를 던진다")
     void throwsWhenEveryCandidateFails() {
-        when(odsayClient.travelMinutes(any(), any())).thenReturn(Optional.empty());
+        when(travelTimeClient.travelMinutes(any(), any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> serviceWith(List.of(SEONGSU, GANGNAM)).recommend(request()))
                 .isInstanceOf(RecommendationUnavailableException.class)
@@ -130,9 +126,9 @@ class RecommendationServiceTest {
     }
 
     private void stubMinutes(Station station, int first, int second, int third) {
-        when(odsayClient.travelMinutes(originOf(0), station.location())).thenReturn(Optional.of(first));
-        when(odsayClient.travelMinutes(originOf(1), station.location())).thenReturn(Optional.of(second));
-        when(odsayClient.travelMinutes(originOf(2), station.location())).thenReturn(Optional.of(third));
+        when(travelTimeClient.travelMinutes(originOf(0), station.location())).thenReturn(Optional.of(first));
+        when(travelTimeClient.travelMinutes(originOf(1), station.location())).thenReturn(Optional.of(second));
+        when(travelTimeClient.travelMinutes(originOf(2), station.location())).thenReturn(Optional.of(third));
     }
 
     private GeoPoint originOf(int index) {

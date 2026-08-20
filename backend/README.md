@@ -9,7 +9,7 @@
 - 약속방 생성 및 참여자 관리
 - 기상청 단기예보 조회
 - Kakao Local 기반 주변 장소 검색
-- 중간 지점 후보 추천 (ODsay 대중교통 이동시간 기반)
+- 중간 지점 후보 추천 (Tmap 대중교통 이동시간 기반)
 
 ## Tech Stack
 
@@ -29,6 +29,8 @@
 
 - 기상청 단기예보 조회서비스
 - Kakao Local API
+- Tmap 대중교통 경로안내 API (이동시간 조회 기본값)
+- ODsay 대중교통 경로검색 API (설정으로 전환 가능한 대체 경로)
 
 ## Project Structure
 
@@ -44,7 +46,7 @@ src/main/java/com/bannana/backend
 - `room`: 약속방 생성, 호스트 등록, 참여자 등록/수정, 참여 현황 조회
 - `weather`: 위도/경도를 KMA 격자로 변환하고 단기예보를 조회
 - `place`: Kakao Local API로 주변 장소를 검색하고 응답을 정리
-- `recommendation`: 출발지 중심점 계산 → 후보 역 선정 → ODsay 이동시간 조회 → gap 기준 상위 3곳 선정 (DB를 쓰지 않는 stateless 모듈)
+- `recommendation`: 출발지 중심점 계산 → 후보 역 선정 → Tmap 이동시간 조회 → gap 기준 상위 3곳 선정 (DB를 쓰지 않는 stateless 모듈)
 
 ## API
 
@@ -116,11 +118,13 @@ src/main/java/com/bannana/backend
 }
 ```
 
-- 처리 순서: 출발지 단순 평균으로 중심점 계산 → 주변 지하철역 6~10곳 후보 선정 → (후보 × 참여자) ODsay 대중교통 이동시간 병렬 조회 → `gap_minutes`(최대-최소) 오름차순 상위 3곳.
+- 처리 순서: 출발지 단순 평균으로 중심점 계산 → 주변 지하철역 6~10곳 후보 선정 → (후보 × 참여자) 대중교통 이동시간 병렬 조회 → `gap_minutes`(최대-최소) 오름차순 상위 3곳.
 - 후보 역 선정은 `bannana.recommendation.station-provider`로 전환합니다. `auto`(기본, 카카오 실시간 검색 후 실패 시 정적 목록 폴백) / `kakao` / `static`.
-- **부분 실패는 전체를 실패시키지 않습니다.** ODsay 조회에 실패한 (참여자 × 후보) 조합만 빠지고, 해당 참여자는 그 후보의 `travel_times`에서 제외됩니다. 한 후보의 모든 조합이 실패하면 그 후보만 빠지고, 후보가 하나도 남지 않으면 502입니다.
+- **이동시간 조회 제공자는 `bannana.recommendation.travel-time-provider`로 고릅니다.** `tmap`(기본) / `odsay`. ODsay 일일 한도에 걸려 Tmap으로 전환했지만, 한도가 리셋되면 설정만 바꿔 되돌릴 수 있습니다.
+- **부분 실패는 요청 전체를 실패시키지 않습니다.** 다만 후보는 **참여자 전원의 이동시간이 모여야** 인정됩니다. 한 명이라도 조회에 실패하면 그 후보만 통째로 빠집니다(구멍 난 채로 gap을 내면 실제보다 공평해 보여 순위가 왜곡되기 때문). 살아남은 후보가 하나도 없으면 502입니다.
+- Tmap은 경로를 못 찾아도 **HTTP 200**으로 응답하고 `result.status`에 사유를 담습니다. `status 11`(출발지·도착지가 가까움)은 직선거리 기반 도보 추정치로 대체하고, 그 외 status는 실패로 처리합니다. `totalTime`은 **초 단위**라 분으로 변환합니다.
 - 오류 응답은 `{"error": "...", "message": "..."}` 형태로, room/weather/place의 `ApiErrorResponse`와 형태가 다릅니다. 통일하려면 프론트와 합의가 필요합니다.
-- `datetime`, `place_types`는 계약 유지를 위해 받기만 하고 계산에는 쓰지 않습니다(ODsay 경로검색에 출발시각 파라미터가 없고, 장소 검색은 `place` 모듈 담당).
+- `datetime`, `place_types`는 계약 유지를 위해 받기만 하고 계산에는 쓰지 않습니다(장소 검색은 `place` 모듈 담당). 다만 Tmap은 ODsay와 달리 출발시각 지정(`searchDttm`)을 지원하므로, 원하면 `datetime`을 실제로 반영할 수 있습니다.
 - `max_travel_min`은 soft 필터입니다. 초과 참여자가 있는 후보는 뒤로 밀리되 후보가 모자라면 채워집니다.
 
 ## Environment Variables
@@ -129,7 +133,8 @@ src/main/java/com/bannana/backend
 | --- | --- |
 | `KMA_SERVICE_KEY` | 기상청 단기예보 조회서비스 인증키 |
 | `KAKAO_REST_API_KEY` | Kakao Local API 인증키 (주변 장소 검색 + 후보 역 검색 공용) |
-| `ODSAY_API_KEY` | ODsay 대중교통 경로검색 인증키. **URL 인코딩 전 원본 값**을 넣어야 합니다 |
+| `TMAP_APP_KEY` | Tmap 대중교통 API appKey. **이동시간 조회의 기본 제공자**라 없으면 `/recommendations`가 502입니다 |
+| `ODSAY_API_KEY` | ODsay 인증키(**URL 인코딩 전 원본 값**). `travel-time-provider=odsay`로 되돌릴 때만 필요합니다 |
 
 IntelliJ `Run Configuration` 에서 환경 변수를 설정할 수 있습니다.
 
@@ -154,7 +159,7 @@ Windows 기준 실행:
 - Room/Participant: 약속방 생성, 호스트 출발지 등록, 참여자 등록, 참여자 출발지 수정, 참여 현황 조회
 - Weather: 기상청 단기예보 실연동
 - Place: Kakao Local 실연동
-- Recommendation: 중간지점 계산, 후보 역 선정, ODsay 대중교통 이동시간 조회, gap 기준 상위 3곳 선정
+- Recommendation: 중간지점 계산, 후보 역 선정, Tmap 대중교통 이동시간 조회, gap 기준 상위 3곳 선정
 
 ### 아직 없는 것
 

@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 이동시간 조회가 끝난 후보 하나.
  *
- * @param travelTimes    닉네임 -> 이동시간(분). ODsay 조회에 실패한 참여자는 아예 들어있지 않다.
+ * @param travelTimes    닉네임 -> 이동시간(분). 참여자 전원이 조회돼야 후보로 인정하므로 항상 전원이 들어있다.
  * @param gapMinutes     최대 - 최소 이동시간
  * @param totalMinutes   이동시간 합계
  * @param violationCount max_travel_min을 초과한 참여자 수 (soft 필터용)
